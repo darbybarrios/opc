@@ -1,6 +1,7 @@
 var app = angular.module("app",['ngRoute']);
 
 function listar_plcs($http,$scope,baseUrl){
+	//Luis
 	  
 	$http.get(baseUrl + "/listar-dispositivos-server").success(function (data) {
 		{ $scope.jsonplcsActivas = data;
