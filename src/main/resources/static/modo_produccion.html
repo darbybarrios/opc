@@ -1,0 +1,161 @@
+<head>
+		<title>Modo Produccion</title>
+	    <link href="vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+</head>
+
+    <!-- bootstrap-progressbar -->
+    <script src="vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+	
+        <div>
+          <!-- top tiles -->
+		      <div class="well" style="overflow: auto">
+		       <div class="col-md-10 left-margin">
+		  	            <label> Seleccionar Linea:</label>
+                        
+                          <select id="idPLC" class="form-control" ng-model="selLinea" ng-change="activateRealtime()" type="checkbox" ng-options="maquinas.idMaquina as maquinas.nombre for maquinas in maquinas">
+                            <option value="">-- Seleccionar --</option>
+
+                          </select>
+                        
+				</div>	
+			</div>	
+					
+          <div class="row tile_count">
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-clock-o"></i> Turno Actual</span>
+              <div class="count" align="center" ng-bind="turnoActual.descTurno"></div>
+              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i> Restante</i></span>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-user"></i> Arrancado</span>
+			  
+
+			<div class="count" ng-if="descDet != null" ng-bind="descDet"></div>
+			<div class="count" ng-if="descDet == null" ng-bind="tag1Vacio"></div>
+<!--			  <div ng-switch  on="descDet">
+			  	<div class="count" ng-switch-when="!= null" ng-bind="descDet"></div>
+				<div class="count" ng-switch-when="== null" ng-bind="tag1Vacio"></div>
+			  </div>-->
+			  
+			  
+			  
+			  
+              <span class="count_bottom"><i class="green">00:00:00 </i> Funcionamiento</span>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-user"></i> Velocidad </span>
+              <div class="count green" ng-bind="tag3.valor">-</div>
+              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i></span>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-user"></i> Produccion </span>
+              <div class="count" ng-bind="tag4.valor">-</div>
+              <span class="count_bottom"><i class="red"><i class="fa fa-sort-desc"></i>0 </i></span>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-user"></i> Detenido </span>
+	         
+			  <div class="count" ng-if="descDet5 != null" ng-bind="descDet5"></div>
+			  <div class="count" ng-if="descDet5 == null" ng-bind="tag5Vacio"></div>
+			  <span class="count_bottom" ng-if="descDet5 == 'Si'" ><i class="red"><i class="fa fa-sort-asc"></i></i></span>
+			  <span class="count_bottom" ng-if="descDet5 == 'No'" ><i class="green"><i class="fa fa-sort-asc"></i></i></span>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-user"></i> Eficiencia </span>
+              <div class="count" ng-bind="eficiencia"></div>
+              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i></span>
+            </div>
+          </div>
+          <!-- /top tiles -->
+
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="dashboard_graph">
+
+                <div class="row x_title">
+                  <div class="col-md-6">
+                    <h3>Actividad de Produccion <small>Indices de Eficiencia</small></h3>
+                  </div>
+                  <div class="col-md-6">
+                    <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
+                      <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                      <span>December 30, 2014 - January 28, 2015</span> <b class="caret"></b>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-9 col-sm-9 col-xs-12">
+                  <div id="placeholder33" style="height: 260px; display: none" class="demo-placeholder"></div>
+                  <div style="width: 100%;">
+                    <div id="canvas_dahs" class="demo-placeholder" style="width: 100%; height:270px;"></div>
+                  </div>
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-12 bg-white">
+                  <div class="x_title">
+                    <h2>Ultimos Turnos</h2>
+                    <div class="clearfix"></div>
+                  </div>
+
+                  <div class="col-md-12 col-sm-12 col-xs-6">
+                    <div>
+                      <p>Parametro 1.1</p>
+                      <div class="">
+                        <div class="progress progress_sm" style="width: 76%;">
+                          <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="80"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <p>Parametro 2</p>
+                      <div class="">
+                        <div class="progress progress_sm" style="width: 76%;">
+                          <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="60"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-12 col-sm-12 col-xs-6">
+                    <div>
+                      <p>Parametro 3</p>
+                      <div class="">
+                        <div class="progress progress_sm" style="width: 76%;">
+                          <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="40"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <p>Parametro 4</p>
+                      <div class="">
+                        <div class="progress progress_sm" style="width: 76%;">
+                          <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="50"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="clearfix"></div>
+              </div>
+            </div>
+
+          </div>
+          <br />
+
+          <div class="row">
+
+
+      
+
+           
+
+                        <div class="row">
+
+
+                <!-- Start to do list -->
+                <!-- end of weather widget -->
+              </div>
+            </div>
+          </div>
+        </div>
+     
