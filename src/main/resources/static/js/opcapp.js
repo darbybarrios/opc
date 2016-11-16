@@ -12,6 +12,7 @@ function listar_plcs($http,$scope,baseUrl){
 	}
 
 function listar_marcas($http,$scope,baseUrl){
+	//Darby
 	$http.get(baseUrl + "/listar-marcas").success(function (data) {
 		{ $scope.jsonmarcas = data;
 		  $scope.marcas = $scope.jsonmarcas;
