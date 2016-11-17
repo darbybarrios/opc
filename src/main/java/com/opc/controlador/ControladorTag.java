@@ -45,6 +45,7 @@ public class ControladorTag {
 	@ResponseBody	
 	public List<Tag> listar_tag_dispo(int idDispositivo) throws IllegalArgumentException, JIException, AlreadyConnectedException, IOException{
 		Dispositivo dispo = daoDispo.findOne(idDispositivo);
+		String nombDisp;
 		accesarDispositivo acceso = accesarDispositivo.getInstancia();
 		int longDis = dispo.getDescripcion().length();
 		//acceso.cargarTags(dispo.getDescripcion());
@@ -56,10 +57,17 @@ public class ControladorTag {
 		
 		while (vectorTag.hasNext()){
 			Tag tag = vectorTag.next();
-			String nombDisp = tag.getItemId().substring(1, longDis+1);
-			if (nombDisp.equals(dispo.getDescripcion()) ){
-				tagDef.add(new Tag(tag.getItemId(),tag.getdescTag()));
+			
+			if (tag.getItemId().substring(0, 1).equals("[")){
+				nombDisp = tag.getItemId().substring(1, longDis+1);
+					if (nombDisp.equals(dispo.getDescripcion()) ){
+						tagDef.add(new Tag(tag.getItemId(),tag.getdescTag()));
+					}
+			}	
+				else{
+					tagDef.add(new Tag(tag.getItemId(),tag.getdescTag()));
 			}
+					
 		}  
 		
 		//acceso.desconectar();

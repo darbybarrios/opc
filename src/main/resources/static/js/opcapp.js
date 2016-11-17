@@ -1003,10 +1003,12 @@ app.controller("TagsController", ['$scope','$http',function($scope, $http) {
     	
     	
 
-		$scope.tags.splice( index, 1 );		
+				
+		
 		//alert($scope.dispositivos[index].idDispositivo);
-		$http.get(baseUrl + '/eliminar-tag?id='+$scope.tags[index].idTag+'&statReg=1').
+		$http.get(baseUrl + '/eliminar-tag?idTag='+$scope.tagsdispo[index].idTag+'&statReg=1').
 		success(function(data){
+			$scope.tagsdispo.splice( index, 1 );
 			alert("Tag Eliminada");
 			//
 			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
