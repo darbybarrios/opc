@@ -1,7 +1,6 @@
 var app = angular.module("app",['ngRoute']);
 
 function listar_plcs($http,$scope,baseUrl){
-	//Luis
 	  
 	$http.get(baseUrl + "/listar-dispositivos-server").success(function (data) {
 		{ $scope.jsonplcsActivas = data;
@@ -12,7 +11,6 @@ function listar_plcs($http,$scope,baseUrl){
 	}
 
 function listar_marcas($http,$scope,baseUrl){
-	//Darby
 	$http.get(baseUrl + "/listar-marcas").success(function (data) {
 		{ $scope.jsonmarcas = data;
 		  $scope.marcas = $scope.jsonmarcas;
