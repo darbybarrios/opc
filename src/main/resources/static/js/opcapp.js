@@ -1,10 +1,6 @@
 var app = angular.module("app",['ngRoute']);
 
 function listar_plcs($http,$scope,baseUrl){
-<<<<<<< HEAD
-	//LuisS
-=======
->>>>>>> branch 'master' of http://dlsistemas.sytes.net/opc
 	  
 	$http.get(baseUrl + "/listar-dispositivos-server").success(function (data) {
 		{ $scope.jsonplcsActivas = data;
