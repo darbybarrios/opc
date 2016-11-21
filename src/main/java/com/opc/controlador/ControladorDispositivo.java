@@ -26,10 +26,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.opc.modelo.Dispositivo;
 import com.opc.modelo.Maquina;
 import com.opc.modelo.Marca;
+import com.opc.modelo.ResumenConectividad;
 import com.opc.modelo.Sucursal;
 import com.opc.repositorio.RepositorioDispositivo;
 import com.opc.repositorio.RepositorioMaquina;
 import com.opc.repositorio.RepositorioMarca;
+import com.opc.repositorio.RepositorioResumenConectividad;
 import com.opc.repositorio.RepositorioSucursal;
 
 import com.opc.modelo.Tag;
@@ -55,14 +57,28 @@ public class ControladorDispositivo {
 	@Autowired
 	private RepositorioTag daoTag;	
 	
+	@Autowired
+	private RepositorioResumenConectividad daoResumenConn;	
+	
 	@RequestMapping("verificar-conexion")
 	@ResponseBody	
 	public String verificar_conexion(int id){
-		return "1";
+		Dispositivo dispo =  daoDispositivo.findOne(id);
+		ResumenConectividad rConn = daoResumenConn.findTopByDispositivoOrderByFechaDesc(dispo);
+		String resul;
+		
+		if (rConn.getCalidad() > 0){
+			resul = "1";
+		}else
+		{
+			resul = "0";
+		}
+		
+		return resul;
 	} 
 
-
-/*	
+/*
+	
 	@RequestMapping("verificar-conexion")
 	@ResponseBody	
 	public String verificar_conexion(int id) throws IllegalArgumentException, JIException, AlreadyConnectedException, IOException, NotConnectedException, DuplicateGroupException, AddFailedException{
@@ -110,8 +126,8 @@ public class ControladorDispositivo {
 		
 		return status;
 	}	
-	
 	*/
+
 	
 	@RequestMapping(value = "listar-dispositivos")
 	@ResponseBody

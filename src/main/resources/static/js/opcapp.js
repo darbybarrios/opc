@@ -1,4 +1,4 @@
-var app = angular.module("app",['ngRoute']);
+var app = angular.module("app",['ngRoute','jlareau.pnotify']);
 
 function listar_plcs($http,$scope,baseUrl){
 	  
@@ -181,11 +181,11 @@ function buscar_valor_tag1($http,$scope,baseUrl){
 	}).then(function(result){
 		  $scope.selectTag = result.data;
 		  
-		  return $http.get(baseUrl +'/Tablero_Tag1?idDispositivo='+$scope.tagDispo.idDispositivo+'&posTag=1')
+		  return $http.get(baseUrl +'/verificarArranque?idDispositivo='+$scope.tagDispo.idDispositivo)
 	}).then(function(result){
 		  $scope.tag1 = result.data;
 		  
-		  return $http.get(baseUrl +'/valorDetTag?idTag='+$scope.tag1.tag.idTag+'&valor='+$scope.tag1.valor)
+		  return $http.get(baseUrl +'/valorDetTag?idTag='+$scope.tag1.tag.idTag+'&valor='+$scope.tag1.arrancado)
 	}).then(function(result){
 		  $scope.descDet = result.data;		  
 		  //console.log($scope.Tag1); 
@@ -256,11 +256,11 @@ function buscar_valor_tag5($http,$scope,baseUrl){
 	}).then(function(result){
 		  $scope.selectTag5 = result.data;
 		  
-		  return $http.get(baseUrl +'/Tablero_Tag1?idDispositivo='+$scope.tagDispo5.idDispositivo+'&posTag=5')
+		  return $http.get(baseUrl +'/verificarParada?idDispositivo='+$scope.tagDispo5.idDispositivo)
 	}).then(function(result){
 		  $scope.tag5 = result.data;
 		  console.log($scope.Tag5); 
-		  return $http.get(baseUrl +'/valorDetTag?idTag='+$scope.tag5.tag.idTag+'&valor='+$scope.tag5.valor)
+		  return $http.get(baseUrl +'/valorDetTag?idTag='+$scope.tag5.tag.idTag+'&valor='+$scope.tag5.parado)
 	}).then(function(result){
 		  $scope.descDet5 = result.data;			  
 	})	  
@@ -806,6 +806,43 @@ app.config(['$routeProvider',function($routeProvider) {
 
 	}]);
 
+
+
+app.config(['notificationServiceProvider', function(notificationServiceProvider) {
+
+	notificationServiceProvider
+
+		.setDefaults({
+            styling: 'bootstrap3',
+			delay: 2500,
+			buttons: {
+				closer: false,
+				closer_hover: false,
+				sticker: false,
+				sticker_hover: false
+			},
+			type: 'error'
+		})
+
+		// Configure a stack named 'bottom_right' that append a call 'stack-bottomright'
+		.setStack('bottom_right', 'stack-bottomright', {
+			dir1: 'up',
+			dir2: 'left',
+			firstpos1: 25,
+			firstpos2: 25
+		})
+
+		// Configure a stack named 'top_left' that append a call 'stack-topleft'
+		.setStack('top_left', 'stack-topleft', {
+			dir1: 'down',
+			dir2: 'right',
+			push: 'top'
+		})
+
+	;
+
+}]);
+
 app.constant("baseUrl", ".");
 app.config(['baseUrl', 'remoteResourceProvider',
   function(baseUrl, remoteResourceProvider) {
@@ -915,8 +952,7 @@ app.controller("DispositivosController", ['$scope','$http',function($scope, $htt
     
     $scope.removerDipo = function(index){
     	
-    	
-
+ 
 		$scope.dispositivos.splice( index, 1 );		
 		//alert($scope.dispositivos[index].idDispositivo);
 		$http.get(baseUrl + '/eliminar-dispositivo?id='+$scope.dispositivos[index].idDispositivo+'&statReg=1').
@@ -935,7 +971,7 @@ app.controller("DispositivosController", ['$scope','$http',function($scope, $htt
 
 //----------------------------------- Tags ---------------------------------------------------------------//
 
-app.controller("TagsController", ['$scope','$http',function($scope, $http) {
+app.controller("TagsController", ['$scope','$http','notificationService',function($scope, $http,notificationService) {
 	$scope.selDispo = [];
     var idSucursal = 1;
     
@@ -984,11 +1020,7 @@ app.controller("TagsController", ['$scope','$http',function($scope, $http) {
     			$scope.txtBit = null;
     			listar_tags($http,$scope,baseUrl,$scope.selDispo);
     			
-    			
-    			
-    			
-    			
-    			//
+   			//
     			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
  
   
@@ -1001,21 +1033,42 @@ app.controller("TagsController", ['$scope','$http',function($scope, $http) {
     
     $scope.removerTag = function(index){
     	
-    	
-
+		notificationService.notify(
+				{
+					title: 'Solicitud de Confirmación',
+					text: 'Esta seguro de dejar de Monitorear la Tag?',
+					hide: false,
+					confirm: {
+					confirm: true
+				},
+				buttons: {
+					closer: false,
+					sticker: false
+				},
+				history: {
+					history: false
+				}
+			}).get().on('pnotify.confirm', function() {
 				
-		
-		//alert($scope.dispositivos[index].idDispositivo);
-		$http.get(baseUrl + '/eliminar-tag?idTag='+$scope.tagsdispo[index].idTag+'&statReg=1').
-		success(function(data){
-			$scope.tagsdispo.splice( index, 1 );
-			alert("Tag Eliminada");
-			//
-			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
-			listar_dispositivos($http,$scope,baseUrl);
-			//refrescar_tabla('#tbdata');
+				$http.get(baseUrl + '/eliminar-tag?idTag='+$scope.tagsdispo[index].idTag+'&stat=1').
+				success(function(data){
+					$scope.tagsdispo.splice( index, 1 );
+					notificationService.success('Tag ha sido Eliminada Satisfactoriamente')
+					//alert("Tag Eliminada");
+					//
+					//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
+					listar_dispositivos($http,$scope,baseUrl);
+					//refrescar_tabla('#tbdata');
 
-		});		
+				});	
+				
+			}).on('pnotify.cancel', function() {
+				//alert('Oh ok. Chicken, I see.');
+			});
+    	
+ 		
+		//alert($scope.dispositivos[index].idDispositivo);
+	
 	}
      
     
@@ -1025,7 +1078,7 @@ app.controller("TagsController", ['$scope','$http',function($scope, $http) {
 //----------------------------------- Modo Produccion ---------------------------------------------------------//
 //-------------------------------------------------------------------------------------------------------------//
 
-app.controller("TableroController", ['$scope','$http','$timeout',function($scope, $http,$timeout) {
+app.controller("TableroController", ['$scope','$http','$timeout','notificationService',function($scope, $http,$timeout,notificationService) {
 	var baseUrl = ".";
 	listar_maquinas($http,$scope,baseUrl);
 	
@@ -1082,7 +1135,8 @@ app.controller("TableroController", ['$scope','$http','$timeout',function($scope
 					
 					}
 					else if ($scope.conectado == "0"){
-						alert("No hay hay conexion con la Linea");
+						//alert("No hay hay conexion con la Linea");
+						notificationService.error('No hay hay conexion con la Linea');
 						limpiar_tags($http,$scope,baseUrl);
 						
 					}

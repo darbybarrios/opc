@@ -35,6 +35,7 @@ import com.opc.modelo.ActividadTag;
 import com.opc.modelo.DetalleTag;
 import com.opc.modelo.Dispositivo;
 import com.opc.modelo.ProductoMaquina;
+import com.opc.modelo.ResumenConectividad;
 import com.opc.modelo.ResumenEficiencia;
 import com.opc.modelo.Tag;
 import com.opc.modelo.TipoValor;
@@ -45,6 +46,7 @@ import com.opc.repositorio.RepositorioDetalleTag;
 import com.opc.repositorio.RepositorioDispositivo;
 import com.opc.repositorio.RepositorioProducto;
 import com.opc.repositorio.RepositorioProductoMaquina;
+import com.opc.repositorio.RepositorioResumenConectividad;
 import com.opc.repositorio.RepositorioResumenEficiencia;
 import com.opc.repositorio.RepositorioTag;
 import com.opc.repositorio.RepositorioTurno;
@@ -248,6 +250,18 @@ public class OpcApplication {
 		
 	}	
 	
+	public void guardarConectividad(Dispositivo dispo, Tag tag, String arrancado, String parado,
+			                        int calidad, Calendar fecha,RepositorioResumenConectividad daoResumenConn){
+		ResumenConectividad resumenConn = new ResumenConectividad();
+		resumenConn.setDispositivo(dispo);
+		resumenConn.setTag(tag);
+		resumenConn.setArrancado(arrancado);
+		resumenConn.setParado(parado);
+		resumenConn.setFecha(fecha);
+		resumenConn.setCalidad(calidad);
+		daoResumenConn.save(resumenConn);
+	}
+	
     public void guardarEficiencia(Dispositivo dispo, RepositorioActividadTag daoActividad, RepositorioProducto daoProducto,
                                   RepositorioProductoMaquina daoProductoMaq, RepositorioTurno daoTurno, RepositorioTag daoTag,
                                   RepositorioResumenEficiencia daoEficiencia) throws ParseException{
@@ -317,7 +331,7 @@ public class OpcApplication {
 	public CommandLineRunner demo(RepositorioTag daoTag,RepositorioDispositivo daoDispositivo, 
 			RepositorioDispositivo repositorioDispositivo,RepositorioActividadTag daoActividadTag,
 			RepositorioDetalleTag daoDetalleTag, RepositorioProducto daoProducto,RepositorioProductoMaquina daoProductoMaq, 
-			RepositorioTurno daoTurno, RepositorioResumenEficiencia daoEficiencia){
+			RepositorioTurno daoTurno, RepositorioResumenEficiencia daoEficiencia, RepositorioResumenConectividad daoResumenConn){
 		return (args) -> {
 			
 			List<Dispositivo> listaDispo = daoDispositivo.findByStatReg("0");
@@ -390,6 +404,7 @@ public class OpcApplication {
 				        	
 				        	
 				        	
+				        	
 			                public void changed(Item item, ItemState state) {
 			                	String valor;
 			                	String tipoInfo;
@@ -403,13 +418,20 @@ public class OpcApplication {
 			                	if (state.getQuality() == 0){ //Si es Cero No hay acceso al PLC
 			                		//access.unbind();
 									System.out.println("Problemas al Conectar a : " + dispo.getDescripcion());
+									if (guardar){
+										guardarConectividad(dispo,tag,null,null,state.getQuality(),state.getTimestamp(),daoResumenConn);
+									}
+									
 									guardar = false;
 									conexion = false;
+									
+									
 			                	}else{
 			                		conexion = true;
 			                	}
 			                	
 			                	if (conexion){
+			                		
 			                		
 				                	if (state.getValue() != null){
 					                	
@@ -438,6 +460,7 @@ public class OpcApplication {
 					                		if (valorInt != valorAnt){
 					                				guardar = true;
 					                				valorAnt = valorInt;
+					                				guardarConectividad(dispo,tag,valor,null,state.getQuality(),state.getTimestamp(),daoResumenConn);
 					                		}else{
 					                			guardar = false;
 					                		}
@@ -468,6 +491,7 @@ public class OpcApplication {
 					                		}  
 					                		
 					                		if (valorInt != valorAnt){
+					                			guardarConectividad(dispo,tag,null,valor,state.getQuality(),state.getTimestamp(),daoResumenConn);
 					                			if (valorInt == 0) {
 					                				if  (arrancado){
 					                					guardar = false; 

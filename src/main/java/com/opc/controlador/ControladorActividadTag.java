@@ -18,6 +18,7 @@ import com.opc.modelo.Area;
 import com.opc.modelo.CausaFalla;
 import com.opc.modelo.Dispositivo;
 import com.opc.modelo.Maquina;
+import com.opc.modelo.ResumenConectividad;
 import com.opc.modelo.Sistema;
 import com.opc.modelo.SubSistema;
 import com.opc.modelo.Tag;
@@ -27,6 +28,7 @@ import com.opc.repositorio.RepositorioArea;
 import com.opc.repositorio.RepositorioCausaFalla;
 import com.opc.repositorio.RepositorioDispositivo;
 import com.opc.repositorio.RepositorioMaquina;
+import com.opc.repositorio.RepositorioResumenConectividad;
 import com.opc.repositorio.RepositorioSistema;
 import com.opc.repositorio.RepositorioSubSistema;
 import com.opc.repositorio.RepositorioTag;
@@ -53,6 +55,10 @@ public class ControladorActividadTag {
 	private RepositorioTurno daoTurno;
 	@Autowired
 	private RepositorioCausaFalla daoCausaFalla;	
+	@Autowired
+	private RepositorioResumenConectividad daoResumenConn;		
+	
+	
 	/*@RequestMapping("production/valor-actual-tag")
 	@ResponseBody	
 	public ActividadTag buscarValorActual(int idTag){
@@ -76,6 +82,27 @@ public class ControladorActividadTag {
 		Tag tag = daoTag.findByDispositivoAndStatWeb(dispo,posTag);
 		ActividadTag actividad = daoActividad.findTopByTagOrderByFechaDesc(tag);
 		return actividad;
+	}	
+
+
+	@RequestMapping("verificarArranque")
+	@ResponseBody	
+	public ResumenConectividad verificarArranque(int idDispositivo){
+		Dispositivo dispo = daoDispositivo.findOne(idDispositivo);
+		Tag tag = daoTag.findBytipoInformacionAndStatRegAndDispositivo("1", "0", dispo);
+		ResumenConectividad rConn = daoResumenConn.findTopByTagOrderByFechaDesc(tag);
+		
+		return rConn;
+	}	
+	
+	@RequestMapping("verificarParada")
+	@ResponseBody	
+	public ResumenConectividad verificarParada(int idDispositivo){
+		Dispositivo dispo = daoDispositivo.findOne(idDispositivo);
+		Tag tag = daoTag.findBytipoInformacionAndStatRegAndDispositivo("2", "0", dispo);
+		ResumenConectividad rConn = daoResumenConn.findTopByTagOrderByFechaDesc(tag);
+		
+		return rConn;
 	}	
 
 	@RequestMapping("Fallas")
