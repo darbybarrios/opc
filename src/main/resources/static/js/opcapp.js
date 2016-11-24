@@ -10,21 +10,6 @@ function listar_plcs($http,$scope,baseUrl){
 	
 	}
 
-function listar_marcas($http,$scope,baseUrl){
-	$http.get(baseUrl + "/listar-marcas").success(function (data) {
-		{ $scope.jsonmarcas = data;
-		  $scope.marcas = $scope.jsonmarcas;
-        }
-	});	
-}
-
-function listar_maquinas($http,$scope,baseUrl){
-	$http.get(baseUrl + "/listar-maquinas").success(function (data) {
-		{ $scope.jsonmaquinas = data;
-		  $scope.maquinas = $scope.jsonmaquinas;
-        }
-	});	
-}
 
 function listar_dispositivos($http,$scope,baseUrl){
 	$scope.jsondispositivos = []; 
@@ -39,6 +24,31 @@ function listar_dispositivos($http,$scope,baseUrl){
 
 	});
 	
+}
+
+function listar_productos($http,$scope,baseUrl){	
+	$scope.productos = [];
+	$http.get(baseUrl + "/listar-productos").success(function (data) {      
+		$scope.productos = data;        
+		iniciar_tabla('#tbprod')
+
+	});
+	
+}
+
+function listar_marcas($http,$scope,baseUrl){
+	$http.get(baseUrl + "/listar-marcas").success(function (data) {
+		$scope.marcas = data;
+		iniciar_tabla('#tbmarca')
+        
+	});	
+}
+
+function listar_maquinas($http,$scope,baseUrl){
+	$http.get(baseUrl + "/listar-maquinas").success(function (data) {		
+		  $scope.maquinas = data;
+		  iniciar_tabla('#tbmaquinas')
+	});	
 }
 
 function iniciar_tabla(nombre){
@@ -779,13 +789,17 @@ app.config(['$routeProvider',function($routeProvider) {
 		    templateUrl: "sucursales.html",
 		    controller: "ListadoSucursalesController"
 		  });
+	  $routeProvider.when('/productos', {
+		    templateUrl: "productos.html",
+		    controller: "ListadoProductosController"
+		  });
 	  $routeProvider.when('/marcas', {
-		    templateUrl: "construccion.html",
-		   // controller: "Pagina3Controller"
+		    templateUrl: "marcas.html",
+		    controller: "ListadoMarcasController"
 		  });
 	  $routeProvider.when('/maquinas', {
-		    templateUrl: "construccion.html",
-		   // controller: "Pagina3Controller"
+		    templateUrl: "maquinas.html",
+		    controller: "ListadoMaquinasController"
 		  });	  
 	  $routeProvider.when('/turnos', {
 		    templateUrl: "turnos.html",
@@ -908,6 +922,141 @@ app.controller("ListadoSucursalesController", ['$scope', 'remoteResource',functi
     });
 
 }]);
+
+//----------------------------------- Productos ----------------------------------------------------------//
+
+
+app.controller("ListadoProductosController", ['$scope','$http','$filter',function($scope, $http,$filter) {
+	var baseUrl = ".";
+	listar_productos($http, $scope, baseUrl);
+	
+	$scope.insertarProducto = function(){	
+    	
+    	if ($scope.txtDesc==""){
+    		alert("Campo en blanco");
+    	}
+    	else{
+    		$http.get(baseUrl + '/nuevo-producto?desc='+$scope.txtDesc).
+    		success(function(data){
+    			alert("Producto agregado");
+    			//
+    			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
+    			listar_productos($http,$scope,baseUrl);
+    			//refrescar_tabla('#tbdata');
+    			$scope.txtDesc=null;
+  
+    		});
+
+    	}
+
+    }
+	
+	$scope.removerProducto = function(index){    	
+		 
+		$scope.productos.splice( index, 1 );		
+		//alert($scope.dispositivos[index].idDispositivo);
+		$http.get(baseUrl + '/eliminar-proucto?id='+$scope.productos[index].idProducto+'&statProducto=1').
+		success(function(data){
+			alert("Producto Eliminado");
+			//
+			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
+			listar_productos($http,$scope,baseUrl);
+			//refrescar_tabla('#tbdata');
+
+		});		
+	}
+}]);
+
+//----------------------------------- Marcas ----------------------------------------------------------//
+
+
+app.controller("ListadoMarcasController", ['$scope','$http','$filter',function($scope, $http,$filter) {
+	var baseUrl = ".";
+	listar_marcas($http, $scope, baseUrl);
+	
+	$scope.insertarMarca = function(){	
+    	
+    	if ($scope.txtDesc==""){
+    		alert("Campo en blanco");
+    	}
+    	else{
+    		$http.get(baseUrl + '/nueva-marca?desc='+$scope.txtDesc).
+    		success(function(data){
+    			alert("Marca agregada");
+    			//
+    			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
+    			listar_marcas($http,$scope,baseUrl);
+    			//refrescar_tabla('#tbdata');
+    			$scope.txtDesc=null;
+  
+    		});
+
+    	}
+
+    }
+	
+	$scope.removerMarca = function(index){    	
+		 
+		$scope.marcas.splice(index, 1 );		
+		//alert($scope.dispositivos[index].idDispositivo);
+		$http.get(baseUrl + '/eliminar-marca?id='+$scope.marcas[index].idMarca+'&statReg=1').
+		success(function(data){
+			alert("Producto Eliminado");
+			//
+			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
+			listar_marcas($http,$scope,baseUrl);
+			//refrescar_tabla('#tbdata');
+
+		});		
+	}
+}]);
+
+
+//----------------------------------- Maquinas ----------------------------------------------------------//
+
+
+app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function($scope, $http,$filter) {
+	var baseUrl = ".";
+	listar_maquinas($http, $scope, baseUrl);
+	
+	$scope.insertarMaquina = function(){	
+    	
+    	if ($scope.txtNombre==""){
+    		alert("Campo en blanco");
+    	}
+    	else{
+    		$http.get(baseUrl + '/nueva-maquina?nombre='+$scope.txtNombre).
+    		success(function(data){
+    			alert("Maquina agregada");
+    			//
+    			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
+    			listar_maquinas($http,$scope,baseUrl);
+    			//refrescar_tabla('#tbdata');
+    			$scope.txtDesc=null;
+  
+    		});
+
+    	}
+
+    }
+	
+	$scope.removerMaquina = function(index){    	
+		 
+		$scope.marcas.splice(index, 1 );		
+		//alert($scope.dispositivos[index].idDispositivo);
+		$http.get(baseUrl + '/eliminar-maquina?id='+$scope.marcas[index].idMarca+'&statReg=1').
+		success(function(data){
+			alert("Maquina Eliminada");
+			//
+			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
+			listar_maquinas($http,$scope,baseUrl);
+			//refrescar_tabla('#tbdata');
+
+		});		
+	}
+}]);
+
+
 
 //----------------------------------- Dispositivos ---------------------------------------------------------//
 
