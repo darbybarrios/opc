@@ -21,6 +21,7 @@ public class ResumenEficiencia {
 	private String statCalculo;
 	private Turno turno;
 	private ProductoMaquina productoMaquina;
+	private Dispositivo dispositivo;
 	
 	public ResumenEficiencia() {
 		super();
@@ -109,6 +110,7 @@ public class ResumenEficiencia {
 	public void setTurno(Turno turno) {
 		this.turno = turno;
 	}
+	
     @ManyToOne
     @JoinColumn(name = "id_ProductoMaquina",referencedColumnName = "idProductoMaquina")
 	public ProductoMaquina getProductoMaquina() {
@@ -117,6 +119,16 @@ public class ResumenEficiencia {
 
 	public void setProductoMaquina(ProductoMaquina productoMaquina) {
 		this.productoMaquina = productoMaquina;
+	}
+
+    @ManyToOne
+    @JoinColumn(name = "id_Dispositivo",referencedColumnName = "idDispositivo")	
+	public Dispositivo getDispositivo() {
+		return dispositivo;
+	}
+
+	public void setDispositivo(Dispositivo dispositivo) {
+		this.dispositivo = dispositivo;
 	}
 	
 	

@@ -150,7 +150,7 @@ public class OpcApplication {
 	    	tipoValor = tag.getTipoValor();
 			descTipo = tipoValor.getDescTipoValor();
 			//System.out.println("Tipo Valor :" + descTipo);
-			itemId = vectorTag.next().getItemId();
+			itemId = tag.getItemId();
 			
 			if (Objects.equals(descTipo,"Binario")){
 				itemId = itemId + "/" + tag.getValorBit();
