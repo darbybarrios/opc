@@ -14,14 +14,14 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
 	@Query("Select " +
 			  "r.turno, " +
 			  "r.dispositivo, " +
-			  "date(r.fecRegistro), " +
+			  "day(r.fecRegistro) || '/' || month(r.fecRegistro) || '/' || year(r.fecRegistro), " +
 			  "sum(r.cantUnidades) as Total, " +
 			  "avg(r.velocidad) as Velocidad " +
 			"From " +
 			  "ResumenEficiencia r " +
 			"Group By " +
-			  "r.turno, r.dispositivo,date(r.fecRegistro) " +
-			"Order by date(r.fecRegistro) ")
+			  "r.turno, r.dispositivo,day(r.fecRegistro) || '/' || month(r.fecRegistro) || '/' || year(r.fecRegistro) " +
+			"Order by day(r.fecRegistro) || '/' || month(r.fecRegistro) || '/' || year(r.fecRegistro) ")
 	List<Object[]> findByIdDispo(@Param("idDispo") int idDispo);	
 	ResumenEficiencia findTopByProductoMaquinaOrderByFecRegistroDesc(ProductoMaquina prod);
 

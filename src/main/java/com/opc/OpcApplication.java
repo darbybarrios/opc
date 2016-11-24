@@ -327,7 +327,7 @@ public class OpcApplication {
 		
     }
 
-	//@Bean
+	@Bean
 	public CommandLineRunner demo(RepositorioTag daoTag,RepositorioDispositivo daoDispositivo, 
 			RepositorioDispositivo repositorioDispositivo,RepositorioActividadTag daoActividadTag,
 			RepositorioDetalleTag daoDetalleTag, RepositorioProducto daoProducto,RepositorioProductoMaquina daoProductoMaq, 
