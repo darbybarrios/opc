@@ -1,5 +1,6 @@
 package com.opc.controlador;
 
+import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.opc.modelo.Marca;
+import com.opc.modelo.Producto;
 import com.opc.repositorio.RepositorioMarca;
 
 
@@ -23,5 +25,16 @@ public class ControladorMarca {
 		List<Marca> lista = (List<Marca>) repositorioMarca.findAll();
 		return lista;
 	}
+	
+	@RequestMapping("nueva-marca")
+	@ResponseBody	
+	public String nueva_marca(String desc) throws ParseException{		
+		Marca marcas = new Marca();
+		marcas.setDescripcion(desc);
+		repositorioMarca.save(marcas);
+		return "Marca";
+	}
+	
+	
 
 }
