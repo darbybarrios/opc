@@ -16,7 +16,7 @@ public class ControladorEficiencia {
 	@Autowired
 	private RepositorioResumenEficiencia daoEficiencia;
 	
-	@RequestMapping("graficoEficienciaMaquina")
+	@RequestMapping("graficoEficienciaMaquinaDia")
 	@ResponseBody		
 	public List<Object[]> graficoEficienciaMaquina(int idDispo){
 		List<Object[]> resulMaq = daoEficiencia.findByIdDispo(idDispo);

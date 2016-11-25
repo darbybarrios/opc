@@ -1,4 +1,4 @@
-var app = angular.module("app",['ngRoute','jlareau.pnotify']);
+var app = angular.module("app",['ngRoute','jlareau.pnotify','chart.js']);
 
 function listar_plcs($http,$scope,baseUrl){
 	  
@@ -1932,6 +1932,67 @@ app.controller("ConsultasController", ['$scope','$http','$timeout',function($sco
 		
 	}	
 		
+
+}]);
+
+//--------------------------------------------------------------------------------------------------------//
+//------------------------------------ GRAFICOS ----------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------//
+
+app.controller("GraficoPrMP", ['$scope','$http','$timeout',function($scope, $http,$timeout) {
+	var baseUrl = ".";
+    var idSucursal = 1;
+    $scope.labels = [];
+    $scope.series = ['Valor Pr'];
+    $scope.data = [];
+    
+    
+      
+	$http.get(baseUrl + '/buscarPorMaquina?idMaquina='+$scope.selMaq).then(function (result) {
+		$scope.maq = result.data;
+		//alert($scope.maq.idDispositivo);
+		return $http.get(baseUrl + '/GraficoEficienciaMaquinaDia?idDispo='+$scope.maq.idDispositivo)
+	}).then(function(result){
+		$scope.graficoPrMP = result.data;
+        for (var i = 0; i < $scope.graficoPrMP; i++) {
+            
+                $scope.labels.push($scope.graficoPrMP[i].RESULT.ROWS[i][2]);
+                $scope.labels.push($scope.graficoPrMP[i].RESULT.ROWS[i][3]);
+                
+                $scope.onClick = function (points, evt) {
+                    console.log(points, evt);
+                  };
+                  
+                  $scope.onHover = function (points) {
+                    if (points.length > 0) {
+                      console.log('Point', points[0].value);
+                    } else {
+                      console.log('No point');
+                    }
+                  };
+                  $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
+
+                  $scope.options = {
+                    scales: {
+                      yAxes: [
+                        {
+                          id: 'y-axis-1',
+                          type: 'linear',
+                          display: true,
+                          position: 'left'
+                        },
+                        {
+                          id: 'y-axis-2',
+                          type: 'linear',
+                          display: true,
+                          position: 'right'
+                        }
+                      ]
+                    }
+                  };           
+        }
+			
+	})		
 
 }]);
 
