@@ -320,6 +320,7 @@ public class OpcApplication {
 			 
 			eficAct.setTurno(turno);
 			eficAct.setValorPr(00.0f);
+			eficAct.setDispositivo(dispo);
 			daoEficiencia.save(eficAct);
 		
 		}

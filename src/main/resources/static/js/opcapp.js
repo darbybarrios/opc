@@ -1,4 +1,4 @@
-var app = angular.module("app",['ngRoute','jlareau.pnotify','chart.js']);
+var app = angular.module("app",['ngRoute','jlareau.pnotify','chart.js','ngProgress']);
 
 function listar_plcs($http,$scope,baseUrl){
 	  
@@ -184,6 +184,9 @@ function limpiar_tags($http,$scope,baseUrl){
 
 function buscar_valor_tag1($http,$scope,baseUrl){
 	
+	
+	var arra = null;
+	
 
 	$http.get(baseUrl + "/buscarPorMaquina?idMaquina="+$scope.selLinea).then(function (result) {
 		  $scope.tagDispo = result.data;
@@ -195,10 +198,23 @@ function buscar_valor_tag1($http,$scope,baseUrl){
 	}).then(function(result){
 		  $scope.tag1 = result.data;
 		  
-		  return $http.get(baseUrl +'/valorDetTag?idTag='+$scope.tag1.tag.idTag+'&valor='+$scope.tag1.arrancado)
+		  if ($scope.tag1.arrancado == "0"){
+			  $scope.descDet = "No";
+		  }
+			  else{
+				  $scope.descDet = "Si";	  
+			  
+		  }
+		  		  
+		  //alert($scope.tag1.arrancado);
+		 // alert(baseUrl +'/valorDetTag?idTag='+$scope.tag1.tag.idTag+'&valor=0');
+		  
+/*		  return $http.get(baseUrl +'/valorDetTag?idTag='+$scope.tag1.tag.idTag+'&valor='+$scope.tag1.arrancado)
 	}).then(function(result){
-		  $scope.descDet = result.data;		  
-		  //console.log($scope.Tag1); 
+		  alert("pase");
+		  $scope.descDet = result.data;	
+		  
+		  //console.log($scope.Tag1); */
 	})	  
 
 	
@@ -294,12 +310,137 @@ function buscar_valor_tag6($http,$scope,baseUrl){
 
 }
 
+function iniciar_progressBars($http,$scope,baseUrl,ngProgressFactory){
+	
+	$scope.pg1 = ngProgressFactory.createInstance();
+	$scope.pg1.setParent(document.getElementById('parametro_1'));
+	$scope.pg1.setColor('#66CDAA');
+	$scope.pg1.setAbsolute();
+	
+	$scope.pg2 = ngProgressFactory.createInstance();
+	$scope.pg2.setParent(document.getElementById('parametro_2'));
+	$scope.pg2.setColor('#66CDAA');
+	$scope.pg2.setAbsolute();
+	
+	$scope.pg3 = ngProgressFactory.createInstance();
+	$scope.pg3.setParent(document.getElementById('parametro_3'));
+	$scope.pg3.setColor('#66CDAA');
+	$scope.pg3.setAbsolute();
+	
+	$scope.pg4 = ngProgressFactory.createInstance();
+	$scope.pg4.setParent(document.getElementById('parametro_4'));
+	$scope.pg4.setColor('#66CDAA');
+	$scope.pg4.setAbsolute();
+}
+
+/*function buscar_ultimosTurnos($http,$scope,baseUrl,ngProgressFactory){
+		
+}*/
+
+function iniciarGraficoPrMP($http,$scope,$filter,baseUrl){
+    $scope.labels = ['Enero','Febrero'];
+    $scope.series = ['Valor Pr'];
+    //$scope.data = [7,10];
+    
+    $scope.labels = [$filter('date')(new Date()-6, 'yyyy-MM-dd'), $filter('date')(new Date()-5, 'yyyy-MM-dd'),
+                     $filter('date')((new Date()-4), 'yyyy-MM-dd'), $filter('date')(new Date()-3, 'yyyy-MM-dd'),
+                    		 $filter('date')(new Date()-2, 'yyyy-MM-dd'), $filter('date')(new Date()-1, 'yyyy-MM-dd'), $filter('date')(new Date(), 'yyyy-MM-dd')];
+    $scope.series = ['Valor Pr'];
+    $scope.data = [
+      [0, 0, 0, 0, 0, 0, 0]
+    ];  
+    
+    $scope.onClick = function (points, evt) {
+        console.log(points, evt);
+      };
+      
+      $scope.onHover = function (points) {
+        if (points.length > 0) {
+          console.log('Point', points[0].value);
+        } else {
+          console.log('No point');
+        }
+      };
+      $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }];
+
+      $scope.options = {
+        scales: {
+          yAxes: [
+            {
+              id: 'y-axis-1',
+              type: 'linear',
+              display: true,
+              position: 'left'
+            }
+          ]
+        }
+      };
+}
+
+function graficoPrMP($http,$scope,baseUrl,notificationService,id){
+      
+			$scope.series = ['Valor Pr'];
+			
+		   // $scope.labels = ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
+			
+            $http.get(baseUrl + '/graficoEficienciaMaquinaDia?idDispo='+id)
+			.success(function(result){
+				{
+				
+				$scope.graficoPrMP = result;
+				$scope.labels = [];
+				$scope.data = [];
+				$scope.dataAux = [];
+				
+		        for (var i = 0; i < $scope.graficoPrMP.length; i++) {
+		                
+		               // notificationService.error($scope.graficoPrMP[0][2]);
+		                $scope.labels.push($scope.graficoPrMP[i][1]);
+		                $scope.dataAux.push($scope.graficoPrMP[i][2]);
+		                
+		         
+		        }
+		        
+		        $scope.data.push($scope.dataAux);
+		        
+				} 
+			});
+
+            $scope.onClick = function (points, evt) {
+                console.log(points, evt);
+              };
+              
+              $scope.onHover = function (points) {
+                if (points.length > 0) {
+                  console.log('Point', points[0].value);
+                } else {
+                  console.log('No point');
+                }
+              };
+              $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }];
+
+              $scope.options = {
+                scales: {
+                  yAxes: [
+                    {
+                      id: 'y-axis-1',
+                      type: 'linear',
+                      display: true,
+                      position: 'left'
+                    }
+                  ]
+                }
+              };
+   	
+	
+}
+
 function eficienciaTurno($http,$scope,baseUrl){
 	
 
 	$http.get(baseUrl + "/buscarPorMaquina?idMaquina="+$scope.selLinea).then(function (result) {
 		  $scope.prDispo = result.data;
-		  return $http.get(baseUrl +'/Pr_Actual?idDispositivo='+$scope.prDispo.idDispositivo+'&idTurno='+$scope.turnoActual.idTurno)
+		  return $http.get(baseUrl +'/EficienciaActual?idDispositivo='+$scope.prDispo.idDispositivo+'&idTurno='+$scope.turnoActual.idTurno)
 	}).then(function(result){
 		  $scope.eficiencia = result.data;
 	})	  
@@ -1269,6 +1410,19 @@ app.config(['baseUrl', 'remoteResourceProvider',
   }
 ]);
 
+/*
+app.config(['ChartJsProvider', function (ChartJsProvider) {
+    // Configure all charts
+    ChartJsProvider.setOptions({
+      chartColors: ['#FF5252', '#FF8A80'],
+      responsive: false
+    });
+    // Configure all line charts
+    ChartJsProvider.setOptions('line', {
+      showLines: false
+    });
+  }]);  */
+
 
 app.filter('songTime',function(){
 
@@ -1314,6 +1468,13 @@ app.filter('time', function($filter)
 
 		 };
 		});
+
+
+app.filter('fecActual',['$filter',  function($filter) {
+    return function() {
+        return $filter('date')(new Date(), 'yyyy-MM-dd');
+    };
+}])
 
 //----------------------------------- Sucursales ----------------------------------------------------------//
 
@@ -1629,16 +1790,17 @@ app.controller("TagsController", ['$scope','$http','notificationService',functio
 }]);
 
 //-------------------------------------------------------------------------------------------------------------//
-//----------------------------------- Modo Produccion ---------------------------------------------------------//
+//----------------------------------- MODO PRODUCCION ---------------------------------------------------------//
 //-------------------------------------------------------------------------------------------------------------//
 
-app.controller("TableroController", ['$scope','$http','$timeout','notificationService',function($scope, $http,$timeout,notificationService) {
+app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','notificationService','$filter','ngProgressFactory',function($scope, $http,$timeout,$rootScope,notificationService,$filter,ngProgressFactory) {
 	var baseUrl = ".";
 	listar_maquinas($http,$scope,baseUrl);
 	
 	iniciar_elementos();
 	limpiar_tags($http,$scope,baseUrl);
 	buscar_turno_actual($http,$scope,baseUrl);
+	iniciarGraficoPrMP($http,$scope,$filter,baseUrl);
 	/*
 	
 	$scope.tag1valor = "-";
@@ -1649,15 +1811,28 @@ app.controller("TableroController", ['$scope','$http','$timeout','notificationSe
 	$scope.tag6valor = "-";
 	
 	*/
+	
+	$scope.progressbar = ngProgressFactory.createInstance();
+	$scope.progressbar.setParent(document.getElementById('parametro_2'));
+	
+	$scope.progressbar.setColor('#66CDAA');
+	$scope.progressbar.setAbsolute();
+  
 		
 //listar_dispositivos($http,$scope,baseUrl);
 	
 	$scope.activateRealtime = function() {
 		
+		$scope.progressbar.set(50);
+		$scope.progressbar.setHeight('10px');
+		//$scope.progressbar.start();
+		
 		$scope.tagDispo = [];
 		$scope.tagDispo2 = [];
 		$scope.conectado = null;
+		$rootScope.selLineaG = $scope.selLinea;
 		
+
 		
 		//alert("Seleccciom :"+$scope.selLinea);
 		   //buscarDispoMaquina($http,$scope,baseUrl)
@@ -1668,6 +1843,8 @@ app.controller("TableroController", ['$scope','$http','$timeout','notificationSe
 			  if ($scope.tagDispo2.idDispositivo == null ){
 				   limpiar_tags($http,$scope,baseUrl);
 				   //alert($scope.tag1Vacio);
+			  }else{
+				  graficoPrMP($http,$scope,baseUrl,notificationService,$scope.tagDispo2.idDispositivo);
 			  }
 			  
 			  
@@ -1682,7 +1859,7 @@ app.controller("TableroController", ['$scope','$http','$timeout','notificationSe
 					   //buscar_valor_tag2($http,$scope,baseUrl);
 					   buscar_valor_tag3($http,$scope,baseUrl);
 					   buscar_valor_tag4($http,$scope,baseUrl);
-					   buscar_valor_tag5($http,$scope,baseUrl);
+					   //buscar_valor_tag5($http,$scope,baseUrl);
 					   //buscar_valor_tag6($http,$scope,baseUrl); 
 					   eficienciaTurno($http,$scope,baseUrl);
 					   $timeout($scope.activateRealtime, 1000);	
@@ -1694,7 +1871,7 @@ app.controller("TableroController", ['$scope','$http','$timeout','notificationSe
 						limpiar_tags($http,$scope,baseUrl);
 						
 					}
-					else if ($scope.conectado == "2"){
+					else if ($scope.conectado == "0"){
 						alert("Problemas al Accesar Servidor, Intente mas Tarde");
 						limpiar_tags($http,$scope,baseUrl);
 					}
@@ -1703,10 +1880,7 @@ app.controller("TableroController", ['$scope','$http','$timeout','notificationSe
 					
 					}			  
 		})		
-		
-
-		
-		   
+	   
 
 	}
 
@@ -1939,60 +2113,85 @@ app.controller("ConsultasController", ['$scope','$http','$timeout',function($sco
 //------------------------------------ GRAFICOS ----------------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------//
 
-app.controller("GraficoPrMP", ['$scope','$http','$timeout',function($scope, $http,$timeout) {
+app.controller("GraficoPrMP", ['$scope','$http','$timeout','$rootScope','$filter',function($scope, $http,$timeout,$rootScope,$filter) {
 	var baseUrl = ".";
     var idSucursal = 1;
-    $scope.labels = [];
+    $scope.labels = ['Enero','Febrero'];
     $scope.series = ['Valor Pr'];
-    $scope.data = [];
+    $scope.data = [7,10];
     
+    $scope.labels = [$filter('date')(new Date()-6, 'yyyy-MM-dd'), $filter('date')(new Date()-5, 'yyyy-MM-dd'),
+                     $filter('date')((new Date()-4), 'yyyy-MM-dd'), $filter('date')(new Date()-3, 'yyyy-MM-dd'),
+                    		 $filter('date')(new Date()-2, 'yyyy-MM-dd'), $filter('date')(new Date()-1, 'yyyy-MM-dd'), $filter('date')(new Date(), 'yyyy-MM-dd')];
+    $scope.series = ['Valor Pr'];
+    $scope.data = [
+      [0, 0, 0, 0, 0, 0, 0]
+    ];  
     
+    $scope.onClick = function (points, evt) {
+        console.log(points, evt);
+      };
       
-	$http.get(baseUrl + '/buscarPorMaquina?idMaquina='+$scope.selMaq).then(function (result) {
-		$scope.maq = result.data;
-		//alert($scope.maq.idDispositivo);
-		return $http.get(baseUrl + '/GraficoEficienciaMaquinaDia?idDispo='+$scope.maq.idDispositivo)
-	}).then(function(result){
-		$scope.graficoPrMP = result.data;
-        for (var i = 0; i < $scope.graficoPrMP; i++) {
-            
-                $scope.labels.push($scope.graficoPrMP[i].RESULT.ROWS[i][2]);
-                $scope.labels.push($scope.graficoPrMP[i].RESULT.ROWS[i][3]);
-                
-                $scope.onClick = function (points, evt) {
-                    console.log(points, evt);
-                  };
-                  
-                  $scope.onHover = function (points) {
-                    if (points.length > 0) {
-                      console.log('Point', points[0].value);
-                    } else {
-                      console.log('No point');
-                    }
-                  };
-                  $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
-
-                  $scope.options = {
-                    scales: {
-                      yAxes: [
-                        {
-                          id: 'y-axis-1',
-                          type: 'linear',
-                          display: true,
-                          position: 'left'
-                        },
-                        {
-                          id: 'y-axis-2',
-                          type: 'linear',
-                          display: true,
-                          position: 'right'
-                        }
-                      ]
-                    }
-                  };           
+      $scope.onHover = function (points) {
+        if (points.length > 0) {
+          console.log('Point', points[0].value);
+        } else {
+          console.log('No point');
         }
+      };
+      $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
+
+      $scope.options = {
+        scales: {
+          yAxes: [
+            {
+              id: 'y-axis-1',
+              type: 'linear',
+              display: true,
+              position: 'left'
+            },
+            {
+              id: 'y-axis-2',
+              type: 'linear',
+              display: true,
+              position: 'right'
+            }
+          ]
+        }
+      };  
+      
+    
+    //$scope.actGraficoPrMp = function(){  
+      
+      $timeout(function(){
+    	
+    	alert("Entrando");
+        
+    /*	if ($rootScope.selLinea != null){
+    	     
+    		
+    		alert("hay linea");
+			$http.get(baseUrl + '/buscarPorMaquina?idMaquina='+$rootScope.selLineaG).then(function (result) {
+				$scope.maq = result.data;
+				//alert($scope.maq.idDispositivo);
+				return $http.get(baseUrl + '/graficoEficienciaMaquinaDia?idDispo='+$scope.maq.idDispositivo)
+			}).then(function(result){
+				$scope.graficoPrMP = result.data;
+		        for (var i = 0; i < $scope.graficoPrMP; i++) {
+		            
+		                $scope.labels.push($scope.graficoPrMP[i].RESULT.ROWS[i][2]);
+		                $scope.data.push($scope.graficoPrMP[i].RESULT.ROWS[i][3]);
+		                
+		         
+		        }
+					
+			})	
+    	}	*/
 			
-	})		
+    	
+	},3000);
+    
+    //$timeout($scope.actGraficoPrMp, 3000);
 
 }]);
 

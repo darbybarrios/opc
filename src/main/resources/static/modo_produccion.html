@@ -1,10 +1,3 @@
-<head>
-		<title>Modo Produccion</title>
-	    <link href="vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
-</head>
-
-    <!-- bootstrap-progressbar -->
-    <script src="vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
 	
         <div>
           <!-- top tiles -->
@@ -84,10 +77,12 @@
                   </div>
 
                 <div class="col-md-9 col-sm-9 col-xs-12">
-                      <div class="demo-container" style="height:280px">
-                        <div id="placeholder33x" class="demo-placeholder"></div>
-                      </div>
+							<canvas id="line" class="chart chart-line" chart-data="data"
+							chart-labels="labels" chart-series="series" chart-options="options"
+							chart-dataset-override="datasetOverride" chart-click="onClick">
+							</canvas> 
                 </div>
+                
                 <div class="col-md-3 col-sm-3 col-xs-12 bg-white">
                   <div class="x_title">
                     <h2>Ultimos Turnos</h2>
@@ -98,6 +93,7 @@
                     <div>
                       <p>Parametro 1.1</p>
                       <div class="">
+                      	<small>77% Complete</small>
                         <div class="progress progress_sm" style="width: 76%;">
                           <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="80"></div>
                         </div>
@@ -106,9 +102,11 @@
                     <div>
                       <p>Parametro 2</p>
                       <div class="">
-                        <div class="progress progress_sm" style="width: 76%;">
-                          <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="60"></div>
+                        <small>77% Complete</small>
+                        <div id="parametro_2" class="progress progress_sm" style="width: 76%;">
+                        	
                         </div>
+                        
                       </div>
                     </div>
                   </div>
@@ -116,6 +114,7 @@
                     <div>
                       <p>Parametro 3</p>
                       <div class="">
+                        <small>77% Complete</small>
                         <div class="progress progress_sm" style="width: 76%;">
                           <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="40"></div>
                         </div>
@@ -124,6 +123,7 @@
                     <div>
                       <p>Parametro 4</p>
                       <div class="">
+                      	<small>77% Complete</small>
                         <div class="progress progress_sm" style="width: 76%;">
                           <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="50"></div>
                         </div>
@@ -186,4 +186,6 @@
             </div>
           </div>
         </div>
+        
+        
      
