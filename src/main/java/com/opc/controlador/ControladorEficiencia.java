@@ -7,6 +7,7 @@ import java.sql.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -70,8 +71,28 @@ public class ControladorEficiencia {
 	@ResponseBody		
 	public List<Object[]> graficoEficienciaMaquina(int idDispo){
 		List<Object[]> resulMaq = daoEficiencia.findByIdDispo(idDispo);
-		
-		return resulMaq;
+		List<Object[]> resulPr = new ArrayList<Object[]>();  
+
+        for (int i = 0; i < resulMaq.size(); i++) {
+        	double pr = 0.0;
+        	Object[] aux = new Object[5];
+          	aux[0] = resulMaq.get(i)[0];
+          	aux[1] = resulMaq.get(i)[1];
+          	aux[2] = resulMaq.get(i)[2];
+          	aux[3] = resulMaq.get(i)[3];
+ 
+			BigInteger und = (BigInteger) aux[2];		
+			BigDecimal vel = (BigDecimal) aux[3];
+			int undInt = und.intValue();
+			double velDou = vel.doubleValue();          	
+			pr = ((undInt)/((1440)*velDou));  //1440 Min tiene el dia
+			aux[4] = round(pr,2);
+        	
+        	resulPr.add(i, aux);
+        	          
+      
+        }
+		return resulPr;
 			
 	}
 	
@@ -121,6 +142,47 @@ public class ControladorEficiencia {
 		return (round(pr,2));
 		
 	}	
+
+	@RequestMapping("EficienciaTurnoDiaMaq")
+	@ResponseBody	
+	public List<Object[]> eficienciaTurnoDiaMaq(int idDispo) throws ParseException{
+		List<Object[]> resulMaq = daoEficiencia.findPrTurnoDiaByIdDispo(idDispo);
+		List<Object[]> resulPr = new ArrayList<Object[]>();  
+
+		DateFormat dateF = new SimpleDateFormat("HH:mm");
+		DateFormat dateD = new SimpleDateFormat("yyyy-MM-dd");
+		DateFormat dateC = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+					
+		
+		
+        for (int i = 0; i < resulMaq.size(); i++) {
+        	double pr = 0.0;
+        	Object[] aux = new Object[6];
+          	aux[0] = resulMaq.get(i)[0];
+          	aux[1] = resulMaq.get(i)[1];
+          	aux[2] = resulMaq.get(i)[2];
+          	aux[3] = resulMaq.get(i)[3];
+          	aux[4] = resulMaq.get(i)[4];
+          	
+    		Turno turno = daoTurno.findOne((Integer) aux[1]);
+
+    		//long tInicio = inicioC.getTimeInMillis(); Leer desde la Tabla Turno en Min
+    		long tAgendado = 480;          	
+ 
+			BigInteger und = (BigInteger) aux[3];		
+			BigDecimal vel = (BigDecimal) aux[4];
+			int undInt = und.intValue();
+			double velDou = vel.doubleValue();          	
+			pr = ((undInt)/((tAgendado)*velDou));  //1440 Min tiene el dia
+			aux[5] = round(pr,2);
+        	
+        	resulPr.add(i, aux);
+        	          
+      
+        }
+		return resulPr;	
+	}
 	
 
 }
