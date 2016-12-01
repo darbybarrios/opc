@@ -38,12 +38,12 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
 
 	
 	@Query(value="Select " +
-				 "resumen_eficiencia.id_dispositivo,  resumen_eficiencia.id_turno, date(fec_registro), " +
+				 "resumen_eficiencia.id_dispositivo,  resumen_eficiencia.id_turno, turno.desc_turno, date(fec_registro), " +
 				 "sum(resumen_eficiencia.cant_unidades) As Total,  round(Avg(resumen_eficiencia.velocidad),2) As Velocidad " +
-				 "From resumen_eficiencia " +
+				 "From resumen_eficiencia Inner Join turno On resumen_eficiencia.id_turno = turno.id_turno " +
 			     "where resumen_eficiencia.id_dispositivo = :idDispo " +
 			     "Group By " +
-			     "resumen_eficiencia.id_dispositivo, resumen_eficiencia.id_turno, date(fec_registro) " +
+			     "resumen_eficiencia.id_dispositivo, resumen_eficiencia.id_turno, turno.desc_turno, date(fec_registro) " +
 			     "Order By date(fec_registro) desc " +	
 			     "limit 4",nativeQuery = true)	
 	List<Object[]> findPrTurnoDiaByIdDispo(@Param("idDispo") int idDispo);

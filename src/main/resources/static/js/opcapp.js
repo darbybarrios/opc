@@ -286,9 +286,14 @@ function buscar_valor_tag5($http,$scope,baseUrl){
 	}).then(function(result){
 		  $scope.tag5 = result.data;
 		  console.log($scope.Tag5); 
-		  return $http.get(baseUrl +'/valorDetTag?idTag='+$scope.tag5.tag.idTag+'&valor='+$scope.tag5.parado)
-	}).then(function(result){
-		  $scope.descDet5 = result.data;			  
+		  
+		  if ($scope.tag5.parado != "0"){
+			  $scope.descDet5 = "Si"
+		  }else{
+			  
+			  $scope.descDet5 = "No"
+		  }
+		  
 	})	  
 
 }
@@ -333,9 +338,41 @@ function iniciar_progressBars($http,$scope,baseUrl,ngProgressFactory){
 	$scope.pg4.setAbsolute();
 }
 
-/*function buscar_ultimosTurnos($http,$scope,baseUrl,ngProgressFactory){
+function buscar_ultimosTurnos($http,$scope,baseUrl,ngProgressFactory,id){
+	
+    $http.get(baseUrl + '/EficienciaTurnoDiaMaq?idDispo='+id)
+	.success(function(result){
+		{
+			$scope.prTurnos = result;
+			if ($scope.prTurnos.length > 0){
+				$scope.titulo1 = $scope.prTurnos[0][3] + " Turno " + $scope.prTurnos[0][2];
+				$scope.pg1.set($scope.prTurnos[0][6]);
+				$scope.pg1.setHeight('10px');
+				$scope.pr1 = $scope.prTurnos[0][6];
+
+				$scope.titulo2 = $scope.prTurnos[1][3] + " Turno " + $scope.prTurnos[1][2];
+				$scope.pg2.set($scope.prTurnos[1][6]);
+				$scope.pg2.setHeight('10px');
+				$scope.pr2 = $scope.prTurnos[1][6];
+				
+				$scope.titulo3 = $scope.prTurnos[2][3] + " Turno " + $scope.prTurnos[2][2];
+				$scope.pg3.set($scope.prTurnos[2][6]);
+				$scope.pg3.setHeight('10px');
+				$scope.pr3 = $scope.prTurnos[2][6];	
+				
+				$scope.titulo4 = $scope.prTurnos[3][3] + " Turno " + $scope.prTurnos[3][2];
+				$scope.pg4.set($scope.prTurnos[3][6]);
+				$scope.pg4.setHeight('10px');
+				$scope.pr4 = $scope.prTurnos[3][6];						
+				
+			}
+				
+        
+		} 
+	});	
+	
 		
-}*/
+}
 
 function iniciarGraficoPrMP($http,$scope,$filter,baseUrl){
     $scope.labels = ['Enero','Febrero'];
@@ -1801,6 +1838,7 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 	limpiar_tags($http,$scope,baseUrl);
 	buscar_turno_actual($http,$scope,baseUrl);
 	iniciarGraficoPrMP($http,$scope,$filter,baseUrl);
+	iniciar_progressBars($http,$scope,baseUrl,ngProgressFactory);
 	/*
 	
 	$scope.tag1valor = "-";
@@ -1812,19 +1850,12 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 	
 	*/
 	
-	$scope.progressbar = ngProgressFactory.createInstance();
-	$scope.progressbar.setParent(document.getElementById('parametro_2'));
-	
-	$scope.progressbar.setColor('#66CDAA');
-	$scope.progressbar.setAbsolute();
-  
+ 
 		
 //listar_dispositivos($http,$scope,baseUrl);
 	
 	$scope.activateRealtime = function() {
-		
-		$scope.progressbar.set(50);
-		$scope.progressbar.setHeight('10px');
+
 		//$scope.progressbar.start();
 		
 		$scope.tagDispo = [];
@@ -1845,6 +1876,7 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 				   //alert($scope.tag1Vacio);
 			  }else{
 				  graficoPrMP($http,$scope,baseUrl,notificationService,$scope.tagDispo2.idDispositivo);
+				  buscar_ultimosTurnos($http,$scope,baseUrl,ngProgressFactory,$scope.tagDispo2.idDispositivo);
 			  }
 			  
 			  
@@ -1859,7 +1891,7 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 					   //buscar_valor_tag2($http,$scope,baseUrl);
 					   buscar_valor_tag3($http,$scope,baseUrl);
 					   buscar_valor_tag4($http,$scope,baseUrl);
-					   //buscar_valor_tag5($http,$scope,baseUrl);
+					   buscar_valor_tag5($http,$scope,baseUrl);
 					   //buscar_valor_tag6($http,$scope,baseUrl); 
 					   eficienciaTurno($http,$scope,baseUrl);
 					   $timeout($scope.activateRealtime, 1000);	

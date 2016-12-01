@@ -67,6 +67,33 @@ public class ControladorEficiencia {
 	    return bd.doubleValue();
 	}
 	
+	public long tiempoTurno(Turno turno) throws ParseException{
+		
+		long horaInicio = turno.getInicio().getTimeInMillis();
+		long horaFinal = turno.getFin().getTimeInMillis();
+		long tiempoTot = 0;
+		
+		if (turno.getTipoTurno().equals("D")){
+
+			tiempoTot = (horaFinal - horaInicio)/60000;
+		}else{
+			DateFormat dateC = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date corte1 = dateC.parse("1970-01-01 24:00:00");
+			Date corte2 = dateC.parse("1970-01-01 00:00:00");
+			Calendar cal1 = Calendar.getInstance();
+			cal1.setTime(corte1);
+			Calendar cal2 = Calendar.getInstance();
+			cal2.setTime(corte2);
+			long corteMl1 = cal1.getTimeInMillis();
+			long corteMl2 = cal2.getTimeInMillis();
+			long parteUno = corteMl1 - horaInicio;
+			long parteDos = horaFinal - corteMl2;
+			tiempoTot = (parteUno+parteDos)/60000;
+			
+		}
+		return tiempoTot;
+	}
+	
 	@RequestMapping("graficoEficienciaMaquinaDia")
 	@ResponseBody		
 	public List<Object[]> graficoEficienciaMaquina(int idDispo){
@@ -86,7 +113,7 @@ public class ControladorEficiencia {
 			int undInt = und.intValue();
 			double velDou = vel.doubleValue();          	
 			pr = ((undInt)/((1440)*velDou));  //1440 Min tiene el dia
-			aux[4] = round(pr,2);
+			aux[4] = round(pr*100,2);
         	
         	resulPr.add(i, aux);
         	          
@@ -158,24 +185,25 @@ public class ControladorEficiencia {
 		
         for (int i = 0; i < resulMaq.size(); i++) {
         	double pr = 0.0;
-        	Object[] aux = new Object[6];
+        	Object[] aux = new Object[7];
           	aux[0] = resulMaq.get(i)[0];
           	aux[1] = resulMaq.get(i)[1];
           	aux[2] = resulMaq.get(i)[2];
           	aux[3] = resulMaq.get(i)[3];
           	aux[4] = resulMaq.get(i)[4];
+          	aux[5] = resulMaq.get(i)[5];
           	
     		Turno turno = daoTurno.findOne((Integer) aux[1]);
 
     		//long tInicio = inicioC.getTimeInMillis(); Leer desde la Tabla Turno en Min
-    		long tAgendado = 480;          	
+    		long tAgendado = tiempoTurno(turno);          	
  
-			BigInteger und = (BigInteger) aux[3];		
-			BigDecimal vel = (BigDecimal) aux[4];
+			BigInteger und = (BigInteger) aux[4];		
+			BigDecimal vel = (BigDecimal) aux[5];
 			int undInt = und.intValue();
 			double velDou = vel.doubleValue();          	
 			pr = ((undInt)/((tAgendado)*velDou));  //1440 Min tiene el dia
-			aux[5] = round(pr,2);
+			aux[6] = round(pr*100,2);
         	
         	resulPr.add(i, aux);
         	          
