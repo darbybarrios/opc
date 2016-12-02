@@ -472,6 +472,18 @@ function graficoPrMP($http,$scope,baseUrl,notificationService,id){
 	
 }
 
+function grafico1MP($http,$scope,baseUrl,id){
+	  
+	$scope.labelsGr1MP = ["No Planeados", "Planeados"];
+	$scope.dataGr1MP = [300, 500];
+}
+
+function grafico2MP($http,$scope,baseUrl,id){
+	  
+	$scope.labelsGr2MP = ["Dosificador", "Cremallera","Dispensador","Tira","Carril"];
+	$scope.dataGr2MP = [300, 500,150,200,340];
+}
+
 function eficienciaTurno($http,$scope,baseUrl){
 	
 
@@ -1877,6 +1889,8 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 			  }else{
 				  graficoPrMP($http,$scope,baseUrl,notificationService,$scope.tagDispo2.idDispositivo);
 				  buscar_ultimosTurnos($http,$scope,baseUrl,ngProgressFactory,$scope.tagDispo2.idDispositivo);
+				  grafico1MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo);
+				  grafico2MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo);
 			  }
 			  
 			  
