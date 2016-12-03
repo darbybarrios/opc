@@ -22,6 +22,7 @@ public class SubSistema {
 	private Sistema sistema;
 	@NotNull
 	private Maquina maquina;
+
 	
 	
 	public SubSistema() {
@@ -97,8 +98,8 @@ public class SubSistema {
 
 	public void setMaquina(Maquina maquina) {
 		this.maquina = maquina;
-	}	
-	
-	
+	}
+
+
 		
 }

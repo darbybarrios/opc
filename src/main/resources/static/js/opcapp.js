@@ -484,6 +484,21 @@ function grafico2MP($http,$scope,baseUrl,id){
 	$scope.dataGr2MP = [300, 500,150,200,340];
 }
 
+function grafico3MP($http,$scope,baseUrl,id){
+	  
+	$scope.labelsGr3MP = ["Dosificador", "Cremallera","Dispensador","Tira","Carril"];
+	$scope.dataGr3MP = [300, 500,150,200,340];
+	
+	  $scope.labelsGr3MP= ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
+	  $scope.seriesGr3MP = ['Series A', 'Series B'];
+
+	  $scope.dataGr3MP = [
+	    [65, 59, 80, 81, 56, 55, 40],
+	    [28, 48, 40, 19, 86, 27, 90]
+	  ];
+}
+
+
 function eficienciaTurno($http,$scope,baseUrl){
 	
 
@@ -553,7 +568,7 @@ function listar_SubSistemas($http,$scope,baseUrl,idArea,idSistema,idMaquina){
 
 function listar_CausaFallas($http,$scope,baseUrl,idArea,idSistema,idSubSistema,idMaquina){
 	
-	$http.get(baseUrl +'/CausaFalla?parea='+idArea+'&psistema='+idSistema+'&psubsistema='+idSubSistema+'&idMaquina='+idMaquina).success(function (data) {
+	$http.get(baseUrl +'/CausaFalla?parea='+idArea+'&psistema='+idSistema+'&psubSistema='+idSubSistema+'&idMaquina='+idMaquina).success(function (data) {
        
 		{ 
 		  $scope.causafallas = data;
@@ -1459,18 +1474,18 @@ app.config(['baseUrl', 'remoteResourceProvider',
   }
 ]);
 
-/*
+
 app.config(['ChartJsProvider', function (ChartJsProvider) {
     // Configure all charts
     ChartJsProvider.setOptions({
-      chartColors: ['#FF5252', '#FF8A80'],
-      responsive: false
+      chartColors: ['#96CA59', '#3F97EB', '#72c380', '#6f7a8a', '#f7cb38', '#5a8022', '#2c7282'],
+      responsive: true
     });
     // Configure all line charts
     ChartJsProvider.setOptions('line', {
-      showLines: false
+      showLines: true
     });
-  }]);  */
+  }]);
 
 
 app.filter('songTime',function(){
@@ -1891,6 +1906,7 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 				  buscar_ultimosTurnos($http,$scope,baseUrl,ngProgressFactory,$scope.tagDispo2.idDispositivo);
 				  grafico1MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo);
 				  grafico2MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo);
+				  grafico3MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo);
 			  }
 			  
 			  
@@ -1994,7 +2010,7 @@ app.controller("TurnosController", ['$scope','$http','$filter',function($scope, 
 //-------------------------------------------  MODO FALLAS -------------------------------------------------//
 //----------------------------------------------------------------------------------------------------------//
 
-app.controller("FallasController", ['$scope','$http','$timeout',function($scope, $http,$timeout) {
+app.controller("FallasController", ['$scope','$http','$timeout','notificationService',function($scope, $http,$timeout,notificationService) {
 	
 	var baseUrl = ".";
     var idSucursal = 1;
@@ -2016,6 +2032,7 @@ app.controller("FallasController", ['$scope','$http','$timeout',function($scope,
 			return $http.get(baseUrl + '/Fallas?idDispositivo='+$scope.maq.idDispositivo)
 		}).then(function(result){
 			$scope.fallas = result.data;
+			listar_Areas($http,$scope,baseUrl,$scope.selMaq);
 			if (inicio == 0){
 				inicio = 1;
 				iniciar_tabla('#tbfalla');
@@ -2038,7 +2055,9 @@ app.controller("FallasController", ['$scope','$http','$timeout',function($scope,
 		$scope.cboArea = null;
 		$scope.cboSistema = null;
 		$scope.cboSubSistema = null;
+	
 		listar_Areas($http,$scope,baseUrl,$scope.selMaq);
+		
 		$scope.indice = index;
 		//listar_Sistemas($http,$scope,baseUrl,$scope.cboArea);
 		//listar_SubSistemas($http,$scope,baseUrl,$scope.cboArea,$scope.cboSistema);
@@ -2065,17 +2084,18 @@ app.controller("FallasController", ['$scope','$http','$timeout',function($scope,
 	
 	$scope.listaCausaFallas = function(){
 		//alert("subsistema : "+ $scope.cboArea + " " + $scope.cboSistema);
-		listar_CausaFallas($http,$scope,baseUrl,$scope.cboArea,$scope.cboSistema,$scope.cboCausaFalla,$scope.selMaq);
+		listar_CausaFallas($http,$scope,baseUrl,$scope.cboArea,$scope.cboSistema,$scope.cboSubSistema,$scope.selMaq);
 	}		
 	
 	$scope.actualizarParada = function(index){
 		
-		//alert("Ahy voy");
+		alert("Indice :" + $scope.indice);
 		
 		$http.get(baseUrl + '/actParada?idActividad='+$scope.fallasAct[$scope.indice].idActividadTag+'&idArea='+$scope.cboArea+'&idSistema='+$scope.cboSistema+
-				  '&idSubsistema='+$scope.cboSubSistema+'&comen='+$scope.txtComen).
+				  '&idSubsistema='+$scope.cboSubSistema+'&idCausaFalla='+$scope.cboCausaFalla+'&comen='+$scope.txtComen).
 		success(function(data){
 			alert("Parada  Actualizada con Exito");
+			//notificationService.success('Parada  Actualizada con Exito');
 			//
 			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
 			$scope.cboArea = null;

@@ -22,6 +22,8 @@ public class CausaFalla {
 	private Sistema sistema;
 	@NotNull
 	private SubSistema subSistema;
+	private String tipoParada;
+	private String restaTiempo;	
 	@NotNull
 	private Maquina maquina;
 	
@@ -92,6 +94,23 @@ public class CausaFalla {
 
 	public void setSubSistema(SubSistema subSistema) {
 		this.subSistema = subSistema;
+	}
+
+
+	public String getTipoParada() {
+		return tipoParada;
+	}
+
+	public void setTipoParada(String tipoParada) {
+		this.tipoParada = tipoParada;
+	}
+
+	public String getRestaTiempo() {
+		return restaTiempo;
+	}
+
+	public void setRestaTiempo(String restaTiempo) {
+		this.restaTiempo = restaTiempo;
 	}
 
 	@ManyToOne
