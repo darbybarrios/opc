@@ -315,7 +315,8 @@ public class OpcApplication {
 			if (velActual == null){
 				eficAct.setVelocidad(0);
 			}else{
-				eficAct.setVelocidad(Integer.parseInt(velActual.getValor()));
+				//eficAct.setVelocidad(Integer.parseInt(velActual.getValor()));
+				eficAct.setVelocidad(totund);
 			}			
 			 
 			eficAct.setTurno(turno);
@@ -343,8 +344,8 @@ public class OpcApplication {
 			final Group group = server.addGroup ( "fallas" );
 			
 			
-			//acceso.cargarPlcs();
-			//acceso.cargarTags("Todos");
+			acceso.cargarPlcs();
+			acceso.cargarTags("Todos");
 			
 			
 			//accesarDispositivo acceso = new accesarDispositivo();

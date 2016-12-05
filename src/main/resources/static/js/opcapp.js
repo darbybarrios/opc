@@ -256,6 +256,19 @@ function buscar_valor_tag3($http,$scope,baseUrl){
 
 }
 
+function buscar_valor_velocidad($http,$scope,baseUrl){
+	
+
+	$http.get(baseUrl + "/buscarPorMaquina?idMaquina="+$scope.selLinea).then(function (result) {
+		  $scope.tagDispo3 = result.data;
+		  return $http.get(baseUrl +'/velocidadActual?idDispositivo='+$scope.tagDispo3.idDispositivo)
+	}).then(function(result){
+		  $scope.tag3 = result.data;
+
+	})	  
+
+}
+
 function buscar_valor_tag4($http,$scope,baseUrl){
 	
 
@@ -1919,7 +1932,8 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 					
 					   buscar_valor_tag1($http,$scope,baseUrl);
 					   //buscar_valor_tag2($http,$scope,baseUrl);
-					   buscar_valor_tag3($http,$scope,baseUrl);
+					   //buscar_valor_tag3($http,$scope,baseUrl);
+					   buscar_valor_velocidad($http,$scope,baseUrl);
 					   buscar_valor_tag4($http,$scope,baseUrl);
 					   buscar_valor_tag5($http,$scope,baseUrl);
 					   //buscar_valor_tag6($http,$scope,baseUrl); 

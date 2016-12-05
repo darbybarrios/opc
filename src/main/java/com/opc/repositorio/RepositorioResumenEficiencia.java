@@ -7,12 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.opc.modelo.Dispositivo;
 import com.opc.modelo.ProductoMaquina;
 import com.opc.modelo.ResumenEficiencia;
 
 public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEficiencia, Integer> {
 
 	ResumenEficiencia findTopByProductoMaquinaOrderByFecRegistroDesc(ProductoMaquina prod);
+	ResumenEficiencia findTopByDispositivoOrderByFecRegistroDesc(Dispositivo dispo);
 	
 	@Query(value= "Select " +
 			  "r.id_dispositivo, " +

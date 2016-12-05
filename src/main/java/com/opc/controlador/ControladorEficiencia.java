@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.opc.modelo.ActividadTag;
 import com.opc.modelo.Dispositivo;
+import com.opc.modelo.ResumenEficiencia;
 import com.opc.modelo.Tag;
 import com.opc.modelo.Turno;
 import com.opc.repositorio.RepositorioActividadTag;
@@ -210,6 +211,15 @@ public class ControladorEficiencia {
       
         }
 		return resulPr;	
+	}
+
+	@RequestMapping("velocidadActual")
+	@ResponseBody	
+	public ResumenEficiencia velocidadActual(int idDispositivo){
+		Dispositivo dispo = daoDispositivo.findOne(idDispositivo);
+		ResumenEficiencia res = daoEficiencia.findTopByDispositivoOrderByFecRegistroDesc(dispo);
+		return res;
+		
 	}
 	
 
