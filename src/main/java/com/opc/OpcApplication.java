@@ -344,8 +344,8 @@ public class OpcApplication {
 			final Group group = server.addGroup ( "fallas" );
 			
 			
-			acceso.cargarPlcs();
-			acceso.cargarTags("Todos");
+			//acceso.cargarPlcs();
+			//acceso.cargarTags("Todos");
 			
 			
 			//accesarDispositivo acceso = new accesarDispositivo();

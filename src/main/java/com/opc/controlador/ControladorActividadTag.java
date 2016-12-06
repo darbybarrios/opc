@@ -154,7 +154,7 @@ public class ControladorActividadTag {
 	
 	@RequestMapping("actParada")
 	@ResponseBody	
-	public String actualizarParada(int idActividad, int idArea, int idSistema,int idSubsistema,int idCausaFalla, String comen){
+	public int actualizarParada(int idActividad, int idArea, int idSistema,int idSubsistema,int idCausaFalla, String comen){
 		ActividadTag actTag = daoActividad.findOne(idActividad);
 		Area area = daoArea.findOne(idArea);
 		Sistema sistema = daoSistema.findOne(idSistema);
@@ -167,7 +167,7 @@ public class ControladorActividadTag {
 		actTag.setStatEditado("1");
 		actTag.setCausaFalla(causaFalla);
 		daoActividad.save(actTag);
-		return "Listo";
+		return 1;
 	}
 
 	

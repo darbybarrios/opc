@@ -2078,9 +2078,9 @@ app.controller("FallasController", ['$scope','$http','$timeout','notificationSer
 		$http.get(baseUrl + '/consultarParada?idParada='+$scope.fallasAct[$scope.indice].idActividadTag).
 		success(function(data){
 			$scope.parada = data;
-			$scope.cboArea = $scope.parada.area.descArea;
-			$scope.cboSistema = $scope.parada.area.descSistema;
-			$scope.cboSubSistema = $scope.parada.area.descSubSistema;
+			//$scope.cboArea = $scope.parada.area.descArea;
+			//$scope.cboSistema = $scope.parada.area.descSistema;
+			//$scope.cboSubSistema = $scope.parada.area.descSubSistema;
 			
 			
 		});			
@@ -2102,19 +2102,22 @@ app.controller("FallasController", ['$scope','$http','$timeout','notificationSer
 	}		
 	
 	$scope.actualizarParada = function(index){
-		
+		//$scope.indice = index;
 		alert("Indice :" + $scope.indice);
+		 
 		
 		$http.get(baseUrl + '/actParada?idActividad='+$scope.fallasAct[$scope.indice].idActividadTag+'&idArea='+$scope.cboArea+'&idSistema='+$scope.cboSistema+
 				  '&idSubsistema='+$scope.cboSubSistema+'&idCausaFalla='+$scope.cboCausaFalla+'&comen='+$scope.txtComen).
 		success(function(data){
-			alert("Parada  Actualizada con Exito");
-			//notificationService.success('Parada  Actualizada con Exito');
+			//alert("Parada  Actualizada con Exito");
+			notificationService.success('Parada  Actualizada con Exito');
+			$scope.resultado = data;
 			//
 			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
 			$scope.cboArea = null;
 			$scope.cboSistema = null;
 			$scope.cboSubSistema = null;
+			$scope.txtComen = null;
 			//refrescar_tabla('#tbdata');
 
 			$http.get(baseUrl + '/buscarPorMaquina?idMaquina='+$scope.selMaq).then(function (result) {
@@ -2125,7 +2128,7 @@ app.controller("FallasController", ['$scope','$http','$timeout','notificationSer
 				$scope.fallas = result.data;
 					$scope.fallasAct = $scope.fallas;
 			
-			}) ///hasta aqui			
+			}) ///hasta aqui	*/		
 			
 		});		
 		
