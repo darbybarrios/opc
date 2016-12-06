@@ -1661,6 +1661,7 @@ app.controller("ListadoMarcasController", ['$scope','$http','$filter',function($
 app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function($scope, $http,$filter) {
 	var baseUrl = ".";
 	listar_maquinas($http, $scope, baseUrl);
+	listar_productos($http,$scope,baseUrl);
 	
 	$scope.insertarMaquina = function(){	
     	

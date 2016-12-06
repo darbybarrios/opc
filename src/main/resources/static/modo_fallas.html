@@ -66,6 +66,7 @@
 						  <th>Sistema</th>
 						  <th>Sub-Sistema</th>
 						  <th>Causa Falla</th>
+						  <th>Comentarios</th>
 						  
   
                         </tr>
@@ -93,8 +94,8 @@
 									<td ng-if="falla.statEditado=='1'" ng-style="{color:'blue'}" ng-bind="falla.subsistema.descSubSistema"></td>
 									<td ng-if="falla.statEditado=='0'" ng-style="{color:'red'}" ng-bind="falla.causaFalla.descCausaFalla"></td>
 									<td ng-if="falla.statEditado=='1'" ng-style="{color:'blue'}" ng-bind="falla.causaFalla.descCausaFalla"></td>									
-
-									
+									<td ng-if="falla.statEditado=='0'" ng-style="{color:'red'}" ng-bind="falla.comentarios"></td>
+									<td ng-if="falla.statEditado=='1'" ng-style="{color:'blue'}" ng-bind="falla.comentarios"></td>		
 		
 							   
                         </tr>
