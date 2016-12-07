@@ -42,8 +42,8 @@
 				  
 <!-- Ventana Modal -->
  				  
-<div class="modal fade bs-example-modal-lg"  tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
+			<div class="modal fade bs-example-modal-lg"  tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="modal-dialog">
                       <div class="modal-content">
 
                         <div class="modal-header">
@@ -52,29 +52,24 @@
                           <h4 class="modal-title" id="myModalLabel2">Agregar Producto</h4>
                         </div>
                         <div class="modal-body">
-
-					  <form class="form-horizontal form-label-left" ng-submit="insertarProducto()">
-
-                     	<div class="form-group">
-	                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descProducto">DescripciÃ³n <span class="required">*</span>
-	                        </label>
-	                        <div class="col-md-6 col-sm-6 col-xs-12">
-	                          <input type="text" id="descProducto" required="required" ng-model="txtDesc"  class="form-control col-md-7 col-xs-12">
-	                        </div>
-                      	</div>
-					  
-					  
-                        
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Salir</button>
-                          <button type="submit" class="btn btn-primary">Guardar</button>
-                        </div>
-					</form>
-				
+					  		<form class="form-horizontal form-label-left" ng-submit="insertarProducto()">
+		                     	<div class="form-group">
+			                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descProducto">Descripci&oacute;n <span class="required">*</span>
+			                        </label>
+			                        <div class="col-md-6 col-sm-6 col-xs-12">
+			                          <input type="text" id="descProducto" required="required" ng-model="txtDesc"  class="form-control col-md-7 col-xs-12">
+			                        </div>
+		                      	</div>
+		                      	<div class="modal-footer">
+                          			<button type="button" class="btn btn-default" data-dismiss="modal">Salir</button>
+                          			<button type="submit" class="btn btn-primary">Guardar</button>
+                      			</div>	
+							</form>				
                       </div>
+                      
                     </div>
                   </div>
-                </div>
+             </div>
 
 				
 <!-- /Ventana Modal -->				
@@ -83,20 +78,23 @@
  			<table id="tbprod" class="table table-striped table-bordered">
                       <thead>
                         <tr>
-                          <th>Descricpción</th>
+                          
+                          <th>Descricpci&oacute;n</th>
 						  <th>Estatus</th>
   						  <th>Edicion</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr ng-repeat="prod in productos track by $index" class="ng-scope">
+                        			
 									<td><a ng-href="">{{prod.descProducto}}</a></td>
 							        <td ng-switch on="prod.statProducto">
 									<span ng-switch-when="0">Activo</span>
 									<span ng-switch-when="1">Inactivo</span></td>
 									<td>
-									        <a class="btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>
-                           					<a class="btn btn-danger btn-xs" ng-click="removerProducto($index)"><i class="fa fa-trash-o"></i></a>
+									        <a class="btn btn-info btn-xs" ng-click="editar($index)"><i class="fa fa-pencil"></i></a>
+									        <a class="btn btn-danger btn-xs" ng-click="borrar($index)"><i class="fa fa-trash-o" ></i></a>
+                           					<!-- <a class="btn btn-danger btn-xs" ng-click="removerProducto($index)"><i class="fa fa-trash-o"></i></a> -->
 									</td>
 		
 							   
@@ -107,14 +105,59 @@
                     </table>
                  
 
-
-
-
                   </div>
                 </div>
               </div>
 		</div>
 	</div>
+	
+      
+      
+   
+  	<script type="text/ng-template" id="borrar.html">
+        
+
+                        <div class="modal-header">                          
+                          <h4 class="modal-title" >Eliminar</h4>
+                        </div>
+                        <div class="modal-body">
+                        	<h5>&iquest;Estas seguro de eliminar el dipositivo?</h5>
+					  					
+                      </div>
+                      <div class="modal-footer" align="center">
+                          <button type="button" class="btn btn-success" ng-click="removerProducto(index)">Si</button>
+                          <button type="button" class="btn btn-danger"  ng-click="cancel()">No</button>
+                      </div>
+                    
+    </script>
+    
+    <script type="text/ng-template" id="editar.html">
+        
+
+                        <div class="modal-header">                          
+                          <h4 class="modal-title" >Editar Producto</h4>
+                        </div>
+                        <div class="modal-body">
+                        	<form class="form-horizontal form-label-left">
+		                     	<div class="form-group">
+			                        <label class="control-label col-md-3 col-sm-3 col-xs-12" >Descripci&oacute;n <span class="required">*</span>
+			                        </label>
+			                        <div class="col-md-6 col-sm-6 col-xs-12">
+			                          <input ng-model="descProducto"  class="form-control col-md-7 col-xs-12">
+			                        </div>
+		                      	</div>
+								<div class="modal-footer">                          			
+                          			<button type="button" class="btn btn-primary" ng-click="editarProducto(index)">Guardar</button>
+									<button type="button" class="btn btn-default" ng-click="cancel()">Salir</button>
+                      			</div>		                      	
+							</form>	
+						</div>
+								
+                    
+    </script>
+    
+  
+	
 </div>
 <!-- /page content -->
 

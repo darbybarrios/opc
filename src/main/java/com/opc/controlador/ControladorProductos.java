@@ -12,7 +12,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.opc.modelo.Dispositivo;
@@ -56,17 +58,34 @@ public class ControladorProductos {
 	
 	@RequestMapping("eliminar-producto")
 	@ResponseBody	
-	public String eliminar(int id, String statProducto){
+	public void eliminar(int idProducto, String statProducto){
 		try{
-			Producto producto =  daoProductos.findOne(id);
+			
+			Producto producto =  daoProductos.findOne(idProducto);
 			producto.setStatProducto(statProducto);
 			daoProductos.save(producto);
 						
 		}
 		catch (Exception ex){
-			return "Error al Eliminar Producto : " + ex.toString();
+			 ex.toString();
 		}
-		return "Producto Eliminado Correctamente";
+		
+	}
+	
+	@RequestMapping("editar-producto")
+	@ResponseBody	
+	public void editar(int idProducto, String descProducto){
+		try{
+			
+			Producto producto =  daoProductos.findOne(idProducto);
+			producto.setDescProducto(descProducto);
+			daoProductos.save(producto);
+						
+		}
+		catch (Exception ex){
+			 ex.toString();
+		}
+		
 	}
 
 	
