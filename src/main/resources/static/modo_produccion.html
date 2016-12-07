@@ -37,7 +37,7 @@
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-user"></i> Velocidad </span>
-              <div class="count green" ng-bind="tag3.valor">-</div>
+              <div class="count green" ng-bind="tag3.velocidad">-</div>
               <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i></span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
@@ -91,18 +91,18 @@
 
                   <div class="col-md-12 col-sm-12 col-xs-6">
                     <div>
-                      <p>Parametro 1.1</p>
+                      <p ng-bind="titulo1"></p>
                       <div class="">
-                      	<small>77% Complete</small>
-                        <div class="progress progress_sm" style="width: 76%;">
+                      	<small ng-bind="pr1"></small><small>% de Eficiencia</small>
+                        <div id="parametro_1" class="progress progress_sm" style="width: 76%;">
                           <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="80"></div>
                         </div>
                       </div>
                     </div>
                     <div>
-                      <p>Parametro 2</p>
+                      <p ng-bind="titulo2"></p>
                       <div class="">
-                        <small>77% Complete</small>
+                        <small ng-bind="pr2"></small><small>% de Eficiencia</small>
                         <div id="parametro_2" class="progress progress_sm" style="width: 76%;">
                         	
                         </div>
@@ -112,19 +112,19 @@
                   </div>
                   <div class="col-md-12 col-sm-12 col-xs-6">
                     <div>
-                      <p>Parametro 3</p>
+                      <p ng-bind="titulo3"></p>
                       <div class="">
-                        <small>77% Complete</small>
-                        <div class="progress progress_sm" style="width: 76%;">
+                        <small ng-bind="pr3"></small><small>% de Eficiencia</small>
+                        <div id="parametro_3" class="progress progress_sm" style="width: 76%;">
                           <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="40"></div>
                         </div>
                       </div>
                     </div>
                     <div>
-                      <p>Parametro 4</p>
+                      <p ng-bind="titulo4"></p>
                       <div class="">
-                      	<small>77% Complete</small>
-                        <div class="progress progress_sm" style="width: 76%;">
+                      	<small ng-bind="pr4"></small><small>% de Eficiencia</small>
+                        <div id="parametro_4" class="progress progress_sm" style="width: 76%;">
                           <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="50"></div>
                         </div>
                       </div>
@@ -136,14 +136,10 @@
                 <div class="clearfix"></div>
               </div>
             </div>
-
-          </div>
-          <br />
-
               <div class="col-md-4 col-sm-4 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>Pie Graph</h2>
+                    <h2>Clasificacion de Paros</h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -163,12 +159,78 @@
                   </div>
                   <div class="x_content">
 
-                    <div id="echart_pie" style="height:350px;"></div>
+                    <canvas id="doughnut" class="chart chart-doughnut"
+  							chart-data="dataGr1MP" chart-labels="labelsGr1MP">
+					</canvas> 
 
                   </div>
                 </div>
               </div>
+
+              <div class="col-md-4 col-sm-4 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Clasificación de Fallas</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                          <li><a href="#">Settings 1</a>
+                          </li>
+                          <li><a href="#">Settings 2</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+
+							<canvas id="pie" class="chart chart-pie"
+							  chart-data="dataGr2MP" chart-labels="labelsGr2MP" chart-options="optionsGrMP">
+							</canvas>
+
+                  </div>
+                </div>
+              </div> 
               
+              <div class="col-md-4 col-sm-4 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Duracion de Paradas</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                          <li><a href="#">Settings 1</a>
+                          </li>
+                          <li><a href="#">Settings 2</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+
+							<canvas id="bar" class="chart chart-bar" chart-data="dataGr3MP" chart-labels="labelsGr3MP" chart-series="seriesGr3MP"> 
+							</canvas>
+
+                  </div>
+                </div>
+              </div>              
+          </div>
+          
+
+             
               
           <div class="row">
 

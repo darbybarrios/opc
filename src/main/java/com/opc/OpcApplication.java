@@ -312,11 +312,14 @@ public class OpcApplication {
 			eficAct.setCantAcum(cantActual);
 			eficAct.setProductoMaquina(prodMaq);
 			eficAct.setStatCalculo("0");
-			if (velActual == null){
+			eficAct.setVelocidad(totund);
+			
+			/*if (velActual == null){
 				eficAct.setVelocidad(0);
 			}else{
-				eficAct.setVelocidad(Integer.parseInt(velActual.getValor()));
-			}			
+				//eficAct.setVelocidad(Integer.parseInt(velActual.getValor()));
+				eficAct.setVelocidad(totund);
+			}	*/		
 			 
 			eficAct.setTurno(turno);
 			eficAct.setValorPr(00.0f);

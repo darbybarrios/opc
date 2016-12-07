@@ -28,6 +28,7 @@ public class Turno {
 	private String statTurno;
 	@NotNull
 	private Sucursal sucursal;
+	private String tipoTurno;
 	
 	public Turno(){
 		
@@ -92,7 +93,17 @@ public class Turno {
 
 	public void setSucursal(Sucursal sucursal) {
 		this.sucursal = sucursal;
+	}
+
+	public String getTipoTurno() {
+		return tipoTurno;
+	}
+
+	public void setTipoTurno(String tipoTurno) {
+		this.tipoTurno = tipoTurno;
 	}	
+	
+	
 	
 
 }

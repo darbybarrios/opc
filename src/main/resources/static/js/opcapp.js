@@ -256,6 +256,19 @@ function buscar_valor_tag3($http,$scope,baseUrl){
 
 }
 
+function buscar_valor_velocidad($http,$scope,baseUrl){
+	
+
+	$http.get(baseUrl + "/buscarPorMaquina?idMaquina="+$scope.selLinea).then(function (result) {
+		  $scope.tagDispo3 = result.data;
+		  return $http.get(baseUrl +'/velocidadActual?idDispositivo='+$scope.tagDispo3.idDispositivo)
+	}).then(function(result){
+		  $scope.tag3 = result.data;
+
+	})	  
+
+}
+
 function buscar_valor_tag4($http,$scope,baseUrl){
 	
 
@@ -286,9 +299,14 @@ function buscar_valor_tag5($http,$scope,baseUrl){
 	}).then(function(result){
 		  $scope.tag5 = result.data;
 		  console.log($scope.Tag5); 
-		  return $http.get(baseUrl +'/valorDetTag?idTag='+$scope.tag5.tag.idTag+'&valor='+$scope.tag5.parado)
-	}).then(function(result){
-		  $scope.descDet5 = result.data;			  
+		  
+		  if ($scope.tag5.parado != "0"){
+			  $scope.descDet5 = "Si"
+		  }else{
+			  
+			  $scope.descDet5 = "No"
+		  }
+		  
 	})	  
 
 }
@@ -333,9 +351,41 @@ function iniciar_progressBars($http,$scope,baseUrl,ngProgressFactory){
 	$scope.pg4.setAbsolute();
 }
 
-/*function buscar_ultimosTurnos($http,$scope,baseUrl,ngProgressFactory){
+function buscar_ultimosTurnos($http,$scope,baseUrl,ngProgressFactory,id){
+	
+    $http.get(baseUrl + '/EficienciaTurnoDiaMaq?idDispo='+id)
+	.success(function(result){
+		{
+			$scope.prTurnos = result;
+			if ($scope.prTurnos.length > 0){
+				$scope.titulo1 = $scope.prTurnos[0][3] + " Turno " + $scope.prTurnos[0][2];
+				$scope.pg1.set($scope.prTurnos[0][6]);
+				$scope.pg1.setHeight('10px');
+				$scope.pr1 = $scope.prTurnos[0][6];
+
+				$scope.titulo2 = $scope.prTurnos[1][3] + " Turno " + $scope.prTurnos[1][2];
+				$scope.pg2.set($scope.prTurnos[1][6]);
+				$scope.pg2.setHeight('10px');
+				$scope.pr2 = $scope.prTurnos[1][6];
+				
+				$scope.titulo3 = $scope.prTurnos[2][3] + " Turno " + $scope.prTurnos[2][2];
+				$scope.pg3.set($scope.prTurnos[2][6]);
+				$scope.pg3.setHeight('10px');
+				$scope.pr3 = $scope.prTurnos[2][6];	
+				
+				$scope.titulo4 = $scope.prTurnos[3][3] + " Turno " + $scope.prTurnos[3][2];
+				$scope.pg4.set($scope.prTurnos[3][6]);
+				$scope.pg4.setHeight('10px');
+				$scope.pr4 = $scope.prTurnos[3][6];						
+				
+			}
+				
+        
+		} 
+	});	
+	
 		
-}*/
+}
 
 function iniciarGraficoPrMP($http,$scope,$filter,baseUrl){
     $scope.labels = ['Enero','Febrero'];
@@ -435,6 +485,33 @@ function graficoPrMP($http,$scope,baseUrl,notificationService,id){
 	
 }
 
+function grafico1MP($http,$scope,baseUrl,id){
+	  
+	$scope.labelsGr1MP = ["No Planeados", "Planeados"];
+	$scope.dataGr1MP = [300, 500];
+}
+
+function grafico2MP($http,$scope,baseUrl,id){
+	  
+	$scope.labelsGr2MP = ["Dosificador", "Cremallera","Dispensador","Tira","Carril"];
+	$scope.dataGr2MP = [300, 500,150,200,340];
+}
+
+function grafico3MP($http,$scope,baseUrl,id){
+	  
+	$scope.labelsGr3MP = ["Dosificador", "Cremallera","Dispensador","Tira","Carril"];
+	$scope.dataGr3MP = [300, 500,150,200,340];
+	
+	  $scope.labelsGr3MP= ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
+	  $scope.seriesGr3MP = ['Series A', 'Series B'];
+
+	  $scope.dataGr3MP = [
+	    [65, 59, 80, 81, 56, 55, 40],
+	    [28, 48, 40, 19, 86, 27, 90]
+	  ];
+}
+
+
 function eficienciaTurno($http,$scope,baseUrl){
 	
 
@@ -504,7 +581,7 @@ function listar_SubSistemas($http,$scope,baseUrl,idArea,idSistema,idMaquina){
 
 function listar_CausaFallas($http,$scope,baseUrl,idArea,idSistema,idSubSistema,idMaquina){
 	
-	$http.get(baseUrl +'/CausaFalla?parea='+idArea+'&psistema='+idSistema+'&psubsistema='+idSubSistema+'&idMaquina='+idMaquina).success(function (data) {
+	$http.get(baseUrl +'/CausaFalla?parea='+idArea+'&psistema='+idSistema+'&psubSistema='+idSubSistema+'&idMaquina='+idMaquina).success(function (data) {
        
 		{ 
 		  $scope.causafallas = data;
@@ -1410,18 +1487,18 @@ app.config(['baseUrl', 'remoteResourceProvider',
   }
 ]);
 
-/*
+
 app.config(['ChartJsProvider', function (ChartJsProvider) {
     // Configure all charts
     ChartJsProvider.setOptions({
-      chartColors: ['#FF5252', '#FF8A80'],
-      responsive: false
+      chartColors: ['#96CA59', '#3F97EB', '#72c380', '#6f7a8a', '#f7cb38', '#5a8022', '#2c7282'],
+      responsive: true
     });
     // Configure all line charts
     ChartJsProvider.setOptions('line', {
-      showLines: false
+      showLines: true
     });
-  }]);  */
+  }]);
 
 
 app.filter('songTime',function(){
@@ -1637,6 +1714,7 @@ app.controller("ListadoMarcasController", ['$scope','$http','$filter',function($
 app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function($scope, $http,$filter) {
 	var baseUrl = ".";
 	listar_maquinas($http, $scope, baseUrl);
+	listar_productos($http,$scope,baseUrl);
 	
 	$scope.insertarMaquina = function(){	
     	
@@ -1854,6 +1932,7 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 	limpiar_tags($http,$scope,baseUrl);
 	buscar_turno_actual($http,$scope,baseUrl);
 	iniciarGraficoPrMP($http,$scope,$filter,baseUrl);
+	iniciar_progressBars($http,$scope,baseUrl,ngProgressFactory);
 	/*
 	
 	$scope.tag1valor = "-";
@@ -1865,19 +1944,12 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 	
 	*/
 	
-	$scope.progressbar = ngProgressFactory.createInstance();
-	$scope.progressbar.setParent(document.getElementById('parametro_2'));
-	
-	$scope.progressbar.setColor('#66CDAA');
-	$scope.progressbar.setAbsolute();
-  
+ 
 		
 //listar_dispositivos($http,$scope,baseUrl);
 	
 	$scope.activateRealtime = function() {
-		
-		$scope.progressbar.set(50);
-		$scope.progressbar.setHeight('10px');
+
 		//$scope.progressbar.start();
 		
 		$scope.tagDispo = [];
@@ -1898,6 +1970,10 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 				   //alert($scope.tag1Vacio);
 			  }else{
 				  graficoPrMP($http,$scope,baseUrl,notificationService,$scope.tagDispo2.idDispositivo);
+				  buscar_ultimosTurnos($http,$scope,baseUrl,ngProgressFactory,$scope.tagDispo2.idDispositivo);
+				  grafico1MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo);
+				  grafico2MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo);
+				  grafico3MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo);
 			  }
 			  
 			  
@@ -1910,9 +1986,10 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 					
 					   buscar_valor_tag1($http,$scope,baseUrl);
 					   //buscar_valor_tag2($http,$scope,baseUrl);
-					   buscar_valor_tag3($http,$scope,baseUrl);
+					   //buscar_valor_tag3($http,$scope,baseUrl);
+					   buscar_valor_velocidad($http,$scope,baseUrl);
 					   buscar_valor_tag4($http,$scope,baseUrl);
-					   //buscar_valor_tag5($http,$scope,baseUrl);
+					   buscar_valor_tag5($http,$scope,baseUrl);
 					   //buscar_valor_tag6($http,$scope,baseUrl); 
 					   eficienciaTurno($http,$scope,baseUrl);
 					   $timeout($scope.activateRealtime, 1000);	
@@ -2001,7 +2078,7 @@ app.controller("TurnosController", ['$scope','$http','$filter',function($scope, 
 //-------------------------------------------  MODO FALLAS -------------------------------------------------//
 //----------------------------------------------------------------------------------------------------------//
 
-app.controller("FallasController", ['$scope','$http','$timeout',function($scope, $http,$timeout) {
+app.controller("FallasController", ['$scope','$http','$timeout','notificationService',function($scope, $http,$timeout,notificationService) {
 	
 	var baseUrl = ".";
     var idSucursal = 1;
@@ -2023,6 +2100,7 @@ app.controller("FallasController", ['$scope','$http','$timeout',function($scope,
 			return $http.get(baseUrl + '/Fallas?idDispositivo='+$scope.maq.idDispositivo)
 		}).then(function(result){
 			$scope.fallas = result.data;
+			listar_Areas($http,$scope,baseUrl,$scope.selMaq);
 			if (inicio == 0){
 				inicio = 1;
 				iniciar_tabla('#tbfalla');
@@ -2045,16 +2123,18 @@ app.controller("FallasController", ['$scope','$http','$timeout',function($scope,
 		$scope.cboArea = null;
 		$scope.cboSistema = null;
 		$scope.cboSubSistema = null;
+	
 		listar_Areas($http,$scope,baseUrl,$scope.selMaq);
+		
 		$scope.indice = index;
 		//listar_Sistemas($http,$scope,baseUrl,$scope.cboArea);
 		//listar_SubSistemas($http,$scope,baseUrl,$scope.cboArea,$scope.cboSistema);
 		$http.get(baseUrl + '/consultarParada?idParada='+$scope.fallasAct[$scope.indice].idActividadTag).
 		success(function(data){
 			$scope.parada = data;
-			$scope.cboArea = $scope.parada.area.descArea;
-			$scope.cboSistema = $scope.parada.area.descSistema;
-			$scope.cboSubSistema = $scope.parada.area.descSubSistema;
+			//$scope.cboArea = $scope.parada.area.descArea;
+			//$scope.cboSistema = $scope.parada.area.descSistema;
+			//$scope.cboSubSistema = $scope.parada.area.descSubSistema;
 			
 			
 		});			
@@ -2072,22 +2152,26 @@ app.controller("FallasController", ['$scope','$http','$timeout',function($scope,
 	
 	$scope.listaCausaFallas = function(){
 		//alert("subsistema : "+ $scope.cboArea + " " + $scope.cboSistema);
-		listar_CausaFallas($http,$scope,baseUrl,$scope.cboArea,$scope.cboSistema,$scope.cboCausaFalla,$scope.selMaq);
+		listar_CausaFallas($http,$scope,baseUrl,$scope.cboArea,$scope.cboSistema,$scope.cboSubSistema,$scope.selMaq);
 	}		
 	
 	$scope.actualizarParada = function(index){
-		
-		//alert("Ahy voy");
+		//$scope.indice = index;
+		alert("Indice :" + $scope.indice);
+		 
 		
 		$http.get(baseUrl + '/actParada?idActividad='+$scope.fallasAct[$scope.indice].idActividadTag+'&idArea='+$scope.cboArea+'&idSistema='+$scope.cboSistema+
-				  '&idSubsistema='+$scope.cboSubSistema+'&comen='+$scope.txtComen).
+				  '&idSubsistema='+$scope.cboSubSistema+'&idCausaFalla='+$scope.cboCausaFalla+'&comen='+$scope.txtComen).
 		success(function(data){
-			alert("Parada  Actualizada con Exito");
+			//alert("Parada  Actualizada con Exito");
+			notificationService.success('Parada  Actualizada con Exito');
+			$scope.resultado = data;
 			//
 			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
 			$scope.cboArea = null;
 			$scope.cboSistema = null;
 			$scope.cboSubSistema = null;
+			$scope.txtComen = null;
 			//refrescar_tabla('#tbdata');
 
 			$http.get(baseUrl + '/buscarPorMaquina?idMaquina='+$scope.selMaq).then(function (result) {
@@ -2098,7 +2182,7 @@ app.controller("FallasController", ['$scope','$http','$timeout',function($scope,
 				$scope.fallas = result.data;
 					$scope.fallasAct = $scope.fallas;
 			
-			}) ///hasta aqui			
+			}) ///hasta aqui	*/		
 			
 		});		
 		
