@@ -1677,6 +1677,7 @@ app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function
     			listar_maquinas($http,$scope,baseUrl);
     			//refrescar_tabla('#tbdata');
     			$scope.txtDesc=null;
+    			$scope.setProducto = null;
   
     		});
 
@@ -1698,6 +1699,32 @@ app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function
 
 		});		
 	}
+
+	$scope.modificarMaquina = function(index){    	
+		 
+		$scope.indMaq = index;
+		$http.get(baseUrl + '/consultar-maquina?idMaquina='+$scope.maquinas[$scope.indMaq].idMaquina).
+		success(function(data){
+			//alert("Maquina Eliminada");
+			//
+			$scope.maquinaModif = data;
+			$scope.txtNombre = data.nombre;
+
+		});	
+	}	
+	
+	
+	$scope.actualizarMaquina = function(){    	
+		 
+	
+		$http.get(baseUrl + '/actualizar-ProductoMaquina?nombre='+$scope.txtNombre+'&idMaquina='+$scope.maquinas[$scope.indMaq].idMaquina+'&idProducto='+$scope.setProducto).
+		success(function(data){
+			alert("Maquina Actualizada");
+
+		});	
+	}		
+
+	
 }]);
 
 
