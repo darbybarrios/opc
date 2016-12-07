@@ -17,6 +17,7 @@ import com.opc.modelo.ProductoMaquina;
 import com.opc.repositorio.RepositorioMaquina;
 import com.opc.repositorio.RepositorioProducto;
 import com.opc.repositorio.RepositorioProductoMaquina;
+import com.opc.repositorio.RepositorioProductos;
 
 @Controller
 public class ControladorMaquina {
@@ -38,12 +39,26 @@ public class ControladorMaquina {
 	
 	@RequestMapping("nueva-maquina")
 	@ResponseBody	
-	public String nuevo_maquina(String nombre) throws ParseException{		
+	public int nuevo_maquina(String nombre, int idProducto) throws ParseException{	
+		Producto producto = repositorioProducto.findOne(idProducto);
 		Maquina maquina = new Maquina();
 		maquina.setNombre(nombre);
 		maquina.setStatus("0");
+		maquina.setProducto(producto);
+	
 		repositorioMaquina.save(maquina);
-		return "Maquina";
+		
+		ProductoMaquina prodMaq = new ProductoMaquina();
+		prodMaq.setMaquina(maquina);
+		prodMaq.setProducto(producto);
+		prodMaq.setStatProducto("0");
+		Calendar fecha = Calendar.getInstance();
+		fecha.setTime(new Date());
+		prodMaq.setFecCambio(fecha);
+		repositorioProductoMaq.save(prodMaq);		
+		
+		
+		return 1;
 	}
 	
 	@RequestMapping("consultar-maquina")
@@ -59,9 +74,17 @@ public class ControladorMaquina {
 	public int actualizarProductoMaquina(String nombre, int idMaquina, int idProducto) throws ParseException{		
 		Maquina maquina = repositorioMaquina.findOne(idMaquina);
 		Producto producto = repositorioProducto.findOne(idProducto);
+		
+		ProductoMaquina prodMaq1 = repositorioProductoMaq.findByMaquinaAndStatProducto(maquina, "0");
+		if (prodMaq1 != null){
+			prodMaq1.setStatProducto("1");
+			repositorioProductoMaq.save(prodMaq1);
+		}
+		
 		ProductoMaquina prodMaq = new ProductoMaquina();
 		
 		maquina.setNombre(nombre);
+		maquina.setProducto(producto);
 		repositorioMaquina.save(maquina);
 				
 		prodMaq.setMaquina(maquina);

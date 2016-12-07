@@ -446,7 +446,7 @@ function graficoPrMP($http,$scope,baseUrl,notificationService,id){
 		                
 		               // notificationService.error($scope.graficoPrMP[0][2]);
 		                $scope.labels.push($scope.graficoPrMP[i][1]);
-		                $scope.dataAux.push($scope.graficoPrMP[i][2]);
+		                $scope.dataAux.push($scope.graficoPrMP[i][4]);
 		                
 		         
 		        }
@@ -1722,7 +1722,7 @@ app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function
     		alert("Campo en blanco");
     	}
     	else{
-    		$http.get(baseUrl + '/nueva-maquina?nombre='+$scope.txtNombre).
+    		$http.get(baseUrl + '/nueva-maquina?nombre='+$scope.txtNombre+'&idProducto='+$scope.setProducto).
     		success(function(data){
     			alert("Maquina agregada");
     			//
@@ -1755,6 +1755,9 @@ app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function
 
 	$scope.modificarMaquina = function(index){    	
 		 
+		$scope.txtNombre = null;
+		$scope.setProducto = null;
+		listar_productos($http,$scope,baseUrl);
 		$scope.indMaq = index;
 		$http.get(baseUrl + '/consultar-maquina?idMaquina='+$scope.maquinas[$scope.indMaq].idMaquina).
 		success(function(data){
@@ -1762,6 +1765,7 @@ app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function
 			//
 			$scope.maquinaModif = data;
 			$scope.txtNombre = data.nombre;
+			$scope.setProducto = data.producto.idProducto;
 
 		});	
 	}	
