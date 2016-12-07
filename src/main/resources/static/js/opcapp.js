@@ -1,4 +1,4 @@
-var app = angular.module("app",['ngRoute','jlareau.pnotify','chart.js','ngProgress']);
+var app = angular.module("app",['ngRoute','jlareau.pnotify','chart.js','ngProgress','ui.bootstrap']);
 
 function listar_plcs($http,$scope,baseUrl){
 	  
@@ -1569,7 +1569,10 @@ app.controller("ListadoSucursalesController", ['$scope', 'remoteResource',functi
 //----------------------------------- Productos ----------------------------------------------------------//
 
 
-app.controller("ListadoProductosController", ['$scope','$http','$filter',function($scope, $http,$filter) {
+app.controller("ListadoProductosController", ['$scope','$http','$filter','$uibModal',function($scope, $http,$filter,$uibModal) {
+	$scope.visible = "N";
+	$scope.index = 0;
+	$http.defaults.headers.post["Content-Type"] = "application/json";
 	var baseUrl = ".";
 	listar_productos($http, $scope, baseUrl);
 	
@@ -1579,8 +1582,8 @@ app.controller("ListadoProductosController", ['$scope','$http','$filter',functio
     		alert("Campo en blanco");
     	}
     	else{
-    		$http.get(baseUrl + '/nuevo-producto?desc='+$scope.txtDesc).
-    		success(function(data){
+    		$http.post(baseUrl + '/nuevo-producto?desc='+$scope.txtDesc).
+    		then(function(){
     			alert("Producto agregado");
     			//
     			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
@@ -1594,21 +1597,71 @@ app.controller("ListadoProductosController", ['$scope','$http','$filter',functio
 
     }
 	
-	$scope.removerProducto = function(index){    	
-		 
-		$scope.productos.splice( index, 1 );		
-		//alert($scope.dispositivos[index].idDispositivo);
-		$http.get(baseUrl + '/eliminar-proucto?id='+$scope.productos[index].idProducto+'&statProducto=1').
-		success(function(data){
-			alert("Producto Eliminado");
-			//
-			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
-			listar_productos($http,$scope,baseUrl);
-			//refrescar_tabla('#tbdata');
+	$scope.borrar = function (index) {
 
-		});		
+	    $scope.index = index;
+	    
+	    $scope.modalInstance = $uibModal.open({
+	    	ariaLabelledBy: 'modal-title',
+	        ariaDescribedBy: 'modal-body',
+	    	templateUrl: 'borrar.html',
+	        scope: $scope,
+	        size: 'sm'	        
+	    });
+	};
+
+	$scope.editar = function (index) {
+
+	    $scope.index = index;
+	    $scope.descProducto = $scope.productos[index].descProducto
+	    $scope.modalInstance = $uibModal.open({
+	    	ariaLabelledBy: 'modal-title',
+	        ariaDescribedBy: 'modal-body',
+	    	templateUrl: 'editar.html',
+	        scope: $scope	        
+	    });
+	};
+	
+	$scope.cancel = function () {		
+		$scope.modalInstance.dismiss('cancel');
+	};
+	
+	
+	$scope.removerProducto = function(index){    	
+			
+		
+		$http.put(baseUrl + '/eliminar-producto?idProducto='+$scope.productos[index].idProducto+'&statProducto=1').
+		then(function(response){
+				$http.get(baseUrl + "/listar-productos").success(function (data) {      
+				$scope.productos = data; 
+
+			});
+
+			});
+		$scope.modalInstance.close();
+		
 	}
+	
+		$scope.editarProducto = function(index){    	
+					
+				alert($scope.descProducto)
+				$http.put(baseUrl + '/editar-producto?idProducto='+$scope.productos[index].idProducto+'&descProducto='+$scope.descProducto).
+				then(function(response){
+						$http.get(baseUrl + "/listar-productos").success(function (data) {      
+						$scope.productos = data; 
+		
+					});
+		
+					});
+				$scope.modalInstance.close();
+				
+			}
+	
+	
+	
 }]);
+
+
 
 //----------------------------------- Marcas ----------------------------------------------------------//
 
