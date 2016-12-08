@@ -112,8 +112,10 @@ public class ControladorEficiencia {
 			BigInteger und = (BigInteger) aux[2];		
 			BigDecimal vel = (BigDecimal) aux[3];
 			int undInt = und.intValue();
-			double velDou = vel.doubleValue();          	
-			pr = ((undInt)/((1440)*velDou));  //1440 Min tiene el dia
+			double velDou = vel.doubleValue();     
+			if (velDou > 0){
+				pr = ((undInt)/((1440)*velDou));  //1440 Min tiene el dia
+			}
 			aux[4] = round(pr*100,2);
         	
         	resulPr.add(i, aux);
@@ -163,7 +165,9 @@ public class ControladorEficiencia {
 			int undInt = und.intValue();
 			double velDou = vel.doubleValue();
 			
-			pr = ((undInt)/((tAgendado)*velDou));
+			if (velDou > 0){
+				pr = ((undInt)/((tAgendado)*velDou));
+			}
 			
 		}
 		
@@ -202,8 +206,10 @@ public class ControladorEficiencia {
 			BigInteger und = (BigInteger) aux[4];		
 			BigDecimal vel = (BigDecimal) aux[5];
 			int undInt = und.intValue();
-			double velDou = vel.doubleValue();          	
-			pr = ((undInt)/((tAgendado)*velDou));  //1440 Min tiene el dia
+			double velDou = vel.doubleValue();         
+			if (velDou > 0){
+				pr = ((undInt)/((tAgendado)*velDou));  //1440 Min tiene el dia
+			}
 			aux[6] = round(pr*100,2);
         	
         	resulPr.add(i, aux);

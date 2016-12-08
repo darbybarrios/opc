@@ -92,6 +92,7 @@
                         <tr>
                           <th>Nombre</th>
 						  <th>Estatus</th>
+						  <th>Producto</th>
   						  <th>Edicion</th>
                         </tr>
                       </thead>
@@ -101,6 +102,7 @@
 							        <td ng-switch on="maquina.status">
 									<span ng-switch-when="0">Activo</span>
 									<span ng-switch-when="1">Inactivo</span></td>
+									<td ng-bind="maquina.producto.descProducto"></td>
 									<td>
 									        <a class="btn btn-info btn-xs" ng-click="modificarMaquina($index)" data-toggle="modal" data-target=".bs-example2-modal-lg"><i class="fa fa-pencil"></i></a>
                            					<a class="btn btn-danger btn-xs" ng-click="removerMaquina($index)"><i class="fa fa-trash-o"></i></a>

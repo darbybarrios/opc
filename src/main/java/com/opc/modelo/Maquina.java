@@ -12,6 +12,7 @@ public class Maquina implements Serializable {
 	private int idMaquina;
 	private String nombre;
 	private String status;
+	private Producto producto;
 	//private Set<Dispositivo> dispositivo;
 	
 	public Maquina(){
@@ -59,7 +60,16 @@ public class Maquina implements Serializable {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+    @ManyToOne
+    @JoinColumn(name = "id_Producto",referencedColumnName = "idProducto")		
+	public Producto getProducto() {
+		return producto;
+	}
 
+	public void setProducto(Producto producto) {
+		this.producto = producto;
+	}
+	
 	//@OneToMany(mappedBy = "maquina", cascade = CascadeType.ALL)
 	//@JsonManagedReference
 /*	public Set<Dispositivo> getDispositivo() {
