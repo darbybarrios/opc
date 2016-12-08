@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.opc.modelo.Dispositivo;
+import com.opc.modelo.Maquina;
 import com.opc.modelo.Producto;
 import com.opc.modelo.Sucursal;
 import com.opc.modelo.Turno;
@@ -48,12 +49,12 @@ public class ControladorProductos {
 
 	@RequestMapping("nuevo-producto")
 	@ResponseBody	
-	public String nuevo_producto(String desc) throws ParseException{		
+	public void nuevo_producto(String desc) throws ParseException{		
 		Producto producto = new Producto();
 		producto.setDescProducto(desc);
 		producto.setStatProducto("0");
 		daoProductos.save(producto);
-		return "Producto";
+		
 	}
 	
 	@RequestMapping("eliminar-producto")
@@ -74,11 +75,12 @@ public class ControladorProductos {
 	
 	@RequestMapping("editar-producto")
 	@ResponseBody	
-	public void editar(int idProducto, String descProducto){
+	public void editar(int idProducto, String descProducto, String statProducto){
 		try{
 			
 			Producto producto =  daoProductos.findOne(idProducto);
 			producto.setDescProducto(descProducto);
+			producto.setStatProducto(statProducto);
 			daoProductos.save(producto);
 						
 		}
@@ -86,6 +88,14 @@ public class ControladorProductos {
 			 ex.toString();
 		}
 		
+	}
+	
+	@RequestMapping("consultar-producto")
+	@ResponseBody	
+	public Producto consultar_maquina(int idProducto) throws ParseException{		
+		Producto producto = daoProductos.findOne(idProducto);
+		return producto;
+			
 	}
 
 	

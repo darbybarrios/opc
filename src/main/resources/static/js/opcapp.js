@@ -1576,24 +1576,19 @@ app.controller("ListadoProductosController", ['$scope','$http','$filter','$uibMo
 	var baseUrl = ".";
 	listar_productos($http, $scope, baseUrl);
 	
-	$scope.insertarProducto = function(){	
+	$scope.insertarProducto = function(){   	
     	
-    	if ($scope.txtDesc==""){
-    		alert("Campo en blanco");
-    	}
-    	else{
     		$http.post(baseUrl + '/nuevo-producto?desc='+$scope.txtDesc).
-    		then(function(){
-    			alert("Producto agregado");
-    			//
-    			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
-    			listar_productos($http,$scope,baseUrl);
-    			//refrescar_tabla('#tbdata');
+    		success(function(response){
+    			$('#crear').modal('hide');
+    			$http.get(baseUrl + "/listar-productos").success(function (data) {      
+					$scope.productos = data;
+    			});
     			$scope.txtDesc=null;
   
     		});
 
-    	}
+    	
 
     }
 	
@@ -1611,15 +1606,13 @@ app.controller("ListadoProductosController", ['$scope','$http','$filter','$uibMo
 	};
 
 	$scope.editar = function (index) {
-
-	    $scope.index = index;
-	    $scope.descProducto = $scope.productos[index].descProducto
-	    $scope.modalInstance = $uibModal.open({
-	    	ariaLabelledBy: 'modal-title',
-	        ariaDescribedBy: 'modal-body',
-	    	templateUrl: 'editar.html',
-	        scope: $scope	        
-	    });
+		$scope.indProd = index;
+		$http.get(baseUrl + '/consultar-producto?idProducto='+$scope.productos[$scope.indProd].idProducto).
+		success(function(data){
+				$scope.modifProd = data;
+				$scope.txtDescProducto = $scope.modifProd.descProducto;
+				$scope.txtEstatus = $scope.modifProd.statProducto
+			});
 	};
 	
 	$scope.cancel = function () {		
@@ -1631,7 +1624,7 @@ app.controller("ListadoProductosController", ['$scope','$http','$filter','$uibMo
 			
 		
 		$http.put(baseUrl + '/eliminar-producto?idProducto='+$scope.productos[index].idProducto+'&statProducto=1').
-		then(function(response){
+		success(function(response){
 				$http.get(baseUrl + "/listar-productos").success(function (data) {      
 				$scope.productos = data; 
 
@@ -1642,20 +1635,21 @@ app.controller("ListadoProductosController", ['$scope','$http','$filter','$uibMo
 		
 	}
 	
-		$scope.editarProducto = function(index){    	
-					
-				alert($scope.descProducto)
-				$http.put(baseUrl + '/editar-producto?idProducto='+$scope.productos[index].idProducto+'&descProducto='+$scope.descProducto).
-				then(function(response){
+		$scope.editarProducto = function(index){
+				$http.put(baseUrl + '/editar-producto?idProducto='+$scope.productos[$scope.index].idProducto+'&descProducto='+$scope.txtDescProducto
+						+'&statProducto='+$scope.txtEstatus).
+				success(function(response){
+						$('#editar').modal('hide');
 						$http.get(baseUrl + "/listar-productos").success(function (data) {      
-						$scope.productos = data; 
-		
+							$scope.productos = data;
+							
 					});
 		
 					});
-				$scope.modalInstance.close();
 				
 			}
+		
+		
 	
 	
 	
