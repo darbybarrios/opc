@@ -242,10 +242,26 @@ public class ControladorActividadTag {
 	}
 
 	
-	@RequestMapping("graficosParadasMp")
+	@RequestMapping("graficosTipoParadasMp")
 	@ResponseBody		
-	public List<Object[]> graficoParadasMp(int idDispositivo){
+	public List<Object[]> graficoTipoParadasMp(String filtro, String grupo, int idSucursal, int idDispositivo,String inicio, String fin){
+		// Grupo = Turno, Dia, Mes
+		// Filtro = Sucursal, Maquina
 		List<Object[]> resulParadas = daoActividad.findParadasByDispositivoGroupTipoAndFecha(idDispositivo);
+		
+		if (grupo.equals("Dia")){
+			
+			if (filtro.equals("Sucursal")){
+				
+			}else if (filtro.equals("Dia")){
+				
+			}
+			
+		}else if (grupo.equals("Mes")) {
+		}else if (grupo.equals("Turno")) {
+			
+		}
+		
 		return resulParadas;
 	}
 	
