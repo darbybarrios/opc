@@ -240,6 +240,14 @@ public class ControladorActividadTag {
 		return pr;
 		
 	}
+
+	
+	@RequestMapping("graficosParadasMp")
+	@ResponseBody		
+	public List<Object[]> graficoParadasMp(int idDispositivo){
+		List<Object[]> resulParadas = daoActividad.findParadasByDispositivoGroupTipoAndFecha(idDispositivo);
+		return resulParadas;
+	}
 	
 	
 

@@ -489,6 +489,26 @@ function grafico1MP($http,$scope,baseUrl,id){
 	  
 	$scope.labelsGr1MP = ["No Planeados", "Planeados"];
 	$scope.dataGr1MP = [300, 500];
+	
+  /* $http.get(baseUrl + '/graficoParadasMp?idDispositivo='+id)
+	.success(function(result){
+		$scope.grParadas = result;
+		if ($scope.grParadas != null){
+	        for (var i = 0; i < $scope.grParadas.length; i++) {
+                
+	               // notificationService.error($scope.graficoPrMP[0][2]);
+	                $scope.labelsGr1MP.push($scope.graficoPrMP[i][1]);
+	                $scope.dataGr1MP.push($scope.graficoPrMP[i][0]);
+	                
+	         
+	        }	
+		}else
+			{
+		}
+
+	});  */
+    
+    
 }
 
 function grafico2MP($http,$scope,baseUrl,id){

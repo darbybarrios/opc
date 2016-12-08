@@ -148,7 +148,7 @@ public class ControladorDispositivo {
 	
 	@RequestMapping(value = "crear-dispositivo")
 	@ResponseBody
-	public String crear(String descripcion,int idMarca, int idMaquina, int idSucursal){
+	public int crear(String descripcion,int idMarca, int idMaquina, int idSucursal){
 		String nombreDispositivo;
 		try{
 			Marca marca = daoMarca.findByIdMarca(idMarca);
@@ -159,9 +159,9 @@ public class ControladorDispositivo {
 			nombreDispositivo = dispositivo.getDescripcion();
 		}
 		catch (Exception ex){
-			return "Error al Crear el Dispositivo : " + ex.toString();
+			return 0;
 		}
-		return "Dispositivo Creado Exitosamente : " + nombreDispositivo;
+		return 1;
 	}
 	
 	@RequestMapping(value = "actualizar-dispositivo")
