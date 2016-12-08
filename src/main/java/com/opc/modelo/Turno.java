@@ -30,15 +30,14 @@ public class Turno {
 	@NotNull
 	private Sucursal sucursal;
 	private String tipoTurno;
-	@Column(name="secuencia", nullable = true, columnDefinition="int4 default '0'")
-	private int secuencia;     //Orden de los Turnos	
+	private String secuencia;     //Orden de los Turnos	
 
 	
 	public Turno(){
 		
 	}
 		
-	public Turno(String descTurno,Calendar inicio, Calendar fin, String statTurno, Sucursal sucursal, String tipoTurno, int secuencia) {
+	public Turno(String descTurno,Calendar inicio, Calendar fin, String statTurno, Sucursal sucursal, String tipoTurno) {
 		super();
 		this.descTurno = descTurno;
 		this.inicio = inicio;
@@ -46,7 +45,7 @@ public class Turno {
 		this.statTurno = statTurno;
 		this.sucursal = sucursal;
 		this.tipoTurno = tipoTurno;
-		this.secuencia = secuencia;
+
 	}
 
 	@Id
@@ -109,14 +108,7 @@ public class Turno {
 		this.tipoTurno = tipoTurno;
 	}
 
-	public int getSecuencia() {
-		return secuencia;
-	}
 
-	public void setSecuencia(int secuencia) {
-		this.secuencia = secuencia;
-	}	
-	
 	
 	
 

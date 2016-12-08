@@ -40,7 +40,7 @@ public class ControladorTurnos {
 
 	@RequestMapping("nuevo-turno")
 	@ResponseBody	
-	public int nuevo_turno(String desc, String inicio, String fin, int idSucursal, String tipoTurno,int secuencia) throws ParseException{
+	public int nuevo_turno(String desc, String inicio, String fin, int idSucursal, String tipoTurno) throws ParseException{
 		DateFormat formato = new SimpleDateFormat("HH:mm:ss");
 		Date horaIni = formato.parse(inicio);
 		Date horaFin = formato.parse(fin);
@@ -53,7 +53,7 @@ public class ControladorTurnos {
 		
 
 		Sucursal sucursal = daoSucursal.findOne(idSucursal);
-		Turno turn = new Turno(desc,hIni,hFin,"0",sucursal,tipoTurno,secuencia);
+		Turno turn = new Turno(desc,hIni,hFin,"0",sucursal,tipoTurno);
 		daoTurno.save(turn);
 		return 1;
 	}

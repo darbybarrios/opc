@@ -14,8 +14,6 @@ public interface RepositorioTurno extends CrudRepository<Turno, Integer> {
 	
 	Turno findByInicioLessThanEqualAndFinGreaterThanEqual(Date horaActual, Date hora2);
 	Turno findByStatTurnoOrderByFinDesc(String stat);
-	Turno findTopOrderBySecuencia(Sucursal sucursal);
-	Turno findTopOrderBySecuenciaDesc(Sucursal sucursal);
 	
 	
 
