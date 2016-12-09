@@ -116,7 +116,7 @@ public class ControladorEficiencia {
 			if (velDou > 0){
 				pr = ((undInt)/((1440)*velDou));  //1440 Min tiene el dia
 			}
-			aux[4] = round(pr*100,2);
+			aux[4] = round(pr,2);
         	
         	resulPr.add(i, aux);
         	          
@@ -210,7 +210,7 @@ public class ControladorEficiencia {
 			if (velDou > 0){
 				pr = ((undInt)/((tAgendado)*velDou));  //1440 Min tiene el dia
 			}
-			aux[6] = round(pr*100,2);
+			aux[6] = round(pr,2);
         	
         	resulPr.add(i, aux);
         	          

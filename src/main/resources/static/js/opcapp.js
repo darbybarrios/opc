@@ -2001,6 +2001,7 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 		$scope.tagDispo2 = [];
 		$scope.conectado = null;
 		$rootScope.selLineaG = $scope.selLinea;
+		buscar_turno_actual($http,$scope,baseUrl);
 		
 
 		

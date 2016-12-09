@@ -270,15 +270,19 @@ public class OpcApplication {
     	//Turno turno = new ControladorTurnos().turno_actual();
     	Turno turno = turno_actual(daoTurno);
     	DateFormat seg = new SimpleDateFormat("ss");
+    	DateFormat min = new SimpleDateFormat("mm");
     	Calendar fecha = Calendar.getInstance();
     	fecha.setTime(new Date());
 		String horaStr = seg.format(new Date());
+		String minStr = min.format(new Date());
 		int cantAnterior = 0;
 		int cantActual = 0;
 		int cantAcum = 0;
+        String minActual = "99";
 		
 		if (horaStr.equals("00")){
 		
+			
 			Tag unidades = daoTag.findBytipoInformacionAndStatRegAndDispositivo("4", "0", dispo);
 			Tag velocidad = daoTag.findBytipoInformacionAndStatRegAndDispositivo("5", "0", dispo);
 			ActividadTag undAct = daoActividad.findTopByTagOrderByFechaDesc(unidades);
@@ -346,8 +350,8 @@ public class OpcApplication {
 			final Group group = server.addGroup ( "fallas" );
 			
 			
-			acceso.cargarPlcs();
-			acceso.cargarTags("Todos");
+			//acceso.cargarPlcs();
+			//acceso.cargarTags("Todos");
 			
 			
 			//accesarDispositivo acceso = new accesarDispositivo();
@@ -404,6 +408,7 @@ public class OpcApplication {
 				        	long tiempoFunc;
 				        	boolean conexion = true;
 				        	boolean arranco = false;
+				        	String minAnt = "99";
 				        	
 				        	
 				        	
@@ -547,8 +552,14 @@ public class OpcApplication {
 					                	if (Objects.equals(tag.getTipoInformacion(),"4")){
 					                	
 						                	try {
-												guardarEficiencia(dispo,daoActividadTag,daoProducto,daoProductoMaq,daoTurno,daoTag,daoEficiencia);
-											} catch (ParseException e1) {
+						                		
+						                		DateFormat mm = new SimpleDateFormat("mm");
+						                		String minStr = mm.format(new Date());
+						                		if (!minStr.equals(minAnt)){
+						                			guardarEficiencia(dispo,daoActividadTag,daoProducto,daoProductoMaq,daoTurno,daoTag,daoEficiencia);
+						                		    minAnt = minStr;
+						                		}
+						                	} catch (ParseException e1) {
 												// TODO Auto-generated catch block
 												e1.printStackTrace();
 											}

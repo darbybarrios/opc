@@ -30,14 +30,14 @@ public class Turno {
 	@NotNull
 	private Sucursal sucursal;
 	private String tipoTurno;
-	private String secuencia;     //Orden de los Turnos	
+	private int secuencia;     //Orden de los Turnos	
 
 	
 	public Turno(){
 		
 	}
 		
-	public Turno(String descTurno,Calendar inicio, Calendar fin, String statTurno, Sucursal sucursal, String tipoTurno) {
+	public Turno(String descTurno,Calendar inicio, Calendar fin, String statTurno, Sucursal sucursal, String tipoTurno, int secuencia) {
 		super();
 		this.descTurno = descTurno;
 		this.inicio = inicio;
@@ -45,6 +45,7 @@ public class Turno {
 		this.statTurno = statTurno;
 		this.sucursal = sucursal;
 		this.tipoTurno = tipoTurno;
+		this.secuencia = secuencia;
 
 	}
 
