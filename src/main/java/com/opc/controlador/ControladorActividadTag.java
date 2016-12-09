@@ -253,7 +253,9 @@ public class ControladorActividadTag {
 			
 			if (filtro.equals("Sucursal")){
 				
-			}else if (filtro.equals("Dia")){
+			}else if (filtro.equals("Dispositivo")){
+				
+				//List<Object[]> resulParadas = daoActividad.findParadasByDispositivoGroupTipoAndFecha(idDispositivo);
 				
 			}
 			

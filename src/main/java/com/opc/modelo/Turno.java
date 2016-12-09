@@ -109,6 +109,14 @@ public class Turno {
 		this.tipoTurno = tipoTurno;
 	}
 
+	public int getSecuencia() {
+		return secuencia;
+	}
+
+	public void setSecuencia(int secuencia) {
+		this.secuencia = secuencia;
+	}
+
 
 	
 	

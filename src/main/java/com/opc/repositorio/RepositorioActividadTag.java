@@ -26,10 +26,10 @@ public interface RepositorioActividadTag extends CrudRepository<ActividadTag, In
 	
 
  	
-	@Query(value="Select count(*) As total, causa_falla.tipo_parada, date(fecha) From " +
+	@Query(value="Select sum(duracion_ms) As total, causa_falla.tipo_parada, date(fecha) From " +
 				 "actividad_tag Inner Join causa_falla On actividad_tag.id_causa_falla = causa_falla.id_causa_falla " +
 				 "Inner Join tag On actividad_tag.id_tag = tag.id_tag Where " +
-				 "tag.tipo_informacion = '2'	And tag.id_dispositivo = :idDispo " +   
+				 "tag.tipo_informacion = '2'	And tag.id_dispositivo = :idDispo And to_char(fecha,'DD/MM/YYYY') = :fechaDia" +   
 				 "Group By causa_falla.tipo_parada, date(fecha) " +
 				 "Order By date(fecha) desc  ",nativeQuery=true)
 	List<Object[]> findParadasByDispositivoGroupTipoAndFecha(@Param("idDispo") int idDispo);

@@ -113,7 +113,27 @@ function cargarValores($http,$scope,baseUrl){
         }];	
 	
 	
-	
+    $scope.tipoTurno = [{
+        idTipoTurno: "D",
+        descTipoTurno: "Diurno"
+      }, {
+    	  idTipoTurno: "M",
+    	  descTipoTurno: "Mixto"
+      }, {
+    	  idTipoTurno: "N",
+    	  descTipoTurno: "Nocturno"
+      }];	
+    
+    $scope.tipoSecuencia = [{
+        idTipoSecuencia: "1",
+        descTipoSecuencia: "1"
+      }, {
+    	idTipoSecuencia: "2",
+    	descTipoSecuencia: "2"
+      }, {
+    	idTipoSecuencia: "3",
+    	descTipoSecuencia: "3"
+      }];	    
 	
 	
 }
@@ -1552,7 +1572,7 @@ app.filter('time', function($filter)
 		{
 		 return function(input)
 		 {
-		  alert(input);	 
+		  //alert(input);	 
 		  if(input == null){ 
 			  
 			  return ""; 
@@ -1570,6 +1590,7 @@ app.filter('time', function($filter)
 app.filter('fecActual',['$filter',  function($filter) {
     return function() {
         return $filter('date')(new Date(), 'yyyy-MM-dd');
+    	//return $filter('date')(new Date(), 'HH:mm:ss');
     };
 }])
 
@@ -2072,6 +2093,7 @@ app.controller("TurnosController", ['$scope','$http','$filter',function($scope, 
 	var baseUrl = ".";
     var idSucursal = 1;	
     buscarSucursal($http,$scope,baseUrl,idSucursal);
+    cargarValores($http,$scope,baseUrl);
     
 	$http.get(baseUrl + "/listar-turnos").success(function (data) {
 		{ 
@@ -2089,8 +2111,12 @@ app.controller("TurnosController", ['$scope','$http','$filter',function($scope, 
     	else{
     		
 	    		if ($scope.sucursal.turnos > $scope.turnos.length){
-	    		var inicio = $filter('time')($scope.txtInicio+':00');
-		    		$http.get(baseUrl + '/nuevo-turno?desc='+$scope.txtDesc+'&inicio='+$scope.txtInicio+':00'+'&fin='+$scope.txtFin+':00'+'&idSucursal='+idSucursal).
+	    		//var inicio = $filter('time')($scope.txtInicio+':00');
+	    		var inicio = $filter('time')($scope.txtInicio);
+	    		var fin = $filter('time')($scope.txtFin);
+	    		//$scope.txtInicio+':00'+  asi se pasaba el parametyro
+	    		//$scope.txtFin+':00'  
+		    		$http.get(baseUrl + '/nuevo-turno?desc='+$scope.txtDesc+'&inicio='+inicio+'&fin='+fin+'&idSucursal='+idSucursal+'&tipoTurno='+$scope.cboTipoTurno+'&secuencia='+$scope.txtOrden).
 		    		success(function(data){
 		    			alert("Turno agregado");
 		    			//

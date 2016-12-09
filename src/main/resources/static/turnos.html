@@ -81,20 +81,25 @@
                         </div>
                       </div>
                       
-                      <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Tipo Turno </label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="time" id="fin" class="form-control col-md-7 col-xs-12" ng-model="cboTipoTurno">
+                       <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Tipo Turno</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                          <select id="idTipoTurno" class="form-control" ng-model="cboTipoTurno" type="checkbox" ng-options="tipoTurno.idTipoTurno as tipoTurno.descTipoTurno for tipoTurno in tipoTurno">
+                            <option value="">-- Seleccionar --</option>
+                          </select>
                         </div>
-                      </div>                      						  
-
-                      <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Orden Turno </label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="time" id="fin" class="form-control col-md-7 col-xs-12" ng-model="txtOrden">
+                      </div>	
+                      
+                       <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Orden Turno</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                          <select id="idTipoSecuencia" class="form-control" ng-model="txtOrden" type="checkbox" ng-options="tipoSecuencia.idTipoSecuencia as tipoSecuencia.descTipoSecuencia for tipoSecuencia in tipoSecuencia">
+                            <option value="">-- Seleccionar --</option>
+                          </select>
                         </div>
-                      </div>
-                      					                         
+                      </div>                      
+                      
+                                           					                         
                        <div class="ln_solid"></div>
                        <div class="form-group">
                         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
