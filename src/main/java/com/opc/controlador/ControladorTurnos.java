@@ -58,6 +58,31 @@ public class ControladorTurnos {
 		return 1;
 	}
 
+	@RequestMapping("fecha-jornada-actual")
+	@ResponseBody	
+	public Calendar determinarFechaJornada(Calendar fecha, Turno turno) throws ParseException{
+		Calendar fechaInicio = null;
+		DateFormat dateF = new SimpleDateFormat("HH:mm");
+		String horaCorte = "00:00";
+		Date horaC = dateF.parse(horaCorte);
+		String ini = dateF.format(fecha.getTime());
+		Date horaActual = dateF.parse(ini);
+		
+		if (turno.getTipoTurno().equals("D")){
+				fechaInicio = fecha;					
+		}else{
+			if ((horaActual.compareTo(horaC)) > 0) {
+				fecha.add(Calendar.DAY_OF_MONTH, -1);
+				fechaInicio = fecha;
+			}else{
+				
+				fechaInicio = fecha;
+			}
+		}
+		
+		return fechaInicio;
+	}
+
 	
 	
 	@RequestMapping("turno-actual")

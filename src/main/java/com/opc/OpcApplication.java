@@ -601,7 +601,8 @@ public class OpcApplication {
 							                		
 						                		
 					                		}
-				                		
+				                		    
+					                		
 					                		
 					                		DetalleTag detalle = daoDetalleTag.findByTagAndValorDetTag(tag, valor);
 						                    ActividadTag evento = new ActividadTag();
