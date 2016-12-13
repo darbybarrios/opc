@@ -1742,8 +1742,9 @@ app.controller("ListadoMarcasController", ['$scope','$http','$filter',function($
 	}
 }]);
 
-
-//----------------------------------- Maquinas ----------------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------//
+//----------------------------------- MAQUINAS ----------------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------//
 
 
 app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function($scope, $http,$filter) {
@@ -1757,7 +1758,7 @@ app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function
     		alert("Campo en blanco");
     	}
     	else{
-    		$http.get(baseUrl + '/nueva-maquina?nombre='+$scope.txtNombre+'&idProducto='+$scope.setProducto).
+    		$http.get(baseUrl + '/nueva-maquina?nombre='+$scope.txtNombre+'&idProducto='+$scope.setProducto+'&velocidad='+$scope.txtVelocidad+'&tiempoHambre='+$scope.txtTiempoHambre).
     		success(function(data){
     			alert("Maquina agregada");
     			//
@@ -1800,6 +1801,8 @@ app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function
 			//
 			$scope.maquinaModif = data;
 			$scope.txtNombre = data.nombre;
+			$scope.txtVelocidad = data.velocidad;
+			$scope.txtTiempoHambre = data.tiempoHambre;
 			$scope.setProducto = data.producto.idProducto;
 
 		});	
@@ -1809,9 +1812,10 @@ app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function
 	$scope.actualizarMaquina = function(){    	
 		 
 	
-		$http.get(baseUrl + '/actualizar-ProductoMaquina?nombre='+$scope.txtNombre+'&idMaquina='+$scope.maquinas[$scope.indMaq].idMaquina+'&idProducto='+$scope.setProducto).
+		$http.get(baseUrl + '/actualizar-ProductoMaquina?nombre='+$scope.txtNombre+'&idMaquina='+$scope.maquinas[$scope.indMaq].idMaquina+'&idProducto='+$scope.setProducto+'&velocidad='+$scope.txtVelocidad+'&tiempoHambre='+$scope.txtTiempoHambre).
 		success(function(data){
 			alert("Maquina Actualizada");
+			listar_maquinas($http,$scope,baseUrl);
 
 		});	
 	}		

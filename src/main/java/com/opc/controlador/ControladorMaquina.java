@@ -39,12 +39,14 @@ public class ControladorMaquina {
 	
 	@RequestMapping("nueva-maquina")
 	@ResponseBody	
-	public int nuevo_maquina(String nombre, int idProducto) throws ParseException{	
+	public int nuevo_maquina(String nombre, int idProducto, int velocidad, int tiempoHambre) throws ParseException{	
 		Producto producto = repositorioProducto.findOne(idProducto);
 		Maquina maquina = new Maquina();
 		maquina.setNombre(nombre);
 		maquina.setStatus("0");
 		maquina.setProducto(producto);
+		maquina.setVelocidad(velocidad);
+		maquina.setTiempoHambre(tiempoHambre);
 	
 		repositorioMaquina.save(maquina);
 		
@@ -71,30 +73,41 @@ public class ControladorMaquina {
 	
 	@RequestMapping("actualizar-ProductoMaquina")
 	@ResponseBody	
-	public int actualizarProductoMaquina(String nombre, int idMaquina, int idProducto) throws ParseException{		
+	public int actualizarProductoMaquina(String nombre, int idMaquina, int idProducto, int velocidad, int tiempoHambre) throws ParseException{		
 		Maquina maquina = repositorioMaquina.findOne(idMaquina);
 		Producto producto = repositorioProducto.findOne(idProducto);
+		boolean enc = false;
 		
 		ProductoMaquina prodMaq1 = repositorioProductoMaq.findByMaquinaAndStatProducto(maquina, "0");
 		if (prodMaq1 != null){
-			prodMaq1.setStatProducto("1");
-			repositorioProductoMaq.save(prodMaq1);
+			
+			if (!prodMaq1.getProducto().equals(producto)){
+				prodMaq1.setStatProducto("1");
+				repositorioProductoMaq.save(prodMaq1);
+				enc = true;
+			}
+
 		}
 		
-		ProductoMaquina prodMaq = new ProductoMaquina();
-		
+				
 		maquina.setNombre(nombre);
 		maquina.setProducto(producto);
+		maquina.setVelocidad(velocidad);
+		maquina.setTiempoHambre(tiempoHambre);
 		repositorioMaquina.save(maquina);
-				
-		prodMaq.setMaquina(maquina);
-		prodMaq.setProducto(producto);
-		prodMaq.setStatProducto("0");
-		Calendar fecha = Calendar.getInstance();
-		fecha.setTime(new Date());
-		prodMaq.setFecCambio(fecha);
-		repositorioProductoMaq.save(prodMaq);
 		
+		if (enc) {
+		
+			ProductoMaquina prodMaq = new ProductoMaquina();				
+			prodMaq.setMaquina(maquina);
+			prodMaq.setProducto(producto);
+			prodMaq.setStatProducto("0");
+			Calendar fecha = Calendar.getInstance();
+			fecha.setTime(new Date());
+			prodMaq.setFecCambio(fecha);
+			repositorioProductoMaq.save(prodMaq);
+		
+		}
 		return 1;
 			
 	}	
