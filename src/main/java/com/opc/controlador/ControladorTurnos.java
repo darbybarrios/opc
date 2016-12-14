@@ -31,6 +31,11 @@ public class ControladorTurnos {
 	
 	
 	
+	public ControladorTurnos() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	@RequestMapping("listar-turnos")
 	@ResponseBody
 	public List<Turno> listar_turnos(){
@@ -72,8 +77,9 @@ public class ControladorTurnos {
 				fechaInicio = fecha;					
 		}else{
 			if ((horaActual.compareTo(horaC)) > 0) {
-				fecha.add(Calendar.DAY_OF_MONTH, -1);
 				fechaInicio = fecha;
+				fechaInicio.add(Calendar.DAY_OF_MONTH, -1);
+				
 			}else{
 				
 				fechaInicio = fecha;

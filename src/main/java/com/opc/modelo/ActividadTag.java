@@ -26,6 +26,7 @@ public class ActividadTag {
 		private long duracionMs;
 		private String comentarios;
 		private String descFalla;
+		private Calendar fechaJornada;
 		
 		public ActividadTag() {
 			super();
@@ -255,6 +256,18 @@ public class ActividadTag {
 
 		public void setDescFalla(String descFalla) {
 			this.descFalla = descFalla;
+		}
+
+
+
+		public Calendar getFechaJornada() {
+			return fechaJornada;
+		}
+
+
+
+		public void setFechaJornada(Calendar fechaJornada) {
+			this.fechaJornada = fechaJornada;
 		}
 
 

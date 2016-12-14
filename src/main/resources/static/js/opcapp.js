@@ -284,7 +284,9 @@ function buscar_valor_velocidad($http,$scope,baseUrl){
 		  return $http.get(baseUrl +'/velocidadActual?idDispositivo='+$scope.tagDispo3.idDispositivo)
 	}).then(function(result){
 		  $scope.tag3 = result.data;
-
+		  return $http.get(baseUrl +'/velocidadSeteada?idDispositivo='+$scope.tagDispo3.idDispositivo)
+	}).then(function(result){
+		  $scope.velSet = result.data;
 	})	  
 
 }

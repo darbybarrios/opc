@@ -250,6 +250,32 @@ public class OpcApplication {
 		
 	}	
 	
+	public Calendar determinarFechaJornada(Calendar fecha, Turno turno) throws ParseException{
+		Calendar fechaInicio = null;
+		DateFormat dateF = new SimpleDateFormat("HH:mm");
+		String horaCorte = "00:00";
+		Date horaC = dateF.parse(horaCorte);
+		String ini = dateF.format(fecha.getTime());
+		Date horaActual = dateF.parse(ini);
+		
+		if (turno.getTipoTurno().equals("D")){
+				fechaInicio = fecha;					
+		}else{
+			if ((horaActual.compareTo(horaC)) > 0) {
+				fechaInicio = fecha;
+				fechaInicio.add(Calendar.DAY_OF_MONTH, -1);
+				
+			}else{
+				
+				fechaInicio = fecha;
+			}
+		}
+		
+		return fechaInicio;
+	}
+	
+	
+	
 	public void guardarConectividad(Dispositivo dispo, Tag tag, String arrancado, String parado,
 			                        int calidad, Calendar fecha,RepositorioResumenConectividad daoResumenConn){
 		ResumenConectividad resumenConn = new ResumenConectividad();
@@ -267,8 +293,9 @@ public class OpcApplication {
                                   RepositorioResumenEficiencia daoEficiencia) throws ParseException{
     	
     	//ControladorTurnos contTur = new ControladorTurnos().turno_actual();
-    	//Turno turno = new ControladorTurnos().turno_actual();
+    	//ControladorTurnos cturno = new ControladorTurnos();
     	Turno turno = turno_actual(daoTurno);
+    	
     	DateFormat seg = new SimpleDateFormat("ss");
     	DateFormat min = new SimpleDateFormat("mm");
     	Calendar fecha = Calendar.getInstance();
@@ -279,7 +306,8 @@ public class OpcApplication {
 		int cantActual = 0;
 		int cantAcum = 0;
         String minActual = "99";
-		
+       // Calendar f_Jornada = cturno.determinarFechaJornada(fecha, turno);
+        
 		if (horaStr.equals("00")){
 		
 			
@@ -328,6 +356,7 @@ public class OpcApplication {
 			eficAct.setTurno(turno);
 			eficAct.setValorPr(00.0f);
 			eficAct.setDispositivo(dispo);
+			//eficAct.setFechaJornada(f_Jornada);
 			daoEficiencia.save(eficAct);
 		
 		}
@@ -345,6 +374,7 @@ public class OpcApplication {
 			List<Dispositivo> listaDispo = daoDispositivo.findByStatReg("0");
 			Iterator<Dispositivo> vectorDis = listaDispo.iterator();
 			accesarDispositivo acceso = accesarDispositivo.getInstancia();
+			
 
 			Server server = acceso.conectar();
 			final Group group = server.addGroup ( "fallas" );
@@ -602,8 +632,9 @@ public class OpcApplication {
 						                		
 					                		}
 				                		    
-					                		
-					                		
+
+											
+											
 					                		DetalleTag detalle = daoDetalleTag.findByTagAndValorDetTag(tag, valor);
 						                    ActividadTag evento = new ActividadTag();
 						                    evento.setFecha(state.getTimestamp());
@@ -618,6 +649,25 @@ public class OpcApplication {
 						                    evento.setTiempoFuncMs(tiempoFunc);
 						                    evento.setDescFalla(falla);
 						                    
+						                   // ControladorTurnos cTurnos = new ControladorTurnos();
+					                		Turno tJornada = null;
+					                		Calendar fJornada = null;
+					                		
+											try {
+												tJornada = turno_actual(daoTurno);
+											} catch (ParseException e1) {
+												// TODO Auto-generated catch block
+												e1.printStackTrace();
+											}
+					                		try {
+					                			Calendar fecReg = state.getTimestamp();
+												fJornada = determinarFechaJornada(fecReg, tJornada);
+											} catch (ParseException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											} 
+						                    
+						                    evento.setFechaJornada(fJornada);
 						                    
 						                    daoActividadTag.save(evento);
 					                	}
