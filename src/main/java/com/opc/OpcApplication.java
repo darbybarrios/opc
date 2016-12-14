@@ -257,13 +257,16 @@ public class OpcApplication {
 		Date horaC = dateF.parse(horaCorte);
 		String ini = dateF.format(fecha.getTime());
 		Date horaActual = dateF.parse(ini);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
 		
 		if (turno.getTipoTurno().equals("D")){
 				fechaInicio = fecha;					
 		}else{
 			if ((horaActual.compareTo(horaC)) > 0) {
-				fechaInicio = fecha;
-				fechaInicio.add(Calendar.DAY_OF_MONTH, -1);
+				//fechaInicio = fecha;
+				//fechaInicio.add(Calendar.DAY_OF_MONTH, -1);
+				cal.add(Calendar.DAY_OF_MONTH, -1);
 				
 			}else{
 				
@@ -271,7 +274,7 @@ public class OpcApplication {
 			}
 		}
 		
-		return fechaInicio;
+		return cal;
 	}
 	
 	
@@ -380,8 +383,8 @@ public class OpcApplication {
 			final Group group = server.addGroup ( "fallas" );
 			
 			
-			//acceso.cargarPlcs();
-			//acceso.cargarTags("Todos");
+		//	acceso.cargarPlcs();
+		//	acceso.cargarTags("Todos");
 			
 			
 			//accesarDispositivo acceso = new accesarDispositivo();
