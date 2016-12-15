@@ -27,6 +27,7 @@ public class ActividadTag {
 		private String comentarios;
 		private String descFalla;
 		private Calendar fechaJornada;
+		private Turno turno;
 		
 		public ActividadTag() {
 			super();
@@ -268,6 +269,19 @@ public class ActividadTag {
 
 		public void setFechaJornada(Calendar fechaJornada) {
 			this.fechaJornada = fechaJornada;
+		}
+
+
+	    @ManyToOne
+	    @JoinColumn(name = "id_Turno",referencedColumnName = "idTurno")	
+		public Turno getTurno() {
+			return turno;
+		}
+
+
+
+		public void setTurno(Turno turno) {
+			this.turno = turno;
 		}
 
 

@@ -244,10 +244,10 @@ public class ControladorActividadTag {
 	
 	@RequestMapping("graficosTipoParadasMp")
 	@ResponseBody		
-	public List<Object[]> graficoTipoParadasMp(String filtro, String grupo, int idSucursal, int idDispositivo,String inicio, String fin){
+	public List<Object[]> graficoTipoParadasMp(String filtro, String grupo, int idSucursal, int idDispositivo,int idTurno, String inicio, String fin){
 		// Grupo = Turno, Dia, Mes
 		// Filtro = Sucursal, Maquina
-		List<Object[]> resulParadas = daoActividad.findParadasByDispositivoGroupTipoAndFecha(idDispositivo);
+		List<Object[]> resulParadas = null;
 		
 		if (grupo.equals("Dia")){
 			
@@ -261,8 +261,17 @@ public class ControladorActividadTag {
 			
 		}else if (grupo.equals("Mes")) {
 		}else if (grupo.equals("Turno")) {
+			if (filtro.equals("Sucursal")){
+				
+			}else if (filtro.equals("Dispositivo")){
+				
+				resulParadas = daoActividad.findParadasByDispositivoAndTurno(idDispositivo,idTurno);
+				//List<Object[]> resulParadas = daoActividad.findParadasByDispositivoGroupTipoAndFecha(idDispositivo);
+				
+			}
 			
 		}
+		
 		
 		return resulParadas;
 	}

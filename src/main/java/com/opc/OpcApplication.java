@@ -309,7 +309,7 @@ public class OpcApplication {
 		int cantActual = 0;
 		int cantAcum = 0;
         String minActual = "99";
-       // Calendar f_Jornada = cturno.determinarFechaJornada(fecha, turno);
+        Calendar f_Jornada = determinarFechaJornada(fecha, turno);
         
 		if (horaStr.equals("00")){
 		
@@ -359,7 +359,7 @@ public class OpcApplication {
 			eficAct.setTurno(turno);
 			eficAct.setValorPr(00.0f);
 			eficAct.setDispositivo(dispo);
-			//eficAct.setFechaJornada(f_Jornada);
+			eficAct.setFechaJornada(f_Jornada);
 			daoEficiencia.save(eficAct);
 		
 		}
@@ -671,6 +671,7 @@ public class OpcApplication {
 											} 
 						                    
 						                    evento.setFechaJornada(fJornada);
+						                    evento.setTurno(tJornada);
 						                    
 						                    daoActividadTag.save(evento);
 					                	}

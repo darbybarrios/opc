@@ -507,20 +507,21 @@ function graficoPrMP($http,$scope,baseUrl,notificationService,id){
 	
 }
 
-function grafico1MP($http,$scope,baseUrl,id){
+function grafico1MP($http,$scope,baseUrl,id,idSucursal,idTurno,inicio,fin,t){
 	  
-	$scope.labelsGr1MP = ["No Planeados", "Planeados"];
-	$scope.dataGr1MP = [300, 500];
+  if (t == 60){
 	
-  /* $http.get(baseUrl + '/graficoParadasMp?idDispositivo='+id)
+   $http.get(baseUrl + '/graficosTipoParadasMp?filtro=Dispositivo&grupo=Turno&idSucursal='+idSucursal+'&idDispositivo='+id+'&idTurno='+idTurno+'&inicio')
 	.success(function(result){
-		$scope.grParadas = result;
-		if ($scope.grParadas != null){
-	        for (var i = 0; i < $scope.grParadas.length; i++) {
+		$scope.grParadas1MP = result;
+		$scope.labelsGr1MP = [];
+		$scope.dataGr1MP = [];
+		if ($scope.grParadas1MP != null){
+	        for (var i = 0; i < $scope.grParadas1MP.length; i++) {
                 
 	               // notificationService.error($scope.graficoPrMP[0][2]);
-	                $scope.labelsGr1MP.push($scope.graficoPrMP[i][1]);
-	                $scope.dataGr1MP.push($scope.graficoPrMP[i][0]);
+	                $scope.labelsGr1MP.push($scope.grParadas1MP[i][1]);
+	                $scope.dataGr1MP.push($scope.grParadas1MP[i][0]);
 	                
 	         
 	        }	
@@ -528,9 +529,9 @@ function grafico1MP($http,$scope,baseUrl,id){
 			{
 		}
 
-	});  */
+	});  
     
-    
+  }   
 }
 
 function grafico2MP($http,$scope,baseUrl,id){
@@ -1999,12 +2000,15 @@ app.controller("TagsController", ['$scope','$http','notificationService',functio
 app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','notificationService','$filter','ngProgressFactory',function($scope, $http,$timeout,$rootScope,notificationService,$filter,ngProgressFactory) {
 	var baseUrl = ".";
 	listar_maquinas($http,$scope,baseUrl);
-	
+	var idSucursal = 1;
+	inicio = '01/01/1970';
+	fin = '01/01/1970';
 	iniciar_elementos();
 	limpiar_tags($http,$scope,baseUrl);
 	buscar_turno_actual($http,$scope,baseUrl);
 	iniciarGraficoPrMP($http,$scope,$filter,baseUrl);
 	iniciar_progressBars($http,$scope,baseUrl,ngProgressFactory);
+	$scope.temporizador = 59;
 	/*
 	
 	$scope.tag1valor = "-";
@@ -2029,6 +2033,7 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 		$scope.conectado = null;
 		$rootScope.selLineaG = $scope.selLinea;
 		buscar_turno_actual($http,$scope,baseUrl);
+		$scope.temporizador = $scope.temporizador + 1;
 		
 
 		
@@ -2044,7 +2049,7 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 			  }else{
 				  graficoPrMP($http,$scope,baseUrl,notificationService,$scope.tagDispo2.idDispositivo);
 				  buscar_ultimosTurnos($http,$scope,baseUrl,ngProgressFactory,$scope.tagDispo2.idDispositivo);
-				  grafico1MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo);
+				  grafico1MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo,idSucursal,$scope.turnoActual.idTurno,inicio,fin,$scope.temporizador);
 				  grafico2MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo);
 				  grafico3MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo);
 			  }
@@ -2065,6 +2070,10 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 					   buscar_valor_tag5($http,$scope,baseUrl);
 					   //buscar_valor_tag6($http,$scope,baseUrl); 
 					   eficienciaTurno($http,$scope,baseUrl);
+						if (($scope.temporizador) == 60){
+							$scope.temporizador = 0;
+						}
+
 					   $timeout($scope.activateRealtime, 1000);	
 					
 					}
