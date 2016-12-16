@@ -539,6 +539,31 @@ function grafico2MP($http,$scope,baseUrl,id){
 	  
 	$scope.labelsGr2MP = ["Dosificador", "Cremallera","Dispensador","Tira","Carril"];
 	$scope.dataGr2MP = [300, 500,150,200,340];
+
+	  if (t == 60){
+			
+		   $http.get(baseUrl + '/graficosCausaFallaParadasMp?filtro=Dispositivo&grupo=Turno&idSucursal='+idSucursal+'&idDispositivo='+id+'&idTurno='+idTurno+'&inicio')
+			.success(function(result){
+				$scope.grParadas2MP = result;
+				$scope.labelsGr2MP = [];
+				$scope.dataGr2MP = [];
+				if ($scope.grParadas2MP != null){
+			        for (var i = 0; i < $scope.grParadas2MP.length; i++) {
+		                
+			               // notificationService.error($scope.graficoPrMP[0][2]);
+			                $scope.labelsGr2MP.push($scope.grParadas2MP[i][1]);
+			                $scope.dataGr2MP.push($scope.grParadas2MP[i][0]);
+			                
+			         
+			        }	
+				}else
+					{
+				}
+
+			});  
+		    
+		  } 	
+	
 }
 
 function grafico3MP($http,$scope,baseUrl,id){
@@ -2051,7 +2076,7 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 				  graficoPrMP($http,$scope,baseUrl,notificationService,$scope.tagDispo2.idDispositivo);
 				  buscar_ultimosTurnos($http,$scope,baseUrl,ngProgressFactory,$scope.tagDispo2.idDispositivo);
 				  grafico1MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo,idSucursal,$scope.turnoActual.idTurno,inicio,fin,$scope.temporizador);
-				  grafico2MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo);
+				  grafico2MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo,idSucursal,$scope.turnoActual.idTurno,inicio,fin,$scope.temporizador);
 				  grafico3MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo);
 			  }
 			  

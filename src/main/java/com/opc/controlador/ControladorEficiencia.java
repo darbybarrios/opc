@@ -123,21 +123,21 @@ public class ControladorEficiencia {
           	aux[3] = resulMaq.get(i)[3];
  
 			BigInteger und = (BigInteger) aux[2];		
-			BigDecimal vel = (BigDecimal) aux[3];
+			int vel = (int) aux[3];
 			int undInt = und.intValue();
 			int velSet = velocidadSeteada(idDispo); //Velocidad Seteada Directo en la Maquina
 		
-		/*	double velDou = vel.doubleValue();     
+			double velDou = (double) vel;     
 			if (velDou > 0){
 				pr = ((undInt)/((1440)*velDou));  //1440 Min tiene el dia
 			}
 			
-			*/
-			if (velSet > 0){
-					pr = ((undInt)/((1440)*velSet));
-			}
 			
-			aux[4] = round(pr,2);
+			/*if (velSet > 0){
+					pr = ((undInt)/((1440)*velSet));
+			}*/
+			
+			aux[4] = round(pr*100,2);
         	
         	resulPr.add(i, aux);
         	          
@@ -178,27 +178,35 @@ public class ControladorEficiencia {
 		int velSet = velocidadSeteada(idDispositivo); //Velocidad Seteada Directo en la Maquina
 		
 		double pr = 0.0;
+
 		if (valoresActuales != null){
 			
 			
 			BigInteger und = (BigInteger) valoresActuales.get(0)[2];		
-			BigDecimal vel = (BigDecimal) valoresActuales.get(0)[3];
+			//BigDecimal vel = (BigDecimal) valoresActuales.get(0)[3];
+			int vel = (int) valoresActuales.get(0)[3];
+			
+			
 			
 			int undInt = und.intValue();
-			/*double velDou = vel.doubleValue();
+			//double velDou = vel.doubleValue();
+			double velDou = vel;
 			
 			if (velDou > 0){
-				pr = ((undInt)/((tAgendado)*velDou));
+				pr = ((undInt)/((1440)*velDou));
 			}
-			*/
-			if (velSet > 0){
-				pr = ((undInt)/((1440)*velSet));
-			}			
+			
+		
+			/*if (velSet > 0){
+				
+			
+				pr = (((undInt)/((1440)*velSet))*100);
+			}	*/		
 			
 			
 		}
 		
-		return (round(pr,2));
+		return (round(pr*100,2));
 		
 	}	
 
@@ -231,22 +239,22 @@ public class ControladorEficiencia {
     		long tAgendado = tiempoTurno(turno);          	
  
 			BigInteger und = (BigInteger) aux[4];		
-			BigDecimal vel = (BigDecimal) aux[5];
+			int vel = (int) aux[5];
 			int undInt = und.intValue();
 			
 			
 			
-			/*double velDou = vel.doubleValue();         
+			double velDou = (double) vel;         
 			if (velDou > 0){
 				pr = ((undInt)/((tAgendado)*velDou));  //1440 Min tiene el dia
 			}
 			
-			*/
+			/*
 			
 			if (velSet > 0){
 				pr = ((undInt)/((tAgendado)*velSet));  //1440 Min tiene el dia
-			}
-			aux[6] = round(pr,2);
+			}*/
+			aux[6] = round(pr*100,2);
         	
         	resulPr.add(i, aux);
         	          

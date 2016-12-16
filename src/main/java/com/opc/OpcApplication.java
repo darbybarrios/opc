@@ -34,6 +34,7 @@ import com.opc.controlador.ControladorTurnos;
 import com.opc.modelo.ActividadTag;
 import com.opc.modelo.DetalleTag;
 import com.opc.modelo.Dispositivo;
+import com.opc.modelo.Maquina;
 import com.opc.modelo.ProductoMaquina;
 import com.opc.modelo.ResumenConectividad;
 import com.opc.modelo.ResumenEficiencia;
@@ -44,6 +45,7 @@ import com.opc.modelo.accesarDispositivo;
 import com.opc.repositorio.RepositorioActividadTag;
 import com.opc.repositorio.RepositorioDetalleTag;
 import com.opc.repositorio.RepositorioDispositivo;
+import com.opc.repositorio.RepositorioMaquina;
 import com.opc.repositorio.RepositorioProducto;
 import com.opc.repositorio.RepositorioProductoMaquina;
 import com.opc.repositorio.RepositorioResumenConectividad;
@@ -293,7 +295,7 @@ public class OpcApplication {
 	
     public void guardarEficiencia(Dispositivo dispo, RepositorioActividadTag daoActividad, RepositorioProducto daoProducto,
                                   RepositorioProductoMaquina daoProductoMaq, RepositorioTurno daoTurno, RepositorioTag daoTag,
-                                  RepositorioResumenEficiencia daoEficiencia) throws ParseException{
+                                  RepositorioResumenEficiencia daoEficiencia, RepositorioMaquina daoMaquina) throws ParseException{
     	
     	//ControladorTurnos contTur = new ControladorTurnos().turno_actual();
     	//ControladorTurnos cturno = new ControladorTurnos();
@@ -310,6 +312,13 @@ public class OpcApplication {
 		int cantAcum = 0;
         String minActual = "99";
         Calendar f_Jornada = determinarFechaJornada(fecha, turno);
+        
+		
+		Maquina maq = daoMaquina.findOne(dispo.getMaquina().getIdMaquina());
+		int velSet = maq.getVelocidad();
+		
+        
+        
         
 		if (horaStr.equals("00")){
 		
@@ -348,6 +357,7 @@ public class OpcApplication {
 			eficAct.setProductoMaquina(prodMaq);
 			eficAct.setStatCalculo("0");
 			eficAct.setVelocidad(totund);
+			eficAct.setVelSeteada(velSet);
 			
 			/*if (velActual == null){
 				eficAct.setVelocidad(0);
@@ -371,7 +381,8 @@ public class OpcApplication {
 	public CommandLineRunner demo(RepositorioTag daoTag,RepositorioDispositivo daoDispositivo, 
 			RepositorioDispositivo repositorioDispositivo,RepositorioActividadTag daoActividadTag,
 			RepositorioDetalleTag daoDetalleTag, RepositorioProducto daoProducto,RepositorioProductoMaquina daoProductoMaq, 
-			RepositorioTurno daoTurno, RepositorioResumenEficiencia daoEficiencia, RepositorioResumenConectividad daoResumenConn){
+			RepositorioTurno daoTurno, RepositorioResumenEficiencia daoEficiencia, RepositorioResumenConectividad daoResumenConn,
+			RepositorioMaquina daoMaquina){
 		return (args) -> {
 			
 			List<Dispositivo> listaDispo = daoDispositivo.findByStatReg("0");
@@ -383,8 +394,8 @@ public class OpcApplication {
 			final Group group = server.addGroup ( "fallas" );
 			
 			
-		//	acceso.cargarPlcs();
-		//	acceso.cargarTags("Todos");
+			//acceso.cargarPlcs();
+			//acceso.cargarTags("Todos");
 			
 			
 			//accesarDispositivo acceso = new accesarDispositivo();
@@ -589,7 +600,7 @@ public class OpcApplication {
 						                		DateFormat mm = new SimpleDateFormat("mm");
 						                		String minStr = mm.format(new Date());
 						                		if (!minStr.equals(minAnt)){
-						                			guardarEficiencia(dispo,daoActividadTag,daoProducto,daoProductoMaq,daoTurno,daoTag,daoEficiencia);
+						                			guardarEficiencia(dispo,daoActividadTag,daoProducto,daoProductoMaq,daoTurno,daoTag,daoEficiencia,daoMaquina);
 						                		    minAnt = minStr;
 						                		}
 						                	} catch (ParseException e1) {

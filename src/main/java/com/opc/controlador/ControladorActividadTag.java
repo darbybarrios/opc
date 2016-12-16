@@ -276,6 +276,38 @@ public class ControladorActividadTag {
 		return resulParadas;
 	}
 	
-	
+	@RequestMapping("graficosCausaFallaParadasMp")
+	@ResponseBody		
+	public List<Object[]> graficoCausaFallasMp(String filtro, String grupo, int idSucursal, int idDispositivo,int idTurno, String inicio, String fin){
+		// Grupo = Turno, Dia, Mes
+		// Filtro = Sucursal, Maquina
+		List<Object[]> resulParadas = null;
+		
+		if (grupo.equals("Dia")){
+			
+			if (filtro.equals("Sucursal")){
+				
+			}else if (filtro.equals("Dispositivo")){
+				
+				//List<Object[]> resulParadas = daoActividad.findParadasByDispositivoGroupTipoAndFecha(idDispositivo);
+				
+			}
+			
+		}else if (grupo.equals("Mes")) {
+		}else if (grupo.equals("Turno")) {
+			if (filtro.equals("Sucursal")){
+				
+			}else if (filtro.equals("Dispositivo")){
+				
+				resulParadas = daoActividad.findParadasByDispositivoAndTurnoByCausaFalla(idDispositivo, idTurno);
+				//List<Object[]> resulParadas = daoActividad.findParadasByDispositivoGroupTipoAndFecha(idDispositivo);
+				
+			}
+			
+		}
+		
+		
+		return resulParadas;
+	}	
 
 }

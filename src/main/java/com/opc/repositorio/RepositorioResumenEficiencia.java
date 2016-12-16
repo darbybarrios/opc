@@ -20,7 +20,7 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
 			  "r.id_dispositivo, " +
 			  "date(r.fec_Registro), " +
 			  "sum(r.cant_Unidades) as Total, " +
-			  "round(avg(r.velocidad),2) as Velocidad " +
+			  "max(r.vel_seteada) as Velocidad " +
 			"From " +
 			  "Resumen_Eficiencia r " +
 			"Where r.id_dispositivo = :idDispo " +
@@ -31,7 +31,7 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
 	
 	@Query(value="Select " +
 					"resumen_eficiencia.id_dispositivo,  resumen_eficiencia.id_turno, " +
-					"Sum(resumen_eficiencia.cant_unidades) As Total,  round(Avg(resumen_eficiencia.velocidad),2) As Velocidad " +
+					"Sum(resumen_eficiencia.cant_unidades) As Total,  max(resumen_eficiencia.vel_seteada) As Velocidad " +
 				 "From resumen_eficiencia " +
 				 "Where (date(fec_registro) = current_date) And resumen_eficiencia.id_turno = :idTurno And resumen_eficiencia.id_dispositivo = :idDispo  " + 
 				 "Group By " +
@@ -41,7 +41,7 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
 	
 	@Query(value="Select " +
 				 "resumen_eficiencia.id_dispositivo,  resumen_eficiencia.id_turno, turno.desc_turno, date(fec_registro), " +
-				 "sum(resumen_eficiencia.cant_unidades) As Total,  round(Avg(resumen_eficiencia.velocidad),2) As Velocidad " +
+				 "sum(resumen_eficiencia.cant_unidades) As Total,  max(resumen_eficiencia.vel_seteada) As Velocidad " +
 				 "From resumen_eficiencia Inner Join turno On resumen_eficiencia.id_turno = turno.id_turno " +
 			     "where resumen_eficiencia.id_dispositivo = :idDispo " +
 			     "Group By " +
