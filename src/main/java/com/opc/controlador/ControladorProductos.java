@@ -78,7 +78,8 @@ public class ControladorProductos {
 	public void editar(int idProducto, String descProducto, String statProducto){
 		try{
 			
-			Producto producto =  daoProductos.findOne(idProducto);
+			Producto producto =  new Producto();
+			producto.setIdProducto(idProducto);
 			producto.setDescProducto(descProducto);
 			producto.setStatProducto(statProducto);
 			daoProductos.save(producto);

@@ -26,6 +26,17 @@ function listar_dispositivos($http,$scope,baseUrl){
 	
 }
 
+function listar_sucursales($http,$scope,baseUrl){	
+	$scope.sucursal = [];
+	$http.get(baseUrl + "/listar-sucursales").success(function (data) {      
+		$scope.sucursales = data;        
+		iniciar_tabla('#tbsucursales')
+
+	});
+	
+}
+
+
 function listar_productos($http,$scope,baseUrl){	
 	$scope.productos = [];
 	$http.get(baseUrl + "/listar-productos").success(function (data) {      
@@ -1555,14 +1566,59 @@ app.filter('fecActual',['$filter',  function($filter) {
 
 //----------------------------------- Sucursales ----------------------------------------------------------//
 
-app.controller("ListadoSucursalesController", ['$scope', 'remoteResource',function($scope, remoteResource) {
-    $scope.sucursales = [];
+app.controller("ListadoSucursalesController", ['$scope','$http','$filter',function($scope, $http,$filter) {
+	$http.defaults.headers.post["Content-Type"] = "application/json";
+	var baseUrl = ".";
+	listar_sucursales($http, $scope, baseUrl);
+	
+	
+	
+	$scope.insertarSucursal = function(){
+		
+		$http.post(baseUrl + '/nueva-sucursal?estado='+$scope.estado+'&direccion='+$scope.direccion+'&nombre='+$scope.nombre+
+				'&telefono='+$scope.telefono+'&turnos='+$scope.turnos)
+		.success(function(response){
+			$('#crear').modal('hide');
+			$http.get(baseUrl + "/listar-sucursales").success(function (data) {      
+				$scope.sucursales = data;
+			});
+			$scope.estado=null;
+			$scope.direccion=null;
+			$scope.nombre=null;
+			$scope.telefono=null;
+			$scope.turnos=null;
+		});	
+		
+	}
+	
+	$scope.editar = function (index) {
+		$scope.indSucursal= index;
+		$http.get(baseUrl + '/buscar-sucursal?idSuc='+$scope.sucursales[$scope.indSucursal].idSucursal).
+		success(function(data){
+			$scope.modifSucursal = data;
+			$scope.estado=$scope.modifSucursal.estado;
+			$scope.direccion=$scope.modifSucursal.direccion;
+			$scope.nombre=$scope.modifSucursal.nombre;
+			$scope.telefono=$scope.modifSucursal.telefono;
+			$scope.turnos=$scope.modifSucursal.turnos;
+			});
+	};
+	
+	$scope.editarSucursal = function(){
+		$http.put(baseUrl + '/editar-sucursal?idSuc='+$scope.sucursales[$scope.indSucursal].idSucursal+'&estado='+$scope.estado+'&direccion='+$scope.direccion+'&nombre='+$scope.nombre+
+				'&telefono='+$scope.telefono+'&turnos='+$scope.turnos).
+		success(function(response){
+				$('#editar').modal('hide');
+				$http.get(baseUrl + "/listar-sucursales").success(function (data) {      
+					$scope.sucursales = data;
+					
+			});
 
-    remoteResource.list(function(sucursales) {
-      $scope.sucursales = sucursales;
-    }, function(data, status) {
-      alert("Ha fallado la petición. Estado HTTP:" + status);
-    });
+			});
+		
+	}
+
+    
 
 }]);
 
@@ -1570,8 +1626,7 @@ app.controller("ListadoSucursalesController", ['$scope', 'remoteResource',functi
 
 
 app.controller("ListadoProductosController", ['$scope','$http','$filter','$uibModal',function($scope, $http,$filter,$uibModal) {
-	$scope.visible = "N";
-	$scope.index = 0;
+	
 	$http.defaults.headers.post["Content-Type"] = "application/json";
 	var baseUrl = ".";
 	listar_productos($http, $scope, baseUrl);
@@ -1635,8 +1690,8 @@ app.controller("ListadoProductosController", ['$scope','$http','$filter','$uibMo
 		
 	}
 	
-		$scope.editarProducto = function(index){
-				$http.put(baseUrl + '/editar-producto?idProducto='+$scope.productos[$scope.index].idProducto+'&descProducto='+$scope.txtDescProducto
+		$scope.editarProducto = function(){
+				$http.put(baseUrl + '/editar-producto?idProducto='+$scope.productos[$scope.indProd].idProducto+'&descProducto='+$scope.txtDescProducto
 						+'&statProducto='+$scope.txtEstatus).
 				success(function(response){
 						$('#editar').modal('hide');
@@ -1648,10 +1703,6 @@ app.controller("ListadoProductosController", ['$scope','$http','$filter','$uibMo
 					});
 				
 			}
-		
-		
-	
-	
 	
 }]);
 
