@@ -1638,7 +1638,7 @@ app.config(['ChartJsProvider', function (ChartJsProvider) {
     });
     
     ChartJsProvider.setOptions('doughnut', {
-        showLines: true
+        legend: true
       });    
   }]);
 

@@ -1,6 +1,7 @@
 package com.opc.repositorio;
 
 import java.sql.Array;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -50,6 +51,15 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
 			     "limit 4",nativeQuery = true)	
 	List<Object[]> findPrTurnoDiaByIdDispo(@Param("idDispo") int idDispo);
 	
+	/*
+	long findTiempoRestadoByDia(@Param("idDispo") int idDispo, @Param("Fecha") Calendar fecha);
+	
+	*/
+	@Query(value="Select case when Sum(actividad_tag.duracion_ms) is null then 0 else Sum(actividad_tag.duracion_ms) end " +
+                 "From actividad_tag Inner Join tag On actividad_tag.id_tag = tag.id_tag Inner Join causa_falla " +
+                 "On actividad_tag.id_causa_falla = causa_falla.id_causa_falla Where actividad_tag.duracion_ms > 0 and actividad_tag.id_causa_falla is not null " +
+                 "And causa_falla.resta_tiempo = 'si' And tag.id_dispositivo = :idDispo And date(actividad_tag.fecha_jornada) = date(:Fecha)",nativeQuery=true)
+	long findTiempoRestadoByDia(@Param("idDispo") int idDispo, @Param("Fecha") String fecha);
 	
 	
 }

@@ -69,6 +69,24 @@ public class ControladorEficiencia {
 	    return bd.doubleValue();
 	}
 	
+	public long tiempoParadas(String tipo, int idDispositivo, int idTurno, Date inicio, Date fin){
+		
+		long resul = 0;
+		DateFormat dateC = new SimpleDateFormat("yyyy-MM-dd");
+		String inicioStr = dateC.format(inicio);
+		
+		if (tipo.equals("Turno")){
+			
+		}else if (tipo.equals("Dia")){
+			
+			resul = daoEficiencia.findTiempoRestadoByDia(idDispositivo, inicioStr);
+			
+		}else if (tipo.equals("Rango")){
+			
+		}
+		return resul;
+	}
+	
 	
 	@RequestMapping("velocidadSeteada")
 	@ResponseBody	
@@ -126,10 +144,13 @@ public class ControladorEficiencia {
 			int vel = (int) aux[3];
 			int undInt = und.intValue();
 			int velSet = velocidadSeteada(idDispo); //Velocidad Seteada Directo en la Maquina
+			Date fecha = (Date) aux[1];
+			
+			long tRest = (tiempoParadas("Dia",idDispo,0,fecha,new Date()))/60000;
 		
 			double velDou = (double) vel;     
 			if (velDou > 0){
-				pr = ((undInt)/((1440)*velDou));  //1440 Min tiene el dia
+				pr = ((undInt)/((1440 - tRest)*velDou));  //1440 Min tiene el dia
 			}
 			
 			
@@ -193,7 +214,7 @@ public class ControladorEficiencia {
 			double velDou = vel;
 			
 			if (velDou > 0){
-				pr = ((undInt)/((1440)*velDou));
+				pr = ((undInt)/((tAgendado)*velDou));
 			}
 			
 		
