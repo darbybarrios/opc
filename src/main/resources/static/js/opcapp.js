@@ -48,6 +48,7 @@ function listar_productos($http,$scope,baseUrl){
 }
 
 function listar_marcas($http,$scope,baseUrl){
+	$scope.marcas = [];
 	$http.get(baseUrl + "/listar-marcas").success(function (data) {
 		$scope.marcas = data;
 		iniciar_tabla('#tbmarca')
@@ -56,6 +57,7 @@ function listar_marcas($http,$scope,baseUrl){
 }
 
 function listar_maquinas($http,$scope,baseUrl){
+	$scope.maquinas = [];
 	$http.get(baseUrl + "/listar-maquinas").success(function (data) {		
 		  $scope.maquinas = data;
 		  iniciar_tabla('#tbmaquinas')
@@ -1716,40 +1718,38 @@ app.controller("ListadoMarcasController", ['$scope','$http','$filter',function($
 	listar_marcas($http, $scope, baseUrl);
 	
 	$scope.insertarMarca = function(){	
-    	
-    	if ($scope.txtDesc==""){
-    		alert("Campo en blanco");
-    	}
-    	else{
-    		$http.get(baseUrl + '/nueva-marca?desc='+$scope.txtDesc).
-    		success(function(data){
-    			alert("Marca agregada");
-    			//
-    			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
-    			listar_marcas($http,$scope,baseUrl);
-    			//refrescar_tabla('#tbdata');
+    		$http.post(baseUrl + '/nueva-marca?desc='+$scope.txtDesc).
+    		success(function(response){
+    			$('#crear').modal('hide');
+    			$http.get(baseUrl + "/listar-marcas").success(function (data) {      
+					$scope.marcas = data;
+    			});
     			$scope.txtDesc=null;
   
     		});
-
-    	}
-
     }
 	
-	$scope.removerMarca = function(index){    	
-		 
-		$scope.marcas.splice(index, 1 );		
-		//alert($scope.dispositivos[index].idDispositivo);
-		$http.get(baseUrl + '/eliminar-marca?id='+$scope.marcas[index].idMarca+'&statReg=1').
-		success(function(data){
-			alert("Producto Eliminado");
-			//
-			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
-			listar_marcas($http,$scope,baseUrl);
-			//refrescar_tabla('#tbdata');
+	$scope.editar = function (index) {
+		$scope.indMarca = index;
+		$http.get(baseUrl + '/consultar-marca?idMarca='+$scope.marcas[$scope.indMarca].idMarca).
+		success(function(data){				
+				$scope.descripcion = data.descripcion;
+			});
+	};
+	
+	$scope.editarMarca = function(){
+		$http.put(baseUrl + '/editar-marca?idMarca='+$scope.marcas[$scope.indMarca].idMarca+'&desc='+$scope.descripcion).
+		success(function(response){
+				$('#editar').modal('hide');
+				$http.get(baseUrl + "/listar-marcas").success(function (data) {      
+					$scope.marcas = data;
+					
+			});
 
-		});		
+			});
+		
 	}
+	
 }]);
 
 
@@ -1759,41 +1759,40 @@ app.controller("ListadoMarcasController", ['$scope','$http','$filter',function($
 app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function($scope, $http,$filter) {
 	var baseUrl = ".";
 	listar_maquinas($http, $scope, baseUrl);
-	listar_productos($http,$scope,baseUrl);
+	$scope.productos = [];
+	$http.get(baseUrl + "/listar-productos").success(function (data) {      
+		$scope.productos = data;     
+	});
 	
 	$scope.insertarMaquina = function(){	
     	
-    	if ($scope.txtNombre==""){
-    		alert("Campo en blanco");
-    	}
-    	else{
-    		$http.get(baseUrl + '/nueva-maquina?nombre='+$scope.txtNombre+'&idProducto='+$scope.setProducto).
-    		success(function(data){
-    			alert("Maquina agregada");
-    			//
-    			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
-    			listar_maquinas($http,$scope,baseUrl);
-    			//refrescar_tabla('#tbdata');
-    			$scope.txtDesc=null;
+    		$http.post(baseUrl + '/nueva-maquina?nombre='+$scope.txtNombre+'&idProducto='+$scope.setProducto).
+    		success(function(response){
+    			$('#crear').modal('hide');
+    			$http.get(baseUrl + "/listar-maquinas").success(function (data) {		
+    				  $scope.maquinas = data;
+    			});	
+    			$scope.txtNombre=null;
     			$scope.setProducto = null;
   
     		});
 
-    	}
 
     }
 	
-	$scope.removerMaquina = function(index){    	
+	$scope.eliminar = function(index){ 
+		$scope.indMaq = index;
+	}
+	
+	$scope.eliminarMaquina = function(){   	
 		 
-		$scope.marcas.splice(index, 1 );		
-		//alert($scope.dispositivos[index].idDispositivo);
-		$http.get(baseUrl + '/eliminar-maquina?id='+$scope.marcas[index].idMarca+'&statReg=1').
-		success(function(data){
-			alert("Maquina Eliminada");
-			//
-			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
-			listar_maquinas($http,$scope,baseUrl);
-			//refrescar_tabla('#tbdata');
+		$http.put(baseUrl + '/eliminar-maquina?idMaquina='+$scope.maquinas[$scope.indMaq].idMaquina).
+		success(function(response){
+			$('#eliminar').modal('hide');
+			$http.get(baseUrl + "/listar-maquinas").success(function (data) {		
+				  $scope.maquinas = data;
+			});
+			
 
 		});		
 	}
@@ -1802,13 +1801,13 @@ app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function
 		 
 		$scope.txtNombre = null;
 		$scope.setProducto = null;
-		listar_productos($http,$scope,baseUrl);
+		$scope.productos = [];
+		$http.get(baseUrl + "/listar-productos").success(function (data) {      
+			$scope.productos = data;     
+		});
 		$scope.indMaq = index;
 		$http.get(baseUrl + '/consultar-maquina?idMaquina='+$scope.maquinas[$scope.indMaq].idMaquina).
-		success(function(data){
-			//alert("Maquina Eliminada");
-			//
-			$scope.maquinaModif = data;
+		success(function(data){			
 			$scope.txtNombre = data.nombre;
 			$scope.setProducto = data.producto.idProducto;
 
@@ -1816,14 +1815,18 @@ app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function
 	}	
 	
 	
-	$scope.actualizarMaquina = function(){    	
-		 
-	
-		$http.get(baseUrl + '/actualizar-ProductoMaquina?nombre='+$scope.txtNombre+'&idMaquina='+$scope.maquinas[$scope.indMaq].idMaquina+'&idProducto='+$scope.setProducto).
-		success(function(data){
-			alert("Maquina Actualizada");
+	$scope.actualizarMaquina = function(){
+		
+			$http.put(baseUrl + '/actualizar-ProductoMaquina?nombre='+$scope.txtNombre+'&idMaquina='+$scope.maquinas[$scope.indMaq].idMaquina+'&idProducto='+$scope.setProducto).
+			success(function(response){
+					$('#editar').modal('hide');
+					$http.get(baseUrl + "/listar-maquinas").success(function (data) {		
+	    				  $scope.maquinas = data;
+					});
 
-		});	
+				});
+			
+		
 	}		
 
 	

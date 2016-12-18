@@ -28,11 +28,28 @@ public class ControladorMarca {
 	
 	@RequestMapping("nueva-marca")
 	@ResponseBody	
-	public String nueva_marca(String desc) throws ParseException{		
+	public void nueva_marca(String desc) throws ParseException{		
 		Marca marcas = new Marca();
 		marcas.setDescripcion(desc);
 		repositorioMarca.save(marcas);
-		return "Marca";
+	}
+	
+	@RequestMapping("consultar-marca")
+	@ResponseBody	
+	public Marca consultar_marca(int idMarca) throws ParseException{		
+		Marca marca = repositorioMarca.findOne(idMarca);
+		return marca;
+		
+	}
+	
+	@RequestMapping("editar-marca")
+	@ResponseBody	
+	public void editar_marca(int idMarca, String desc) throws ParseException{		
+		Marca marca = new Marca();
+		marca.setIdMarca(idMarca);
+		marca.setDescripcion(desc);
+		repositorioMarca.save(marca);
+		
 	}
 	
 	
