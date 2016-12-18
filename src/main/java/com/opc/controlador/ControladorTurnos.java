@@ -31,6 +31,11 @@ public class ControladorTurnos {
 	
 	
 	
+	public ControladorTurnos() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	@RequestMapping("listar-turnos")
 	@ResponseBody
 	public List<Turno> listar_turnos(){
@@ -40,7 +45,7 @@ public class ControladorTurnos {
 
 	@RequestMapping("nuevo-turno")
 	@ResponseBody	
-	public String nuevo_turno(String desc, String inicio, String fin, int idSucursal) throws ParseException{
+	public int nuevo_turno(String desc, String inicio, String fin, int idSucursal, String tipoTurno, int secuencia) throws ParseException{
 		DateFormat formato = new SimpleDateFormat("HH:mm:ss");
 		Date horaIni = formato.parse(inicio);
 		Date horaFin = formato.parse(fin);
@@ -53,9 +58,35 @@ public class ControladorTurnos {
 		
 
 		Sucursal sucursal = daoSucursal.findOne(idSucursal);
-		Turno turn = new Turno(desc,hIni,hFin,"0",sucursal);
+		Turno turn = new Turno(desc,hIni,hFin,"0",sucursal,tipoTurno,secuencia);
 		daoTurno.save(turn);
-		return "Turno";
+		return 1;
+	}
+
+	@RequestMapping("fecha-jornada-actual")
+	@ResponseBody	
+	public Calendar determinarFechaJornada(Calendar fecha, Turno turno) throws ParseException{
+		Calendar fechaInicio = null;
+		DateFormat dateF = new SimpleDateFormat("HH:mm");
+		String horaCorte = "00:00";
+		Date horaC = dateF.parse(horaCorte);
+		String ini = dateF.format(fecha.getTime());
+		Date horaActual = dateF.parse(ini);
+		
+		if (turno.getTipoTurno().equals("D")){
+				fechaInicio = fecha;					
+		}else{
+			if ((horaActual.compareTo(horaC)) > 0) {
+				fechaInicio = fecha;
+				fechaInicio.add(Calendar.DAY_OF_MONTH, -1);
+				
+			}else{
+				
+				fechaInicio = fecha;
+			}
+		}
+		
+		return fechaInicio;
 	}
 
 	

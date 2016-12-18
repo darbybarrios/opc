@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 @Entity
 public class Turno {
@@ -29,18 +30,23 @@ public class Turno {
 	@NotNull
 	private Sucursal sucursal;
 	private String tipoTurno;
+	private int secuencia;     //Orden de los Turnos	
+
 	
 	public Turno(){
 		
 	}
 		
-	public Turno(String descTurno,Calendar inicio, Calendar fin, String statTurno, Sucursal sucursal) {
+	public Turno(String descTurno,Calendar inicio, Calendar fin, String statTurno, Sucursal sucursal, String tipoTurno, int secuencia) {
 		super();
 		this.descTurno = descTurno;
 		this.inicio = inicio;
 		this.fin = fin;
 		this.statTurno = statTurno;
 		this.sucursal = sucursal;
+		this.tipoTurno = tipoTurno;
+		this.secuencia = secuencia;
+
 	}
 
 	@Id
@@ -101,8 +107,17 @@ public class Turno {
 
 	public void setTipoTurno(String tipoTurno) {
 		this.tipoTurno = tipoTurno;
-	}	
-	
+	}
+
+	public int getSecuencia() {
+		return secuencia;
+	}
+
+	public void setSecuencia(int secuencia) {
+		this.secuencia = secuencia;
+	}
+
+
 	
 	
 

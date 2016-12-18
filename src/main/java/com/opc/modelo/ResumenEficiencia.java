@@ -22,6 +22,8 @@ public class ResumenEficiencia {
 	private Turno turno;
 	private ProductoMaquina productoMaquina;
 	private Dispositivo dispositivo;
+	private Calendar fechaJornada;
+	private int velSeteada;
 	
 	public ResumenEficiencia() {
 		super();
@@ -129,6 +131,22 @@ public class ResumenEficiencia {
 
 	public void setDispositivo(Dispositivo dispositivo) {
 		this.dispositivo = dispositivo;
+	}
+
+	public Calendar getFechaJornada() {
+		return fechaJornada;
+	}
+
+	public void setFechaJornada(Calendar fechaJornada) {
+		this.fechaJornada = fechaJornada;
+	}
+
+	public int getVelSeteada() {
+		return velSeteada;
+	}
+
+	public void setVelSeteada(int velSeteada) {
+		this.velSeteada = velSeteada;
 	}
 	
 	

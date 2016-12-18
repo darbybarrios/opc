@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.opc.modelo.ActividadTag;
 import com.opc.modelo.Dispositivo;
+import com.opc.modelo.Maquina;
 import com.opc.modelo.ResumenEficiencia;
 import com.opc.modelo.Tag;
 import com.opc.modelo.Turno;
@@ -68,6 +69,34 @@ public class ControladorEficiencia {
 	    return bd.doubleValue();
 	}
 	
+	public long tiempoParadas(String tipo, int idDispositivo, int idTurno, Date inicio, Date fin){
+		
+		long resul = 0;
+		DateFormat dateC = new SimpleDateFormat("yyyy-MM-dd");
+		String inicioStr = dateC.format(inicio);
+		
+		if (tipo.equals("Turno")){
+			
+		}else if (tipo.equals("Dia")){
+			
+			resul = daoEficiencia.findTiempoRestadoByDia(idDispositivo, inicioStr);
+			
+		}else if (tipo.equals("Rango")){
+			
+		}
+		return resul;
+	}
+	
+	
+	@RequestMapping("velocidadSeteada")
+	@ResponseBody	
+	public int velocidadSeteada(int idDispositivo){
+		Dispositivo dispo = daoDispositivo.findOne(idDispositivo);
+		Maquina maq = daoMaquina.findOne(dispo.getMaquina().getIdMaquina());
+		int velSet = maq.getVelocidad();
+		return velSet;
+	}
+	
 	public long tiempoTurno(Turno turno) throws ParseException{
 		
 		long horaInicio = turno.getInicio().getTimeInMillis();
@@ -98,8 +127,10 @@ public class ControladorEficiencia {
 	@RequestMapping("graficoEficienciaMaquinaDia")
 	@ResponseBody		
 	public List<Object[]> graficoEficienciaMaquina(int idDispo){
+
 		List<Object[]> resulMaq = daoEficiencia.findByIdDispo(idDispo);
 		List<Object[]> resulPr = new ArrayList<Object[]>();  
+		
 
         for (int i = 0; i < resulMaq.size(); i++) {
         	double pr = 0.0;
@@ -110,12 +141,23 @@ public class ControladorEficiencia {
           	aux[3] = resulMaq.get(i)[3];
  
 			BigInteger und = (BigInteger) aux[2];		
-			BigDecimal vel = (BigDecimal) aux[3];
+			int vel = (int) aux[3];
 			int undInt = und.intValue();
-			double velDou = vel.doubleValue();     
+			int velSet = velocidadSeteada(idDispo); //Velocidad Seteada Directo en la Maquina
+			Date fecha = (Date) aux[1];
+			
+			long tRest = (tiempoParadas("Dia",idDispo,0,fecha,new Date()))/60000;
+		
+			double velDou = (double) vel;     
 			if (velDou > 0){
-				pr = ((undInt)/((1440)*velDou));  //1440 Min tiene el dia
+				pr = ((undInt)/((1440 - tRest)*velDou));  //1440 Min tiene el dia
 			}
+			
+			
+			/*if (velSet > 0){
+					pr = ((undInt)/((1440)*velSet));
+			}*/
+			
 			aux[4] = round(pr*100,2);
         	
         	resulPr.add(i, aux);
@@ -131,6 +173,7 @@ public class ControladorEficiencia {
 	public double eficienciaActual(int idDispositivo, int idTurno) throws ParseException{
 		
 		//double pr = 0.0;
+		
 		List<Object[]> valoresActuales = daoEficiencia.findByIdTurnoAndIdDispo(idTurno, idDispositivo);
 		DateFormat dateF = new SimpleDateFormat("HH:mm");
 		DateFormat dateD = new SimpleDateFormat("yyyy-MM-dd");
@@ -153,25 +196,38 @@ public class ControladorEficiencia {
 		inicioC.setTime(inicio);
 		long tInicio = inicioC.getTimeInMillis();
 		long tAgendado = (tActual - tInicio)/60000;
-
+		int velSet = velocidadSeteada(idDispositivo); //Velocidad Seteada Directo en la Maquina
 		
 		double pr = 0.0;
+
 		if (valoresActuales != null){
 			
 			
 			BigInteger und = (BigInteger) valoresActuales.get(0)[2];		
-			BigDecimal vel = (BigDecimal) valoresActuales.get(0)[3];
+			//BigDecimal vel = (BigDecimal) valoresActuales.get(0)[3];
+			int vel = (int) valoresActuales.get(0)[3];
+			
+			
 			
 			int undInt = und.intValue();
-			double velDou = vel.doubleValue();
+			//double velDou = vel.doubleValue();
+			double velDou = vel;
 			
 			if (velDou > 0){
 				pr = ((undInt)/((tAgendado)*velDou));
 			}
 			
+		
+			/*if (velSet > 0){
+				
+			
+				pr = (((undInt)/((1440)*velSet))*100);
+			}	*/		
+			
+			
 		}
 		
-		return (round(pr,2));
+		return (round(pr*100,2));
 		
 	}	
 
@@ -185,7 +241,7 @@ public class ControladorEficiencia {
 		DateFormat dateD = new SimpleDateFormat("yyyy-MM-dd");
 		DateFormat dateC = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
-					
+		int velSet = velocidadSeteada(idDispo);			
 		
 		
         for (int i = 0; i < resulMaq.size(); i++) {
@@ -204,12 +260,21 @@ public class ControladorEficiencia {
     		long tAgendado = tiempoTurno(turno);          	
  
 			BigInteger und = (BigInteger) aux[4];		
-			BigDecimal vel = (BigDecimal) aux[5];
+			int vel = (int) aux[5];
 			int undInt = und.intValue();
-			double velDou = vel.doubleValue();         
+			
+			
+			
+			double velDou = (double) vel;         
 			if (velDou > 0){
 				pr = ((undInt)/((tAgendado)*velDou));  //1440 Min tiene el dia
 			}
+			
+			/*
+			
+			if (velSet > 0){
+				pr = ((undInt)/((tAgendado)*velSet));  //1440 Min tiene el dia
+			}*/
 			aux[6] = round(pr*100,2);
         	
         	resulPr.add(i, aux);

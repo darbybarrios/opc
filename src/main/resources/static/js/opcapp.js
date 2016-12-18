@@ -126,7 +126,27 @@ function cargarValores($http,$scope,baseUrl){
         }];	
 	
 	
-	
+    $scope.tipoTurno = [{
+        idTipoTurno: "D",
+        descTipoTurno: "Diurno"
+      }, {
+    	  idTipoTurno: "M",
+    	  descTipoTurno: "Mixto"
+      }, {
+    	  idTipoTurno: "N",
+    	  descTipoTurno: "Nocturno"
+      }];	
+    
+    $scope.tipoSecuencia = [{
+        idTipoSecuencia: "1",
+        descTipoSecuencia: "1"
+      }, {
+    	idTipoSecuencia: "2",
+    	descTipoSecuencia: "2"
+      }, {
+    	idTipoSecuencia: "3",
+    	descTipoSecuencia: "3"
+      }];	    
 	
 	
 }
@@ -277,7 +297,10 @@ function buscar_valor_velocidad($http,$scope,baseUrl){
 		  return $http.get(baseUrl +'/velocidadActual?idDispositivo='+$scope.tagDispo3.idDispositivo)
 	}).then(function(result){
 		  $scope.tag3 = result.data;
-
+		  return $http.get(baseUrl +'/velocidadSeteada?idDispositivo='+$scope.tagDispo3.idDispositivo)
+	}).then(function(result){
+		  $scope.velSet = result.data;
+		  $scope.titVel = ' Velocidad Meta : ';
 	})	  
 
 }
@@ -440,6 +463,19 @@ function iniciarGraficoPrMP($http,$scope,$filter,baseUrl){
       };
 }
 
+function iniciarGraficos123PrMP($http,$scope,$filter,baseUrl){
+	
+	  $scope.labelsGr1MP = ['Planeados','No Planeados'];
+	  $scope.dataGr1MP = [0,0];
+	  
+	  $scope.labelsGr2MP = ['Planeados','No Planeados'];
+	  $scope.dataGr2MP = [0,0];
+	  
+	  $scope.labelsGr3MP = ['Lunes','Martes','Miercoles','Jueves','Viernes'];
+	  $scope.dataGr3MP = [0,0,0,0];
+	  $scope.seriesGr3MP = ['Planeados'];
+}
+
 function graficoPrMP($http,$scope,baseUrl,notificationService,id){
       
 			$scope.series = ['Valor Pr'];
@@ -498,30 +534,132 @@ function graficoPrMP($http,$scope,baseUrl,notificationService,id){
 	
 }
 
-function grafico1MP($http,$scope,baseUrl,id){
-	  
-	$scope.labelsGr1MP = ["No Planeados", "Planeados"];
-	$scope.dataGr1MP = [300, 500];
-}
 
-function grafico2MP($http,$scope,baseUrl,id){
-	  
-	$scope.labelsGr2MP = ["Dosificador", "Cremallera","Dispensador","Tira","Carril"];
-	$scope.dataGr2MP = [300, 500,150,200,340];
-}
 
-function grafico3MP($http,$scope,baseUrl,id){
-	  
-	$scope.labelsGr3MP = ["Dosificador", "Cremallera","Dispensador","Tira","Carril"];
-	$scope.dataGr3MP = [300, 500,150,200,340];
+function grafico1MP($http,$scope,baseUrl,id,idSucursal,idTurno,inicio,fin,t){
 	
+	
+  $scope.labelsGr1MP = [];
+  $scope.dataGr1MP = [];
+	
+  if (t == 60){
+	
+   $http.get(baseUrl + '/graficosTipoParadasMp?filtro=Dispositivo&grupo=Turno&idSucursal='+idSucursal+'&idDispositivo='+id+'&idTurno='+idTurno+'&inicio='+inicio+'&fin='+fin)
+	.success(function(result){
+		$scope.grParadas1MP = result;
+		$scope.labelsGr1MP = [];
+		$scope.dataGr1MP = [];
+		if ($scope.grParadas1MP != null){
+	        for (var i = 0; i < $scope.grParadas1MP.length; i++) {
+                
+	               // notificationService.error($scope.graficoPrMP[0][2]);
+	                $scope.labelsGr1MP.push($scope.grParadas1MP[i][1]);
+	                $scope.dataGr1MP.push($scope.grParadas1MP[i][0]);
+	                
+	         
+	        }	
+		}else
+			{
+		}
+
+	});  
+    
+  }   
+}
+
+function grafico2MP($http,$scope,baseUrl,id,idSucursal,idTurno,inicio,fin,t){
+	  
+	//$scope.labelsGr2MP = ["Dosificador", "Cremallera","Dispensador","Tira","Carril"];
+	//$scope.dataGr2MP = [300, 500,150,200,340];
+	
+	$scope.labelsGr2MP = [];
+	$scope.dataGr2MP = [];
+
+	 // if (t == 60){
+			
+		   $http.get(baseUrl + '/graficosCausaFallaParadasMp?filtro=Dispositivo&grupo=Turno&idSucursal='+idSucursal+'&idDispositivo='+id+'&idTurno='+idTurno+'&inicio='+inicio+'&fin='+fin)
+			.success(function(result){
+				$scope.grParadas2MP = result;
+				$scope.labelsGr2MP = [];
+				$scope.dataGr2MP = [];
+				if ($scope.grParadas2MP != null){
+			        for (var i = 0; i < $scope.grParadas2MP.length; i++) {
+		                
+			               // notificationService.error($scope.graficoPrMP[0][2]);
+			                $scope.labelsGr2MP.push($scope.grParadas2MP[i][1]);
+			                $scope.dataGr2MP.push($scope.grParadas2MP[i][0]);
+			                
+			         
+			        }	
+				}else
+					{
+				}
+
+			});  
+		    
+	//	  } 	
+	
+}
+
+function grafico3MP($http,$scope,baseUrl,id,idSucursal,idTurno,inicio,fin,t){
+	  
+
+	/*
 	  $scope.labelsGr3MP= ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
 	  $scope.seriesGr3MP = ['Series A', 'Series B'];
 
 	  $scope.dataGr3MP = [
 	    [65, 59, 80, 81, 56, 55, 40],
 	    [28, 48, 40, 19, 86, 27, 90]
-	  ];
+	  ];  */
+	  
+		
+         $http.get(baseUrl + '/graficosTipoParadasSemanalMp?filtro=Dispositivo&grupo=Dia&idSucursal='+idSucursal+'&idDispositivo='+id+'&idTurno='+idTurno+'&inicio='+inicio+'&fin='+fin)
+			.success(function(result){
+				{
+				
+              	
+				$scope.grafico3MP = result;
+				
+				//Si hay mas de 2 tipos de Paradas se divide entre el nro de tipos
+				var mitad = (($scope.grafico3MP.length))/2;
+				var label = mitad;
+				
+				$scope.labelsGr3MP = [];
+				$scope.dataGr3MP = [];
+				$scope.seriesGr3MP =[];
+				$scope.dataAux = [];
+				
+		        for (var i = 0; i < $scope.grafico3MP.length; i++) {
+		                
+		               // notificationService.error($scope.graficoPrMP[0][2]);
+		        	    
+		                
+		                $scope.dataAux.push($scope.grafico3MP[i][0]);
+		                
+		                if ((i == 0) || (i == mitad)){
+		                	$scope.seriesGr3MP.push($scope.grafico3MP[i][1]);
+		                	
+		                }
+		                
+		                if (i == (mitad-1)){
+		                	$scope.dataGr3MP.push($scope.dataAux);
+		                	$scope.dataAux = [];
+		                	mitad = mitad + mitad;
+		                }
+		                
+		                if (i <= (label -1))	{
+		                	$scope.labelsGr3MP.push($scope.grafico3MP[i][4]);
+		                }
+		                
+		         
+		        }
+		        
+		        $scope.dataGr3MP.push($scope.dataAux);
+		        
+				} 
+			});  
+	  
 }
 
 
@@ -1511,6 +1649,10 @@ app.config(['ChartJsProvider', function (ChartJsProvider) {
     ChartJsProvider.setOptions('line', {
       showLines: true
     });
+    
+    ChartJsProvider.setOptions('doughnut', {
+        legend: true
+      });    
   }]);
 
 
@@ -1545,7 +1687,7 @@ app.filter('time', function($filter)
 		{
 		 return function(input)
 		 {
-		  alert(input);	 
+		  //alert(input);	 
 		  if(input == null){ 
 			  
 			  return ""; 
@@ -1563,6 +1705,7 @@ app.filter('time', function($filter)
 app.filter('fecActual',['$filter',  function($filter) {
     return function() {
         return $filter('date')(new Date(), 'yyyy-MM-dd');
+    	//return $filter('date')(new Date(), 'HH:mm:ss');
     };
 }])
 
@@ -1752,8 +1895,10 @@ app.controller("ListadoMarcasController", ['$scope','$http','$filter',function($
 	
 }]);
 
+//-------------------------------------------------------------------------------------------------------//
+//----------------------------------- MAQUINAS ----------------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------//
 
-//----------------------------------- Maquinas ----------------------------------------------------------//
 
 
 app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function($scope, $http,$filter) {
@@ -1773,6 +1918,18 @@ app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function
     				  $scope.maquinas = data;
     			});	
     			$scope.txtNombre=null;
+    	if ($scope.txtNombre==""){
+    		alert("Campo en blanco");
+    	}
+    	else{
+    		$http.get(baseUrl + '/nueva-maquina?nombre='+$scope.txtNombre+'&idProducto='+$scope.setProducto+'&velocidad='+$scope.txtVelocidad+'&tiempoHambre='+$scope.txtTiempoHambre).
+    		success(function(data){
+    			alert("Maquina agregada");
+    			//
+    			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
+    			listar_maquinas($http,$scope,baseUrl);
+    			//refrescar_tabla('#tbdata');
+    			$scope.txtDesc=null;
     			$scope.setProducto = null;
   
     		});
@@ -1809,6 +1966,8 @@ app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function
 		$http.get(baseUrl + '/consultar-maquina?idMaquina='+$scope.maquinas[$scope.indMaq].idMaquina).
 		success(function(data){			
 			$scope.txtNombre = data.nombre;
+			$scope.txtVelocidad = data.velocidad;
+			$scope.txtTiempoHambre = data.tiempoHambre;
 			$scope.setProducto = data.producto.idProducto;
 
 		});	
@@ -1823,6 +1982,13 @@ app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function
 					$http.get(baseUrl + "/listar-maquinas").success(function (data) {		
 	    				  $scope.maquinas = data;
 					});
+	$scope.actualizarMaquina = function(){    	
+		 
+	
+		$http.get(baseUrl + '/actualizar-ProductoMaquina?nombre='+$scope.txtNombre+'&idMaquina='+$scope.maquinas[$scope.indMaq].idMaquina+'&idProducto='+$scope.setProducto+'&velocidad='+$scope.txtVelocidad+'&tiempoHambre='+$scope.txtTiempoHambre).
+		success(function(data){
+			alert("Maquina Actualizada");
+			listar_maquinas($http,$scope,baseUrl);
 
 				});
 			
@@ -2006,12 +2172,16 @@ app.controller("TagsController", ['$scope','$http','notificationService',functio
 app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','notificationService','$filter','ngProgressFactory',function($scope, $http,$timeout,$rootScope,notificationService,$filter,ngProgressFactory) {
 	var baseUrl = ".";
 	listar_maquinas($http,$scope,baseUrl);
-	
+	var idSucursal = 1;
+	inicio = '01/01/1970';
+	fin = '01/01/1970';
 	iniciar_elementos();
 	limpiar_tags($http,$scope,baseUrl);
 	buscar_turno_actual($http,$scope,baseUrl);
 	iniciarGraficoPrMP($http,$scope,$filter,baseUrl);
+	//iniciarGraficos123PrMP($http,$scope,$filter,baseUrl);
 	iniciar_progressBars($http,$scope,baseUrl,ngProgressFactory);
+	$scope.temporizador = 59;
 	/*
 	
 	$scope.tag1valor = "-";
@@ -2035,6 +2205,8 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 		$scope.tagDispo2 = [];
 		$scope.conectado = null;
 		$rootScope.selLineaG = $scope.selLinea;
+		buscar_turno_actual($http,$scope,baseUrl);
+		$scope.temporizador = $scope.temporizador + 1;
 		
 
 		
@@ -2050,9 +2222,9 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 			  }else{
 				  graficoPrMP($http,$scope,baseUrl,notificationService,$scope.tagDispo2.idDispositivo);
 				  buscar_ultimosTurnos($http,$scope,baseUrl,ngProgressFactory,$scope.tagDispo2.idDispositivo);
-				  grafico1MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo);
-				  grafico2MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo);
-				  grafico3MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo);
+				  grafico1MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo,idSucursal,$scope.turnoActual.idTurno,inicio,fin,$scope.temporizador);
+				  grafico2MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo,idSucursal,$scope.turnoActual.idTurno,inicio,fin,$scope.temporizador);
+				  grafico3MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo,idSucursal,$scope.turnoActual.idTurno,inicio,fin,$scope.temporizador);
 			  }
 			  
 			  
@@ -2071,6 +2243,10 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 					   buscar_valor_tag5($http,$scope,baseUrl);
 					   //buscar_valor_tag6($http,$scope,baseUrl); 
 					   eficienciaTurno($http,$scope,baseUrl);
+						if (($scope.temporizador) == 60){
+							$scope.temporizador = 0;
+						}
+
 					   $timeout($scope.activateRealtime, 1000);	
 					
 					}
@@ -2105,6 +2281,7 @@ app.controller("TurnosController", ['$scope','$http','$filter',function($scope, 
 	var baseUrl = ".";
     var idSucursal = 1;	
     buscarSucursal($http,$scope,baseUrl,idSucursal);
+    cargarValores($http,$scope,baseUrl);
     
 	$http.get(baseUrl + "/listar-turnos").success(function (data) {
 		{ 
@@ -2122,8 +2299,12 @@ app.controller("TurnosController", ['$scope','$http','$filter',function($scope, 
     	else{
     		
 	    		if ($scope.sucursal.turnos > $scope.turnos.length){
-	    		var inicio = $filter('time')($scope.txtInicio+':00');
-		    		$http.get(baseUrl + '/nuevo-turno?desc='+$scope.txtDesc+'&inicio='+$scope.txtInicio+':00'+'&fin='+$scope.txtFin+':00'+'&idSucursal='+idSucursal).
+	    		//var inicio = $filter('time')($scope.txtInicio+':00');
+	    		var inicio = $filter('time')($scope.txtInicio);
+	    		var fin = $filter('time')($scope.txtFin);
+	    		//$scope.txtInicio+':00'+  asi se pasaba el parametyro
+	    		//$scope.txtFin+':00'  
+		    		$http.get(baseUrl + '/nuevo-turno?desc='+$scope.txtDesc+'&inicio='+inicio+'&fin='+fin+'&idSucursal='+idSucursal+'&tipoTurno='+$scope.cboTipoTurno+'&secuencia='+$scope.txtOrden).
 		    		success(function(data){
 		    			alert("Turno agregado");
 		    			//

@@ -101,7 +101,7 @@ public class ControladorTag {
 	
 	@RequestMapping("crear-tag")
 	@ResponseBody	
-	public String crear_tag(String itemId, String descTag, String statWeb,int idUnidadMedida, int idTipoValor, 
+	public int crear_tag(String itemId, String descTag, String statWeb,int idUnidadMedida, int idTipoValor, 
 			int escala, int intervalo, int valorBit, int idDispositivo, String tipoInformacion){
 		String nombre;
 		try{
@@ -129,10 +129,10 @@ public class ControladorTag {
 				
 		}
 		catch (Exception ex){
-			return "Error al Crear el Tag : " + ex.toString();
+			return 0;
 		}		
 		
-		return "Grabado Exitoso";
+		return 1;
 		
 	}
 	

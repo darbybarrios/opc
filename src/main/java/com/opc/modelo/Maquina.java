@@ -13,6 +13,8 @@ public class Maquina implements Serializable {
 	private String nombre;
 	private String status;
 	private Producto producto;
+	private int velocidad;
+	private int tiempoHambre;  //Segundos
 	//private Set<Dispositivo> dispositivo;
 	
 	public Maquina(){
@@ -69,6 +71,24 @@ public class Maquina implements Serializable {
 	public void setProducto(Producto producto) {
 		this.producto = producto;
 	}
+
+	public int getVelocidad() {
+		return velocidad;
+	}
+
+	public void setVelocidad(int velocidad) {
+		this.velocidad = velocidad;
+	}
+
+	public int getTiempoHambre() {
+		return tiempoHambre;
+	}
+
+	public void setTiempoHambre(int tiempoHambre) {
+		this.tiempoHambre = tiempoHambre;
+	}
+	
+	
 	
 	//@OneToMany(mappedBy = "maquina", cascade = CascadeType.ALL)
 	//@JsonManagedReference
