@@ -61,5 +61,60 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
                  "And causa_falla.resta_tiempo = 'si' And tag.id_dispositivo = :idDispo And date(actividad_tag.fecha_jornada) = date(:Fecha)",nativeQuery=true)
 	long findTiempoRestadoByDia(@Param("idDispo") int idDispo, @Param("Fecha") String fecha);
 	
+
+	@Query(value="Select case when Sum(actividad_tag.duracion_ms) is null then 0 else Sum(actividad_tag.duracion_ms) end " +
+            "From actividad_tag Inner Join tag On actividad_tag.id_tag = tag.id_tag Inner Join causa_falla " +
+            "On actividad_tag.id_causa_falla = causa_falla.id_causa_falla Where actividad_tag.duracion_ms > 0 and actividad_tag.id_causa_falla is not null " +
+            "And causa_falla.resta_tiempo = 'si' And date(actividad_tag.fecha_jornada) = date(:Fecha)",nativeQuery=true)
+	long findTiempoRestadoByDiaGeneral(@Param("Fecha") String fecha);	
+	
+	//Pr_General en Flyspeed
+	
+	@Query(value="Select round(avg(a.pr),2) from (Select r .id_dispositivo, Sum(r.cant_unidades), avg(r.vel_seteada),((Sum(r.cant_unidades)/(1440*avg(r.vel_seteada)))*100) Pr,date(r.fecha_jornada) " +
+                 "From resumen_eficiencia r Where r.fecha_jornada is not null and to_char(fecha_jornada,'YYYY') = to_char(now(),'YYYY') " +
+                 "Group By r.id_dispositivo, date(r.fecha_jornada)) a",nativeQuery = true)
+	double findEficienciaGeneral();
+	
+	//Pr_general_DiaAnterior en FlySpeed
+	@Query(value="Select r.id_dispositivo, Sum(r.cant_unidades), round(avg(r.vel_seteada),2),((Sum(r.cant_unidades)/(1440*avg(r.vel_seteada)))*100) Pr,date(r.fecha_jornada) " +
+                 "From resumen_eficiencia r Where r.fecha_jornada is not null Group By r.id_dispositivo, date(r.fecha_jornada) " +
+                 "Order by date(r.fecha_jornada) desc limit 2",nativeQuery = true)
+	List<Object[]> findEficienciaGeneralDiaAnterior();
+
+	//Pr_general_TurnoAnterior en FlySpeed
+	@Query(value="Select r.id_dispositivo,r.id_turno, Sum(r.cant_unidades), round(avg(r.vel_seteada),2),((Sum(r.cant_unidades)/(1440*avg(r.vel_seteada)))*100) Pr,date(r.fecha_jornada) " +
+                 "From resumen_eficiencia r Where r.fecha_jornada is not null Group By r.id_dispositivo, r.id_turno, date(r.fecha_jornada) " +
+                 "Order by date(r.fecha_jornada) desc limit 2",nativeQuery = true)
+	List<Object[]> findEficienciaGeneralTurnoAnterior();	
+	
+	//restarTiempoPorTurno
+	@Query(value="Select case when Sum(actividad_tag.duracion_ms) is null then 0 else Sum(actividad_tag.duracion_ms) end " +
+            "From actividad_tag Inner Join tag On actividad_tag.id_tag = tag.id_tag Inner Join causa_falla " +
+            "On actividad_tag.id_causa_falla = causa_falla.id_causa_falla Where actividad_tag.duracion_ms > 0 and actividad_tag.id_causa_falla is not null " +
+            "And causa_falla.resta_tiempo = 'si' And date(actividad_tag.fecha_jornada) = date(:Fecha) And actividad_tag.id_turno = :idTurno",nativeQuery=true)
+	long findTiempoRestadoByTurnoGeneral(@Param("Fecha") String fecha, @Param("idTurno") int idTurno );	
+	
+	//Pr_GeneralGrafico
+	@Query(value="Select r .id_dispositivo, Sum(r.cant_unidades), avg(r.vel_seteada),((Sum(r.cant_unidades)/(1440*avg(r.vel_seteada)))*100) Pr,date(r.fecha_jornada) " +
+                 "From resumen_eficiencia r Where r.fecha_jornada is not null and to_char(fecha_jornada,'YYYY') = to_char(now(),'YYYY')  " +
+                 "Group By r.id_dispositivo, date(r.fecha_jornada)",nativeQuery=true)
+	List<Object[]> findEficienciaGeneralGrafico();
+	
+	
+	@Query(value="Select r.id_dispositivo, Sum(r.cant_unidades) TotalUnd, Avg(r.vel_seteada), ((Sum(r.cant_unidades) / (1440 * Avg(r.vel_seteada))) * 100) As Pr, " +
+                 "to_char(r.fecha_jornada,'YYYY'), maquina.id_maquina, maquina.nombre From resumen_eficiencia r Inner Join " +
+                 "dispositivo  On r.id_dispositivo = dispositivo.id_dispositivo Inner Join maquina On dispositivo.id_maquina = maquina.id_maquina " +
+                 "Where r.fecha_jornada Is Not Null And To_Char(r.fecha_jornada, 'YYYY') = To_Char(Now(), 'YYYY') Group By r.id_dispositivo, to_char(r.fecha_jornada,'YYYY'), " +
+                 "maquina.id_maquina, maquina.nombre Order By TotalUnd desc",nativeQuery=true)
+	List<Object[]> topMaquinas();
+	
+	
+	@Query(value="Select Sum(r.cant_unidades) Sum_cant_unidades, To_Char(r.fecha_jornada,'MM') Mes " + 
+                 "From resumen_eficiencia r Where To_Char(r.fecha_jornada,'MM') = to_char(now(),'MM') Group By " + 
+                 "To_Char(r.fecha_jornada,'MM')", nativeQuery=true)
+	List<Object[]> produccionMensual();
+	
+		
+	
 	
 }

@@ -649,6 +649,64 @@ function grafico3MP($http,$scope,baseUrl,id,idSucursal,idTurno,inicio,fin,t){
 	  
 }
 
+function graficoPrGeneral($http,$scope,baseUrl,notificationService){
+    
+	$scope.seriesGen = ['Valor Pr'];
+	
+   // $scope.labels = ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
+	
+    $http.get(baseUrl + '/graficoEficienciaGeneral')
+	.success(function(result){
+		{
+		
+		$scope.graficoPrGen = result;
+		$scope.labelsGen = [];
+		$scope.dataGen = [];
+		$scope.dataAuxGen = [];
+		
+        for (var i = 0; i < $scope.graficoPrGen.length; i++) {
+                
+               // notificationService.error($scope.graficoPrMP[0][2]);
+                $scope.labelsGen.push($scope.graficoPrGen[i][4]);
+                $scope.dataAuxGen.push($scope.graficoPrGen[i][3]);
+                
+         
+        }
+        
+        $scope.dataGen.push($scope.dataAuxGen);
+        
+		} 
+	});
+
+    $scope.onClick = function (points, evt) {
+        console.log(points, evt);
+      };
+      
+      $scope.onHover = function (points) {
+        if (points.length > 0) {
+          console.log('Point', points[0].value);
+        } else {
+          console.log('No point');
+        }
+      };
+      $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }];
+
+      $scope.options = {
+        scales: {
+          yAxes: [
+            {
+              id: 'y-axis-1',
+              type: 'linear',
+              display: true,
+              position: 'left'
+            }
+          ]
+        }
+      };
+
+
+}
+
 
 function eficienciaTurno($http,$scope,baseUrl){
 	
@@ -659,6 +717,135 @@ function eficienciaTurno($http,$scope,baseUrl){
 	}).then(function(result){
 		  $scope.eficiencia = result.data;
 	})	  
+
+}
+
+function indicadoresGenerales($http,$scope,baseUrl){
+	
+	$scope.ind1 = 0;
+	$scope.ind2 = 0;
+	$scope.ind3 = 0;
+	$scope.ind4 = 0;
+
+	$http.get(baseUrl +'/eficienciaGeneral').success(function (data) {
+		{ 
+		  $scope.ind1 = "%" + data;
+        }
+	});
+	
+	$http.get(baseUrl +'/eficienciaGeneralDiaAnterior').success(function (data) {
+		{ 
+		  $scope.ind2 = "%" + data;
+        }
+	});	
+	
+	$http.get(baseUrl +'/eficienciaGeneralTurnoAnterior').success(function (data) {
+		{ 
+		  $scope.ind3 = "%" + data;
+        }
+	});	
+	
+	$http.get(baseUrl +'/eficienciaGeneralTurnoActual').success(function (data) {
+		{ 
+		  $scope.ind4 = "%" + data;
+        }
+	});		
+	
+}
+
+function topMaquinasProduccion($http,$scope,baseUrl){
+	
+	$scope.topMaquinas = []
+
+	$http.get(baseUrl +'/topProduccion').success(function (data) {
+		{ 
+			$scope.topMaquinas = data;
+			
+			if ($scope.topMaquinas.length > 0){
+				
+				$scope.desc1 = $scope.topMaquinas[0][6] ;
+				$scope.tot1 =  $scope.topMaquinas[0][1];
+				$scope.tit1 = ". Unidades Producidas"
+				
+				if ($scope.topMaquinas.length > 1){
+					$scope.desc2 = $scope.topMaquinas[1][6];
+					$scope.tot2 =  $scope.topMaquinas[1][1];	
+					$scope.tit2 = ". Unidades Producidas"
+				}
+				if ($scope.topMaquinas.length > 2){
+					$scope.desc3 = $scope.topMaquinas[2][6];
+					$scope.tot3 =  $scope.topMaquinas[2][1];	
+					$scope.tit3 = ". Unidades Producidas"
+				}	
+				if ($scope.topMaquinas.length > 3){
+					$scope.desc4 = $scope.topMaquinas[3][6];
+					$scope.tot4 =  $scope.topMaquinas[3][1];
+					$scope.tit4 = ". Unidades Producidas"
+				}		
+				
+				
+			}			
+        }
+	});
+	
+
+}
+
+function graficoProduccionMensual($http,$scope,baseUrl,notificationService){
+    
+	$scope.seriestotMens = ['Total'];
+	
+   // $scope.labels = ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
+	
+    $http.get(baseUrl + '/produccionMensual')
+	.success(function(result){
+		{
+		
+		$scope.graficototMens = result;
+		$scope.labelstotMens = [];
+		$scope.datatotMens = [];
+		$scope.dataAuxtotMens = [];
+		
+        for (var i = 0; i < $scope.graficototMens.length; i++) {
+                
+               // notificationService.error($scope.graficoPrMP[0][2]);
+                $scope.labelstotMens.push($scope.graficototMens[i][1]);
+                $scope.dataAuxtotMens.push($scope.graficototMens[i][0]);
+                
+         
+        }
+        
+        $scope.datatotMens.push($scope.dataAuxtotMens);
+        
+		} 
+	});
+
+    $scope.onClick = function (points, evt) {
+        console.log(points, evt);
+      };
+      
+      $scope.onHover = function (points) {
+        if (points.length > 0) {
+          console.log('Point', points[0].value);
+        } else {
+          console.log('No point');
+        }
+      };
+      $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }];
+
+      $scope.options = {
+        scales: {
+          yAxes: [
+            {
+              id: 'y-axis-1',
+              type: 'linear',
+              display: true,
+              position: 'left'
+            }
+          ]
+        }
+      };
+
 
 }
 
@@ -1512,8 +1699,8 @@ app.provider("remoteResource", RemoteResourceProvider);
 app.config(['$routeProvider',function($routeProvider) {
 	  
 	  $routeProvider.when('/', {
-	    templateUrl: "modo_produccion.html",
-	    controller: "TableroController"
+	    templateUrl: "modo_monitoreo.html",
+	    controller: "MonitoreoController"
 	  });
 	
 	  $routeProvider.when('/modo-produccion', {
@@ -1527,8 +1714,8 @@ app.config(['$routeProvider',function($routeProvider) {
 	  });
 	  
 	  $routeProvider.when('/modo-monitoreo', {
-	    templateUrl: "construccion.html",
-	   // controller: "Pagina3Controller"
+	    templateUrl: "modo_monitoreo.html",
+	    controller: "MonitoreoController"
 	  }); 
 	  $routeProvider.when('/agregar-tags', {
 		    templateUrl: "tags.html",
@@ -2198,6 +2385,21 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 
 
 
+}]);
+
+//-------------------------------------------------------------------------------------------------------------//
+//-----------------------------------------  MODO MONITOREO -----------------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------------//
+
+app.controller("MonitoreoController", ['$scope','$http','$timeout','$rootScope','notificationService','$filter','ngProgressFactory',function($scope, $http,$timeout,$rootScope,notificationService,$filter,ngProgressFactory) {
+	
+	var baseUrl = ".";
+	indicadoresGenerales($http,$scope,baseUrl);
+	graficoPrGeneral($http,$scope,baseUrl,notificationService);
+	topMaquinasProduccion($http,$scope,baseUrl);
+	graficoProduccionMensual($http,$scope,baseUrl,notificationService);
+	
+	
 }]);
 
 //-------------------------------------------------------------------------------------------------------------//
