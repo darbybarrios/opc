@@ -42,17 +42,17 @@
                   <div class="x_content" >
 				  
 		
-				  <div><button type="button"  class="btn btn-round btn-success" data-toggle="modal" data-target=".bs-example-modal-lg">Agregar</button></div>
+				  <div><button type="button"  class="btn btn-round btn-success" data-toggle="modal" data-target="#agregar">Agregar</button></div>
 				  
 <!-- Ventana Modal -->
 				  
-<div class="modal fade bs-example-modal-lg"  tabindex="-1" role="dialog" aria-hidden="true">
+<div id="agregar" class="modal fade "  tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
 
                         <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">�</span>
-                          </button>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+		                          </button>
                           <h4 class="modal-title" id="myModalLabel2">Agregar Turno</h4>
                         </div>
                         <div class="modal-body">
@@ -114,27 +114,98 @@
                     </div>
                   </div>
                 </div>
+                
+                
+                
+                <div id="editar" class="modal fade "  tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+		                          </button>
+                          <h4 class="modal-title" id="myModalLabel2">Agregar Turno</h4>
+                        </div>
+                        <div class="modal-body">
+
+					<form class="form-horizontal form-label-left" ng-submit="modificar()">
+
+
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descTag">Descripci&oacute;nn <span class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <input type="text" id="descTag" required="required" ng-model="txtDesc"  class="form-control col-md-7 col-xs-12">
+                        </div>
+                      </div>					  
+
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Hora Inicio</label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <input type="time" id="inicio"  class="form-control col-md-7 col-xs-12" placeholder="HH:mm:ss" ng-model="txtInicio">
+                        </div>
+                      </div>						  
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Hora Fin </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <input type="time" id="fin" class="form-control col-md-7 col-xs-12" placeholder="HH:mm:ss" ng-model="txtFin">
+                        </div>
+                      </div>
+                      
+                       <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Tipo Turno</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                          <select id="idTipoTurno" class="form-control" ng-model="cboTipoTurno" type="checkbox" ng-options="tipoTurno.idTipoTurno as tipoTurno.descTipoTurno for tipoTurno in tipoTurno">
+                            <option value="">-- Seleccionar --</option>
+                          </select>
+                        </div>
+                      </div>	
+                      
+                       <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Orden Turno</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                          <select id="idTipoSecuencia" class="form-control" ng-model="txtOrden" type="checkbox" ng-options="tipoSecuencia.idTipoSecuencia as tipoSecuencia.descTipoSecuencia for tipoSecuencia in tipoSecuencia">
+                            <option value="">-- Seleccionar --</option>
+                          </select>
+                        </div>
+                      </div>                      
+                      
+                                           					                         
+                       <div class="ln_solid"></div>
+                       <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                          <button type="submit" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+                          <button type="submit" class="btn btn-success">Guardar</button>
+                        </div>
+                      </div>
+                        
+				</form>
+				
+                      </div>
+                    </div>
+                  </div>                 
+                </div>
 				
 <!-- /Ventana Modal -->				
 				
 				
- <table id="tbdata" class="table table-striped table-bordered">
+ <table id="tbdata" class="table table-striped table-bordered nowrap" cellspacing="0">
                       <thead>
                         <tr>
-                          <th>Descricpcion</th>
+                          <th>Descricpci&oacute;n</th>
                           <th>Hora Inicio</th>
                           <th>Hora Fin</th>
-						  <th>Edici�n</th>
+						  <th>Edici&oacute;n</th>
   
                         </tr>
                       </thead>
                       <tbody>
                         <tr ng-repeat="turno in turnos track by $index" class="ng-scope">
 							<td><a ng-href="">{{turno.descTurno}}</a></td>
-							        <td ng-bind="turno.inicio | date:'HH:mm:ss'" ></td>
-									<td ng-bind="turno.fin | date:'HH:mm:ss'">{{turno.fin}}</td>
+							        <td ng-bind="turno.inicio | date:'h:mm a'" ></td>
+									<td ng-bind="turno.fin | date:'h:mm a'">{{turno.fin}}</td>
 									<td>
-									        <a class="btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>
+									        <a class="btn btn-info btn-xs" ng-click="editar($index)" data-toggle="modal" data-target="#editar"><i class="fa fa-pencil"></i></a>
                            					<a class="btn btn-danger btn-xs" ng-click=""><i class="fa fa-trash-o"></i></a>
 									</td>
 		
@@ -154,6 +225,10 @@
               </div>
             </div>
           </div>
+          
+          
+          
+          
         </div>
         <!-- /page content -->
 

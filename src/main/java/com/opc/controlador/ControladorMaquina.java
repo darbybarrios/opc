@@ -39,7 +39,7 @@ public class ControladorMaquina {
 	
 	@RequestMapping("nueva-maquina")
 	@ResponseBody	
-	public int nuevo_maquina(String nombre, int idProducto, int velocidad, int tiempoHambre) throws ParseException{	
+	public void nuevo_maquina(String nombre, int idProducto, int velocidad, int tiempoHambre) throws ParseException{	
 		Producto producto = repositorioProducto.findOne(idProducto);
 		Maquina maquina = new Maquina();
 		maquina.setNombre(nombre);
@@ -60,7 +60,6 @@ public class ControladorMaquina {
 		repositorioProductoMaq.save(prodMaq);
 		
 		
-		return 1;
 	}
 	
 	@RequestMapping("consultar-maquina")
@@ -73,7 +72,7 @@ public class ControladorMaquina {
 	
 	@RequestMapping("actualizar-ProductoMaquina")
 	@ResponseBody			
-	public int actualizarProductoMaquina(String nombre, int idMaquina, int idProducto, int velocidad, int tiempoHambre) throws ParseException{		
+	public void actualizarProductoMaquina(String nombre, int idMaquina, int idProducto, int velocidad, int tiempoHambre) throws ParseException{		
 		Maquina maquina = repositorioMaquina.findOne(idMaquina);
 		Producto producto = repositorioProducto.findOne(idProducto);
 		boolean enc = false;
@@ -108,7 +107,6 @@ public class ControladorMaquina {
 			repositorioProductoMaq.save(prodMaq);
 		
 		}
-		return 1;
 			
 	}
 	
