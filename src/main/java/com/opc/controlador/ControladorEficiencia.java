@@ -76,11 +76,13 @@ public class ControladorEficiencia {
 		String inicioStr = dateC.format(inicio);
 		
 		if (tipo.equals("Turno")){
-			
+		}else if (tipo.equals("TurnoGeneral")){	
+			resul = daoEficiencia.findTiempoRestadoByTurnoGeneral(inicioStr, idTurno);
 		}else if (tipo.equals("Dia")){
 			
 			resul = daoEficiencia.findTiempoRestadoByDia(idDispositivo, inicioStr);
-			
+		}else if (tipo.equals("DiaGeneral")){
+			resul = daoEficiencia.findTiempoRestadoByDiaGeneral(inicioStr);
 		}else if (tipo.equals("Rango")){
 			
 		}
@@ -291,6 +293,165 @@ public class ControladorEficiencia {
 		ResumenEficiencia res = daoEficiencia.findTopByDispositivoOrderByFecRegistroDesc(dispo);
 		return res;
 		
+	}
+
+	@RequestMapping("eficienciaGeneral")
+	@ResponseBody		
+	public double eficienciaGeneral(){
+		double resul = 0.0;
+		resul = daoEficiencia.findEficienciaGeneral();
+		return resul;
+	}
+
+	@RequestMapping("eficienciaGeneralDiaAnterior")
+	@ResponseBody	
+	public double eficienciaGeneralDia(){
+		double resul = 0.0;
+		List<Object[]> resulDia = daoEficiencia.findEficienciaGeneralDiaAnterior();
+		
+		BigInteger totUnd =  (BigInteger) resulDia.get(1)[1];
+		BigDecimal vel = (BigDecimal) resulDia.get(1)[2];
+		//double pr = (double) resulDia.get(1)[3];
+		Date fecha = (Date) resulDia.get(1)[4];
+		double velDou = vel.doubleValue();
+		long tRest = (tiempoParadas("DiaGeneral",0,0,fecha,new Date()))/60000;
+		int iTotUnd = totUnd.intValue();
+		
+		resul = (iTotUnd/((1440 - tRest)*velDou))*100;
+		
+		return round(resul,2);
+	}
+	
+	@RequestMapping("eficienciaGeneralTurnoAnterior")
+	@ResponseBody	
+	public double eficienciaGeneralTurno() throws ParseException{
+		double resul = 0.0;
+		List<Object[]> resulDia = daoEficiencia.findEficienciaGeneralTurnoAnterior();
+		//BigInteger turno = 100000000;
+		//BigInteger turno = (BigInteger) resulDia.get(1)[1];
+		BigInteger totUnd =  (BigInteger) resulDia.get(1)[2];
+		BigDecimal vel = (BigDecimal) resulDia.get(1)[3];
+		//double pr = (double) resulDia.get(1)[3];
+		Date fecha = (Date) resulDia.get(1)[5];
+		double velDou = vel.doubleValue();
+		//int iTurno = turno.intValue();
+		
+		Turno turno = daoTurno.findOne((Integer) resulDia.get(1)[1]);
+		long tAgendado = tiempoTurno(turno); 		
+		//int iTurno = Integer.parseInt(turno);
+		
+		long tRest = (tiempoParadas("TurnoGeneral",0,1,fecha,new Date()))/60000;
+		int iTotUnd = totUnd.intValue();
+		
+		resul = (iTotUnd/((tAgendado - tRest)*velDou))*100;
+		
+		return round(resul,2);
+	}	
+	
+	
+	@RequestMapping("eficienciaGeneralTurnoActual")
+	@ResponseBody	
+	public double eficienciaGeneralTurnoActual() throws ParseException{
+		double resul = 0.0;
+		List<Object[]> resulDia = daoEficiencia.findEficienciaGeneralTurnoAnterior();
+		//BigInteger turno = 100000000;
+		//BigInteger turno = (BigInteger) resulDia.get(1)[1];
+		BigInteger totUnd =  (BigInteger) resulDia.get(0)[2];
+		BigDecimal vel = (BigDecimal) resulDia.get(0)[3];
+		//double pr = (double) resulDia.get(1)[3];
+		Date fecha = (Date) resulDia.get(0)[5];
+		double velDou = vel.doubleValue();
+		//int iTurno = turno.intValue();
+		Turno turno = daoTurno.findOne((Integer) resulDia.get(1)[1]);
+		long tAgendado = tiempoTurno(turno); 		
+		//int iTurno = Integer.parseInt(turno);
+		
+		long tRest = (tiempoParadas("TurnoGeneral",0,1,fecha,new Date()))/60000;
+		int iTotUnd = totUnd.intValue();
+		
+		resul = (iTotUnd/((tAgendado - tRest)*velDou))*100;
+		
+		return round(resul,2);
+	}	
+	
+	
+	
+	@RequestMapping("graficoEficienciaGeneral")
+	@ResponseBody		
+	public List<Object[]> graficoEficienciaGeneral(){
+
+		List<Object[]> resulMaq = daoEficiencia.findEficienciaGeneralGrafico();
+		List<Object[]> resulPr = new ArrayList<Object[]>();  
+		
+
+        for (int i = 0; i < resulMaq.size(); i++) {
+        	double pr = 0.0;
+        	Object[] aux = new Object[5];
+          	aux[0] = resulMaq.get(i)[0];
+          	aux[1] = resulMaq.get(i)[1];//unidades
+          	aux[2] = resulMaq.get(i)[2];//velocidad
+          	aux[3] = resulMaq.get(i)[3];
+          	aux[4] = resulMaq.get(i)[4];//pr
+ 
+			BigInteger und = (BigInteger) aux[1];		
+			BigDecimal vel = (BigDecimal) aux[2];
+			int undInt = und.intValue();
+			//int velSet = velocidadSeteada(idDispo); //Velocidad Seteada Directo en la Maquina
+			Date fecha = (Date) aux[4];
+			
+			long tRest = (tiempoParadas("DiaGeneral",0,0,fecha,new Date()))/60000;
+		
+			double velDou = vel.doubleValue();     
+			if (velDou > 0){
+				pr = ((undInt)/((1440 - tRest)*velDou));  //1440 Min tiene el dia
+			}
+			
+			
+			/*if (velSet > 0){
+					pr = ((undInt)/((1440)*velSet));
+			}*/
+			
+			aux[3] = round(pr*100,2);
+        	
+        	resulPr.add(i, aux);
+        	          
+      
+        }
+		return resulPr;
+			
+	}	
+
+	@RequestMapping("topProduccion")
+	@ResponseBody		
+	public List<Object[]> topProduccion(){
+
+		List<Object[]> resulMaq = daoEficiencia.topMaquinas();
+		List<Object[]> resulPr = new ArrayList<Object[]>();  
+		
+
+        for (int i = 0; i < resulMaq.size(); i++) {
+        	double pr = 0.0;
+        	Object[] aux = new Object[7];
+          	aux[0] = resulMaq.get(i)[0];//IdDispo
+          	aux[1] = resulMaq.get(i)[1];//TotUnd
+          	aux[2] = resulMaq.get(i)[2];//Velocidad
+          	aux[3] = resulMaq.get(i)[3];//PR
+           	aux[5] = resulMaq.get(i)[5];//idMaquina
+           	aux[6] = resulMaq.get(i)[6];//Nombre
+ 
+         	resulPr.add(i, aux);
+        	          
+      
+        }
+		return resulPr;
+			
+	}	
+
+	@RequestMapping("produccionMensual")
+	@ResponseBody	
+	public List<Object[]> produccionMensual(){
+		List<Object[]> resulProd = daoEficiencia.produccionMensual();
+		return resulProd;
 	}
 	
 
