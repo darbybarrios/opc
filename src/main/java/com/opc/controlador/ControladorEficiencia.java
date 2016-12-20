@@ -306,13 +306,20 @@ public class ControladorEficiencia {
 	@RequestMapping("eficienciaGeneralDiaAnterior")
 	@ResponseBody	
 	public double eficienciaGeneralDia(){
-		double resul = 0.0;
+		double resul = 0.0;;
+		int ind = 0;
 		List<Object[]> resulDia = daoEficiencia.findEficienciaGeneralDiaAnterior();
 		
-		BigInteger totUnd =  (BigInteger) resulDia.get(1)[1];
-		BigDecimal vel = (BigDecimal) resulDia.get(1)[2];
+		if (resulDia.toArray().length == 1){
+			ind = 0;
+		}else{
+			ind = 1;
+		}
+		
+		BigInteger totUnd =  (BigInteger) resulDia.get(ind)[1];
+		BigDecimal vel = (BigDecimal) resulDia.get(ind)[2];
 		//double pr = (double) resulDia.get(1)[3];
-		Date fecha = (Date) resulDia.get(1)[4];
+		Date fecha = (Date) resulDia.get(ind)[4];
 		double velDou = vel.doubleValue();
 		long tRest = (tiempoParadas("DiaGeneral",0,0,fecha,new Date()))/60000;
 		int iTotUnd = totUnd.intValue();
@@ -326,17 +333,25 @@ public class ControladorEficiencia {
 	@ResponseBody	
 	public double eficienciaGeneralTurno() throws ParseException{
 		double resul = 0.0;
+		int  ind = 0;
 		List<Object[]> resulDia = daoEficiencia.findEficienciaGeneralTurnoAnterior();
 		//BigInteger turno = 100000000;
 		//BigInteger turno = (BigInteger) resulDia.get(1)[1];
-		BigInteger totUnd =  (BigInteger) resulDia.get(1)[2];
-		BigDecimal vel = (BigDecimal) resulDia.get(1)[3];
+		
+		if (resulDia.toArray().length == 1){
+			ind = 0;
+		}else{
+			ind = 1;
+		}
+		
+		BigInteger totUnd =  (BigInteger) resulDia.get(ind)[2];
+		BigDecimal vel = (BigDecimal) resulDia.get(ind)[3];
 		//double pr = (double) resulDia.get(1)[3];
-		Date fecha = (Date) resulDia.get(1)[5];
+		Date fecha = (Date) resulDia.get(ind)[5];
 		double velDou = vel.doubleValue();
 		//int iTurno = turno.intValue();
 		
-		Turno turno = daoTurno.findOne((Integer) resulDia.get(1)[1]);
+		Turno turno = daoTurno.findOne((Integer) resulDia.get(ind)[1]);
 		long tAgendado = tiempoTurno(turno); 		
 		//int iTurno = Integer.parseInt(turno);
 		
@@ -362,7 +377,7 @@ public class ControladorEficiencia {
 		Date fecha = (Date) resulDia.get(0)[5];
 		double velDou = vel.doubleValue();
 		//int iTurno = turno.intValue();
-		Turno turno = daoTurno.findOne((Integer) resulDia.get(1)[1]);
+		Turno turno = daoTurno.findOne((Integer) resulDia.get(0)[1]);
 		long tAgendado = tiempoTurno(turno); 		
 		//int iTurno = Integer.parseInt(turno);
 		
