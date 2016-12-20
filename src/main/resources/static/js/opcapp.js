@@ -26,6 +26,17 @@ function listar_dispositivos($http,$scope,baseUrl){
 	
 }
 
+function listar_sucursales($http,$scope,baseUrl){	
+	$scope.sucursal = [];
+	$http.get(baseUrl + "/listar-sucursales").success(function (data) {      
+		$scope.sucursales = data;        
+		iniciar_tabla('#tbsucursales')
+
+	});
+	
+}
+
+
 function listar_productos($http,$scope,baseUrl){	
 	$scope.productos = [];
 	$http.get(baseUrl + "/listar-productos").success(function (data) {      
@@ -37,6 +48,7 @@ function listar_productos($http,$scope,baseUrl){
 }
 
 function listar_marcas($http,$scope,baseUrl){
+	$scope.marcas = [];
 	$http.get(baseUrl + "/listar-marcas").success(function (data) {
 		$scope.marcas = data;
 		iniciar_tabla('#tbmarca')
@@ -45,6 +57,7 @@ function listar_marcas($http,$scope,baseUrl){
 }
 
 function listar_maquinas($http,$scope,baseUrl){
+	$scope.maquinas = [];
 	$http.get(baseUrl + "/listar-maquinas").success(function (data) {		
 		  $scope.maquinas = data;
 		  iniciar_tabla('#tbmaquinas')
@@ -1869,7 +1882,7 @@ app.filter('time', function($filter)
 		  } 
 		 
 		  var _date = $filter('date')(new Date(input), 'HH:mm:ss');
-		  alert(_date);
+		  
 		  return _date;
 
 		 };
@@ -1885,14 +1898,59 @@ app.filter('fecActual',['$filter',  function($filter) {
 
 //----------------------------------- Sucursales ----------------------------------------------------------//
 
-app.controller("ListadoSucursalesController", ['$scope', 'remoteResource',function($scope, remoteResource) {
-    $scope.sucursales = [];
+app.controller("ListadoSucursalesController", ['$scope','$http','$filter',function($scope, $http,$filter) {
+	$http.defaults.headers.post["Content-Type"] = "application/json";
+	var baseUrl = ".";
+	listar_sucursales($http, $scope, baseUrl);
+	
+	
+	
+	$scope.insertarSucursal = function(){
+		
+		$http.post(baseUrl + '/nueva-sucursal?estado='+$scope.estado+'&direccion='+$scope.direccion+'&nombre='+$scope.nombre+
+				'&telefono='+$scope.telefono+'&turnos='+$scope.turnos)
+		.success(function(response){
+			$('#crear').modal('hide');
+			$http.get(baseUrl + "/listar-sucursales").success(function (data) {      
+				$scope.sucursales = data;
+			});
+			$scope.estado=null;
+			$scope.direccion=null;
+			$scope.nombre=null;
+			$scope.telefono=null;
+			$scope.turnos=null;
+		});	
+		
+	}
+	
+	$scope.editar = function (index) {
+		$scope.indSucursal= index;
+		$http.get(baseUrl + '/buscar-sucursal?idSuc='+$scope.sucursales[$scope.indSucursal].idSucursal).
+		success(function(data){
+			$scope.modifSucursal = data;
+			$scope.estado=$scope.modifSucursal.estado;
+			$scope.direccion=$scope.modifSucursal.direccion;
+			$scope.nombre=$scope.modifSucursal.nombre;
+			$scope.telefono=$scope.modifSucursal.telefono;
+			$scope.turnos=$scope.modifSucursal.turnos;
+			});
+	};
+	
+	$scope.editarSucursal = function(){
+		$http.put(baseUrl + '/editar-sucursal?idSuc='+$scope.sucursales[$scope.indSucursal].idSucursal+'&estado='+$scope.estado+'&direccion='+$scope.direccion+'&nombre='+$scope.nombre+
+				'&telefono='+$scope.telefono+'&turnos='+$scope.turnos).
+		success(function(response){
+				$('#editar').modal('hide');
+				$http.get(baseUrl + "/listar-sucursales").success(function (data) {      
+					$scope.sucursales = data;
+					
+			});
 
-    remoteResource.list(function(sucursales) {
-      $scope.sucursales = sucursales;
-    }, function(data, status) {
-      alert("Ha fallado la petición. Estado HTTP:" + status);
-    });
+			});
+		
+	}
+
+    
 
 }]);
 
@@ -1900,8 +1958,7 @@ app.controller("ListadoSucursalesController", ['$scope', 'remoteResource',functi
 
 
 app.controller("ListadoProductosController", ['$scope','$http','$filter','$uibModal',function($scope, $http,$filter,$uibModal) {
-	$scope.visible = "N";
-	$scope.index = 0;
+	
 	$http.defaults.headers.post["Content-Type"] = "application/json";
 	var baseUrl = ".";
 	listar_productos($http, $scope, baseUrl);
@@ -1965,8 +2022,8 @@ app.controller("ListadoProductosController", ['$scope','$http','$filter','$uibMo
 		
 	}
 	
-		$scope.editarProducto = function(index){
-				$http.put(baseUrl + '/editar-producto?idProducto='+$scope.productos[$scope.index].idProducto+'&descProducto='+$scope.txtDescProducto
+		$scope.editarProducto = function(){
+				$http.put(baseUrl + '/editar-producto?idProducto='+$scope.productos[$scope.indProd].idProducto+'&descProducto='+$scope.txtDescProducto
 						+'&statProducto='+$scope.txtEstatus).
 				success(function(response){
 						$('#editar').modal('hide');
@@ -1978,10 +2035,6 @@ app.controller("ListadoProductosController", ['$scope','$http','$filter','$uibMo
 					});
 				
 			}
-		
-		
-	
-	
 	
 }]);
 
@@ -1995,40 +2048,38 @@ app.controller("ListadoMarcasController", ['$scope','$http','$filter',function($
 	listar_marcas($http, $scope, baseUrl);
 	
 	$scope.insertarMarca = function(){	
-    	
-    	if ($scope.txtDesc==""){
-    		alert("Campo en blanco");
-    	}
-    	else{
-    		$http.get(baseUrl + '/nueva-marca?desc='+$scope.txtDesc).
-    		success(function(data){
-    			alert("Marca agregada");
-    			//
-    			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
-    			listar_marcas($http,$scope,baseUrl);
-    			//refrescar_tabla('#tbdata');
+    		$http.post(baseUrl + '/nueva-marca?desc='+$scope.txtDesc).
+    		success(function(response){
+    			$('#crear').modal('hide');
+    			$http.get(baseUrl + "/listar-marcas").success(function (data) {      
+					$scope.marcas = data;
+    			});
     			$scope.txtDesc=null;
   
     		});
-
-    	}
-
     }
 	
-	$scope.removerMarca = function(index){    	
-		 
-		$scope.marcas.splice(index, 1 );		
-		//alert($scope.dispositivos[index].idDispositivo);
-		$http.get(baseUrl + '/eliminar-marca?id='+$scope.marcas[index].idMarca+'&statReg=1').
-		success(function(data){
-			alert("Producto Eliminado");
-			//
-			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
-			listar_marcas($http,$scope,baseUrl);
-			//refrescar_tabla('#tbdata');
+	$scope.editar = function (index) {
+		$scope.indMarca = index;
+		$http.get(baseUrl + '/consultar-marca?idMarca='+$scope.marcas[$scope.indMarca].idMarca).
+		success(function(data){				
+				$scope.descripcion = data.descripcion;
+			});
+	};
+	
+	$scope.editarMarca = function(){
+		$http.put(baseUrl + '/editar-marca?idMarca='+$scope.marcas[$scope.indMarca].idMarca+'&desc='+$scope.descripcion).
+		success(function(response){
+				$('#editar').modal('hide');
+				$http.get(baseUrl + "/listar-marcas").success(function (data) {      
+					$scope.marcas = data;
+					
+			});
 
-		});		
+			});
+		
 	}
+	
 }]);
 
 //-------------------------------------------------------------------------------------------------------//
@@ -2036,44 +2087,46 @@ app.controller("ListadoMarcasController", ['$scope','$http','$filter',function($
 //-------------------------------------------------------------------------------------------------------//
 
 
+
 app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function($scope, $http,$filter) {
 	var baseUrl = ".";
 	listar_maquinas($http, $scope, baseUrl);
-	listar_productos($http,$scope,baseUrl);
+	$scope.productos = [];
+	$http.get(baseUrl + "/listar-productos").success(function (data) {      
+		$scope.productos = data;     
+	});
 	
 	$scope.insertarMaquina = function(){	
     	
-    	if ($scope.txtNombre==""){
-    		alert("Campo en blanco");
-    	}
-    	else{
-    		$http.get(baseUrl + '/nueva-maquina?nombre='+$scope.txtNombre+'&idProducto='+$scope.setProducto+'&velocidad='+$scope.txtVelocidad+'&tiempoHambre='+$scope.txtTiempoHambre).
-    		success(function(data){
-    			alert("Maquina agregada");
-    			//
-    			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
-    			listar_maquinas($http,$scope,baseUrl);
-    			//refrescar_tabla('#tbdata');
-    			$scope.txtDesc=null;
+    		$http.post(baseUrl + '/nueva-maquina?nombre='+$scope.txtNombre+'&idProducto='+$scope.setProducto
+    				+'&velocidad='+$scope.txtVelocidad+'&tiempoHambre='+$scope.txtTiempoHambre).
+    		success(function(response){
+    			$('#crear').modal('hide');
+    			$http.get(baseUrl + "/listar-maquinas").success(function (data) {		
+    				  $scope.maquinas = data;
+    			});	
+    			$scope.txtNombre = null;
+    			$scope.txtVelocidad = null;
+    			$scope.txtTiempoHambre = null;
     			$scope.setProducto = null;
-  
-    		});
-
-    	}
+    	
+    		});	
 
     }
 	
-	$scope.removerMaquina = function(index){    	
+	$scope.eliminar = function(index){ 
+		$scope.indMaq = index;
+	}
+	
+	$scope.eliminarMaquina = function(){   	
 		 
-		$scope.marcas.splice(index, 1 );		
-		//alert($scope.dispositivos[index].idDispositivo);
-		$http.get(baseUrl + '/eliminar-maquina?id='+$scope.marcas[index].idMarca+'&statReg=1').
-		success(function(data){
-			alert("Maquina Eliminada");
-			//
-			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
-			listar_maquinas($http,$scope,baseUrl);
-			//refrescar_tabla('#tbdata');
+		$http.put(baseUrl + '/eliminar-ProductoMaquina?idMaquina='+$scope.maquinas[$scope.indMaq].idMaquina).
+		success(function(response){
+			$('#eliminar').modal('hide');
+			$http.get(baseUrl + "/listar-maquinas").success(function (data) {		
+				  $scope.maquinas = data;
+			});
+			
 
 		});		
 	}
@@ -2082,13 +2135,15 @@ app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function
 		 
 		$scope.txtNombre = null;
 		$scope.setProducto = null;
-		listar_productos($http,$scope,baseUrl);
+		$scope.txtVelocidad = null;
+		$scope.txtTiempoHambre = null;
+		$scope.productos = [];
+		$http.get(baseUrl + "/listar-productos").success(function (data) {      
+			$scope.productos = data;     
+		});
 		$scope.indMaq = index;
 		$http.get(baseUrl + '/consultar-maquina?idMaquina='+$scope.maquinas[$scope.indMaq].idMaquina).
-		success(function(data){
-			//alert("Maquina Eliminada");
-			//
-			$scope.maquinaModif = data;
+		success(function(data){			
 			$scope.txtNombre = data.nombre;
 			$scope.txtVelocidad = data.velocidad;
 			$scope.txtTiempoHambre = data.tiempoHambre;
@@ -2098,17 +2153,23 @@ app.controller("ListadoMaquinasController", ['$scope','$http','$filter',function
 	}	
 	
 	
-	$scope.actualizarMaquina = function(){    	
-		 
-	
-		$http.get(baseUrl + '/actualizar-ProductoMaquina?nombre='+$scope.txtNombre+'&idMaquina='+$scope.maquinas[$scope.indMaq].idMaquina+'&idProducto='+$scope.setProducto+'&velocidad='+$scope.txtVelocidad+'&tiempoHambre='+$scope.txtTiempoHambre).
-		success(function(data){
-			alert("Maquina Actualizada");
-			listar_maquinas($http,$scope,baseUrl);
-
-		});	
-	}		
-
+	$scope.actualizarMaquina = function(){
+		
+			$http.put(baseUrl + '/actualizar-ProductoMaquina?nombre='+$scope.txtNombre
+					+'&idMaquina='+$scope.maquinas[$scope.indMaq].idMaquina+'&idProducto='
+					+$scope.setProducto+'&velocidad='+$scope.txtVelocidad+'&tiempoHambre='+$scope.txtTiempoHambre).
+			success(function(response){
+					$('#editar').modal('hide');
+					$http.get(baseUrl + "/listar-maquinas").success(function (data) {		
+	    				  $scope.maquinas = data;
+					});
+			
+			});
+			$scope.txtNombre = null;
+			$scope.txtVelocidad = null;
+			$scope.txtTiempoHambre = null;
+			$scope.setProducto = null;
+	}
 	
 }]);
 
@@ -2411,54 +2472,79 @@ app.controller("TurnosController", ['$scope','$http','$filter',function($scope, 
     var idSucursal = 1;	
     buscarSucursal($http,$scope,baseUrl,idSucursal);
     cargarValores($http,$scope,baseUrl);
-    
+   
 	$http.get(baseUrl + "/listar-turnos").success(function (data) {
 		{ 
 			$scope.turnos = data;
         }
 	});	
 	
+	
+	/* angular.element(document).ready(function() {
+		    $('#tbdata').DataTable( {
+		    	responsive: true,
+		    	dom: 'Bfrtip',
+		        buttons: [
+		            'excel'
+		        ]
+		    } );
+		} );
+	*/
+	
     $scope.insertarTurno = function(){
-    	
-    	
-    	
-    	if ($scope.txtDesc=="" || $scope.txtInicio =="" || $scope.txtFin == ""){
-    		alert("Hay Algun Campo en Blanco");
-    	}
-    	else{
     		
 	    		if ($scope.sucursal.turnos > $scope.turnos.length){
-	    		//var inicio = $filter('time')($scope.txtInicio+':00');
-	    		var inicio = $filter('time')($scope.txtInicio);
-	    		var fin = $filter('time')($scope.txtFin);
-	    		//$scope.txtInicio+':00'+  asi se pasaba el parametyro
-	    		//$scope.txtFin+':00'  
-		    		$http.get(baseUrl + '/nuevo-turno?desc='+$scope.txtDesc+'&inicio='+inicio+'&fin='+fin+'&idSucursal='+idSucursal+'&tipoTurno='+$scope.cboTipoTurno+'&secuencia='+$scope.txtOrden).
-		    		success(function(data){
-		    			alert("Turno agregado");
-		    			//
-		    			//$scope.dispositivos.push({ 'descripcion':$scope.dispoPlc, 'marca': $scope.dispoMarca, 'maquina':$scope.dispoMaquina, 'statDispositivo':0 });
-		    			$http.get(baseUrl + "/listar-turnos").success(function (data) {
-		    				{ 
-		    					$scope.turnos = data;
-		    		        }
-		    			});	
-		    			//refrescar_tabla('#tbdata');
-		    			$scope.txtDesc=null;
-		    			$scope.txtInicio=null;
-		    			$scope.txtFin=null;
-		  
-		    		});
+		    		//var inicio = $filter('time')($scope.txtInicio+':00');
+	    			var inicio = $filter('time')($scope.txtInicio);
+	    			var fin = $filter('time')($scope.txtFin);
+		    		//$scope.txtInicio+':00'+  asi se pasaba el parametyro
+		    		//$scope.txtFin+':00'  
+			    		$http.post(baseUrl + '/nuevo-turno?desc='+$scope.txtDesc+'&inicio='+inicio+'&fin='+fin+'&idSucursal='+idSucursal+'&tipoTurno='+$scope.cboTipoTurno+'&secuencia='+$scope.txtOrden).
+			    		success(function(response){
+			    			$('#agregar').modal('hide');		    			
+			    			$http.get(baseUrl + "/listar-turnos").success(function (data) {
+			    				{ 
+			    					$scope.turnos = data;
+			    		        }
+			    			});	
+			    			$scope.txtDesc=null;
+			    			$scope.txtInicio=null;
+			    			$scope.txtFin=null;
+			  
+			    		});
 	    		}
 		    		else{
 		    			alert('El tope de Turnos de la Sucursal es :'+$scope.sucursal.turnos);
-		    		}	
-    		
-    		
-
+		    	}	
     	}
+    
+    $scope.editar = function(index){
+    	$scope.indTurno = index;
+    	$scope.txtDesc=$scope.turnos[$scope.indTurno].descTurno;
+		$scope.txtInicio=new Date($scope.turnos[$scope.indTurno].inicio);    	
+    	$scope.txtFin=new Date($scope.turnos[$scope.indTurno].fin);
+		$scope.cboTipoTurno=$scope.turnos[$scope.indTurno].tipoTurno;
+		$scope.txtOrden=$scope.turnos[$scope.indTurno].secuencia.toString();
+    }
+    
+    $scope.modificar = function(){
+    	var inicio = $filter('time')($scope.txtInicio);
+		var fin = $filter('time')($scope.txtFin);
+		$http.put(baseUrl + '/modificar-turno?idTurno='+$scope.turnos[$scope.indTurno].idTurno+'&desc='+$scope.txtDesc+'&inicio='+inicio+'&fin='+fin+'&idSucursal='+idSucursal+'&tipoTurno='+$scope.cboTipoTurno+'&secuencia='+$scope.txtOrden).
+		success(function(response){
+			$('#editar').modal('hide');		    			
+			$http.get(baseUrl + "/listar-turnos").success(function (data) {
+				{ 
+					$scope.turnos = data;
+		        }
+			});	
+			$scope.txtDesc=null;
+			$scope.txtInicio=null;
+			$scope.txtFin=null;
 
-    }	
+		});
+    }
+   
 	
 
 }]);

@@ -39,7 +39,7 @@ public class ControladorMaquina {
 	
 	@RequestMapping("nueva-maquina")
 	@ResponseBody	
-	public int nuevo_maquina(String nombre, int idProducto, int velocidad, int tiempoHambre) throws ParseException{	
+	public void nuevo_maquina(String nombre, int idProducto, int velocidad, int tiempoHambre) throws ParseException{	
 		Producto producto = repositorioProducto.findOne(idProducto);
 		Maquina maquina = new Maquina();
 		maquina.setNombre(nombre);
@@ -57,10 +57,9 @@ public class ControladorMaquina {
 		Calendar fecha = Calendar.getInstance();
 		fecha.setTime(new Date());
 		prodMaq.setFecCambio(fecha);
-		repositorioProductoMaq.save(prodMaq);		
+		repositorioProductoMaq.save(prodMaq);
 		
 		
-		return 1;
 	}
 	
 	@RequestMapping("consultar-maquina")
@@ -72,8 +71,8 @@ public class ControladorMaquina {
 	}	
 	
 	@RequestMapping("actualizar-ProductoMaquina")
-	@ResponseBody	
-	public int actualizarProductoMaquina(String nombre, int idMaquina, int idProducto, int velocidad, int tiempoHambre) throws ParseException{		
+	@ResponseBody			
+	public void actualizarProductoMaquina(String nombre, int idMaquina, int idProducto, int velocidad, int tiempoHambre) throws ParseException{		
 		Maquina maquina = repositorioMaquina.findOne(idMaquina);
 		Producto producto = repositorioProducto.findOne(idProducto);
 		boolean enc = false;
@@ -108,7 +107,23 @@ public class ControladorMaquina {
 			repositorioProductoMaq.save(prodMaq);
 		
 		}
-		return 1;
+			
+	}
+	
+	@RequestMapping("eliminar-ProductoMaquina")
+	@ResponseBody	
+	public void eliminar(int idMaquina) throws ParseException{		
+		Maquina maquina = repositorioMaquina.findOne(idMaquina);
+		maquina.setStatus("1");
+		repositorioMaquina.save(maquina);
+		
+		ProductoMaquina prodMaq1 = repositorioProductoMaq.findByMaquina(maquina);
+		
+		if (prodMaq1 != null){
+			prodMaq1.setStatProducto("1");
+			repositorioProductoMaq.save(prodMaq1);
+		}
+		
 			
 	}	
 

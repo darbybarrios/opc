@@ -45,7 +45,7 @@ public class ControladorTurnos {
 
 	@RequestMapping("nuevo-turno")
 	@ResponseBody	
-	public int nuevo_turno(String desc, String inicio, String fin, int idSucursal, String tipoTurno, int secuencia) throws ParseException{
+	public void nuevo_turno(String desc, String inicio, String fin, int idSucursal, String tipoTurno, int secuencia) throws ParseException{
 		DateFormat formato = new SimpleDateFormat("HH:mm:ss");
 		Date horaIni = formato.parse(inicio);
 		Date horaFin = formato.parse(fin);
@@ -60,7 +60,35 @@ public class ControladorTurnos {
 		Sucursal sucursal = daoSucursal.findOne(idSucursal);
 		Turno turn = new Turno(desc,hIni,hFin,"0",sucursal,tipoTurno,secuencia);
 		daoTurno.save(turn);
-		return 1;
+		
+	}
+	
+	@RequestMapping("modificar-turno")
+	@ResponseBody	
+	public void modificar_turno(int idTurno, String desc, String inicio, String fin, int idSucursal, String tipoTurno, int secuencia) throws ParseException{
+		DateFormat formato = new SimpleDateFormat("HH:mm:ss");
+		Date horaIni = formato.parse(inicio);
+		Date horaFin = formato.parse(fin);
+				
+		Calendar hIni = Calendar.getInstance();
+		hIni.setTime(horaIni);
+		
+		Calendar hFin = Calendar.getInstance();
+		hFin.setTime(horaFin);		
+		
+
+		Sucursal sucursal = daoSucursal.findOne(idSucursal);
+		Turno turno = new Turno();
+		turno.setIdTurno(idTurno);
+		turno.setDescTurno(desc);
+		turno.setInicio(hIni);
+		turno.setFin(hFin);
+		turno.setSucursal(sucursal);
+		turno.setStatTurno("0");
+		turno.setTipoTurno(tipoTurno);
+		turno.setSecuencia(secuencia);
+		daoTurno.save(turno);
+		
 	}
 
 	@RequestMapping("fecha-jornada-actual")
