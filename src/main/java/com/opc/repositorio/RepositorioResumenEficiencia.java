@@ -89,9 +89,9 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
 	
 	//restarTiempoPorTurno
 	@Query(value="Select case when Sum(actividad_tag.duracion_ms) is null then 0 else Sum(actividad_tag.duracion_ms) end " +
-            "From actividad_tag Inner Join tag On actividad_tag.id_tag = tag.id_tag Inner Join causa_falla " +
-            "On actividad_tag.id_causa_falla = causa_falla.id_causa_falla Where actividad_tag.duracion_ms > 0 and actividad_tag.id_causa_falla is not null " +
-            "And causa_falla.resta_tiempo = 'si' And date(actividad_tag.fecha_jornada) = date(:Fecha) And actividad_tag.id_turno = :idTurno",nativeQuery=true)
+            	 "From actividad_tag Inner Join tag On actividad_tag.id_tag = tag.id_tag Inner Join causa_falla " +
+                 "On actividad_tag.id_causa_falla = causa_falla.id_causa_falla Where actividad_tag.duracion_ms > 0 and actividad_tag.id_causa_falla is not null " +
+                 "And causa_falla.resta_tiempo = 'si' And date(actividad_tag.fecha_jornada) = date(:Fecha) And actividad_tag.id_turno = :idTurno",nativeQuery=true)
 	long findTiempoRestadoByTurnoGeneral(@Param("Fecha") String fecha, @Param("idTurno") int idTurno );	
 	
 	//Pr_GeneralGrafico
@@ -114,6 +114,24 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
                  "To_Char(r.fecha_jornada,'MM')", nativeQuery=true)
 	List<Object[]> produccionMensual();
 	
+	//Pr_General_Mensual
+	@Query(value="Select t.id_dispositivo, t.totUnd, t.vel, t.mes, Case t.Mes When 1 Then 'Enero' When 2 Then 'Febrero' When '3' Then 'Marzo' " +
+                 "When '4' Then 'Abril' When '5' Then 'Mayo' When 6 Then 'Junio' When 7 Then 'Julio' When '8' Then 'Agosto' When '9' Then 'Septiembre' " +
+                 "When '10' Then 'Octubre' When '11' Then 'Noviembre' Else 'Diciembre' End From (Select r.id_dispositivo, " +
+                 "Sum(r.cant_unidades) As totUnd, Avg(r.vel_seteada) As vel, Date_Part('month', r.fecha_jornada) As Mes " +
+                 "From resumen_eficiencia r Where r.fecha_jornada Is Not Null And to_char(r.fecha_jornada,'YYYY') = to_char(now(),'YYYY') " +
+                 "Group By r.id_dispositivo, Date_Part('month', r.fecha_jornada) Order By Mes Desc) t",nativeQuery=true)
+	List<Object[]> eficicienciaGeneralMensual();
+
+	@Query(value="Select case when Sum(actividad_tag.duracion_ms) is null then 0 else Sum(actividad_tag.duracion_ms) end " +
+            	 "From actividad_tag Inner Join tag On actividad_tag.id_tag = tag.id_tag Inner Join causa_falla " +
+                 "On actividad_tag.id_causa_falla = causa_falla.id_causa_falla Where actividad_tag.duracion_ms > 0 and actividad_tag.id_causa_falla is not null " +
+                 "And causa_falla.resta_tiempo = 'si' And date_part('month',actividad_tag.fecha_jornada) = :Mes",nativeQuery=true)
+	long findTiempoRestadoByMesGeneral(@Param("Mes") int mes);	
+	
+	@Query(value="Select Sum(r.cant_unidades) Sum_cant_unidades " +
+                 "From resumen_eficiencia r Where To_Char(r.fecha_jornada,'YYYY') = to_char(now(),'YYYY') ", nativeQuery=true)
+    long produccionAnual();	
 		
 	
 	

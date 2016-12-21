@@ -55,7 +55,7 @@
                       <div class="tiles">
                         <div class="col-md-4 tile">
                           <span>Produccion</span>
-                          <h2>0 Und. </h2>
+                          <h2 ng-bind="totProdAno"> </h2>
   							<canvas id="line" class="chart chart-line" chart-data="datatotMens"
 							chart-labels="labelstotMens" chart-series="seriestotMens" chart-options="options"
 							chart-dataset-override="datasetOverride" chart-click="onClick">
@@ -64,16 +64,14 @@
                         <div class="col-md-4 tile">
                           <span>Eficiencia Men.</span>
                           <h2 ng-bind="ind1"></h2>
-                          <span class="sparkline22 graph" style="height: 160px;">
-                                          <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
-                                      </span>
+							<canvas id="bar" class="chart chart-bar" chart-data="dataPrGenM" chart-labels="labelsPrGenM" chart-series="seriesPrGenM"> 
+							</canvas>
                         </div>
                         <div class="col-md-4 tile">
                           <span>Paros No Planeados</span>
-                          <h2>0 min.</h2>
-                          <span class="sparkline11 graph" style="height: 160px;">
-                                          <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
-                                      </span>
+                          <h2 ng-bind="totParosNoPlanAno | songTime"></h2>
+							<canvas id="bar" class="chart chart-bar" chart-data="dataParaGen" chart-labels="labelsParaGen" chart-series="seriesParaGen"> 
+							</canvas>
                         </div>
                       </div>
 
