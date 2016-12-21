@@ -668,7 +668,7 @@ function graficoPrGeneral($http,$scope,baseUrl,notificationService){
 	
    // $scope.labels = ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
 	
-    $http.get(baseUrl + '/graficoEficienciaGeneral')
+    $http.get(baseUrl + '/graficoEficienciaGeneral?tipoGr=Dia')
 	.success(function(result){
 		{
 		
@@ -721,6 +721,8 @@ function graficoPrGeneral($http,$scope,baseUrl,notificationService){
 }
 
 
+
+
 function eficienciaTurno($http,$scope,baseUrl){
 	
 
@@ -762,7 +764,23 @@ function indicadoresGenerales($http,$scope,baseUrl){
 		{ 
 		  $scope.ind4 = "%" + data;
         }
-	});		
+	});	
+	
+	$http.get(baseUrl +'/produccionAnual').success(function (data) {
+		{ 
+		  $scope.totProdAno = data + " Und.";
+        }
+	});	
+	
+	$http.get(baseUrl +'/totParosNoPlan').success(function (data) {
+		{ 
+		  $scope.totParosNoPlanAno = data + ".";
+        }
+	});	
+		
+	
+	
+	
 	
 }
 
@@ -861,6 +879,110 @@ function graficoProduccionMensual($http,$scope,baseUrl,notificationService){
 
 
 }
+
+
+function graficoEficienciaGenMes($http,$scope,baseUrl,notificationService){
+	  
+
+	/*
+	  $scope.labelsGr3MP= ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
+	  $scope.seriesGr3MP = ['Series A', 'Series B'];
+
+	  $scope.dataGr3MP = [
+	    [65, 59, 80, 81, 56, 55, 40],
+	    [28, 48, 40, 19, 86, 27, 90]
+	  ];  */
+		$scope.seriesPrGenM= ['Pr:']
+		                     
+         $http.get(baseUrl + '/graficoEficienciaGeneral?tipoGr=Mes').success(function(result){
+				{
+				
+    			$scope.graficoPrGenM = result;
+				$scope.labelsPrGenM = [];
+				$scope.dataPrGenM = [];
+				$scope.seriesPrGenM =[];
+				$scope.dataAuxPrGenM = [];
+				
+		        for (var i = 0; i < $scope.graficoPrGenM.length; i++) {
+		                
+		               // notificationService.error($scope.graficoPrMP[0][2]);
+		        	    
+		                
+		                $scope.dataAuxPrGenM.push($scope.graficoPrGenM[i][3]);
+		              	//$scope.seriesPrGenM.push($scope.graficoPrGenM[i][1]);
+		               	$scope.dataPrGenM.push($scope.dataAuxPrGenM);
+		              	$scope.labelsPrGenM.push($scope.graficoPrGenM[i][4]);
+	         
+		        }
+
+		        $scope.dataPrGenM.push(dataAuxPrGenM);
+		        
+				} 
+			});  
+	  
+}
+
+function graficoParadasGeneral($http,$scope,baseUrl,id,idSucursal,idTurno,inicio,fin,t){
+	  
+
+	/*
+	  $scope.labelsGr3MP= ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
+	  $scope.seriesGr3MP = ['Series A', 'Series B'];
+
+	  $scope.dataGr3MP = [
+	    [65, 59, 80, 81, 56, 55, 40],
+	    [28, 48, 40, 19, 86, 27, 90]
+	  ];  */
+	  
+		
+         $http.get(baseUrl + '/graficosTipoParadasSemanalMp?filtro=Sucursal&grupo=Mes&idSucursal='+idSucursal+'&idDispositivo='+id+'&idTurno='+idTurno+'&inicio='+inicio+'&fin='+fin)
+			.success(function(result){
+				{
+				
+              	
+				$scope.graficoParaGen = result;
+				
+				//Si hay mas de 2 tipos de Paradas se divide entre el nro de tipos
+				var mitad = (($scope.graficoParaGen.length))/2;
+				var label = mitad;
+				
+				$scope.labelsParaGen = [];
+				$scope.dataParaGen = [];
+				$scope.seriesParaGen =[];
+				$scope.dataAuxParaGen = [];
+				
+		        for (var i = 0; i < $scope.graficoParaGen.length; i++) {
+		                
+		               // notificationService.error($scope.graficoPrMP[0][2]);
+		        	    
+		                
+		                $scope.dataAuxParaGen.push($scope.graficoParaGen[i][0]);
+		                
+		                if ((i == 0) || (i == label)){
+		                	$scope.seriesParaGen.push($scope.graficoParaGen[i][1]);
+		                	
+		                }
+		                
+		                if (i == (mitad-1)){
+		                	$scope.dataParaGen.push($scope.dataAuxParaGen);
+		                	$scope.dataAuxParaGen = [];
+		                	mitad = mitad + mitad;
+		                }
+		                
+		                if (i <= (label-1))	{
+		                	$scope.labelsParaGen.push($scope.graficoParaGen[i][3]);
+		                }
+		                
+		         
+		        }
+		        
+		        $scope.dataParaGen.push($scope.dataAuxParaGen);
+		        
+				} 
+			});  
+	  
+}
+
 
 
 function buscar_fallas($http,$scope,baseUrl,id){
@@ -2459,10 +2581,14 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 app.controller("MonitoreoController", ['$scope','$http','$timeout','$rootScope','notificationService','$filter','ngProgressFactory',function($scope, $http,$timeout,$rootScope,notificationService,$filter,ngProgressFactory) {
 	
 	var baseUrl = ".";
+	inicio = '01/01/1970';
+	fin = '01/01/1970';	
 	indicadoresGenerales($http,$scope,baseUrl);
 	graficoPrGeneral($http,$scope,baseUrl,notificationService);
 	topMaquinasProduccion($http,$scope,baseUrl);
 	graficoProduccionMensual($http,$scope,baseUrl,notificationService);
+	graficoEficienciaGenMes($http,$scope,baseUrl,notificationService);
+	graficoParadasGeneral($http,$scope,baseUrl,1,1,1,inicio,fin,60)
 	
 	
 }]);

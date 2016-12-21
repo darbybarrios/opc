@@ -63,5 +63,22 @@ public interface RepositorioActividadTag extends CrudRepository<ActividadTag, In
            "Where tag.id_dispositivo = :idDispo And actividad_tag.id_turno = :idTurno Group By causa_falla.tipo_parada, actividad_tag.id_turno, tag.id_dispositivo,actividad_tag.fecha Order By causa_falla.tipo_parada",nativeQuery=true)
 	List<Object[]> findParadasByTipoSemanal(@Param("idDispo") int idDispo, @Param("idTurno") int idTurno);
 	
+	//Paradas_ByTipoMensual
+	@Query(value="Select round(((Sum(actividad_tag.duracion_ms) * 100) / (Select Sum(a.duracion_ms) " +
+                 "From actividad_tag a where a.id_causa_falla Is Not Null And to_char(a.fecha_jornada,'YYYY') = to_char(now(),'YYYY') )),2) As Porc, causa_falla.tipo_parada, " + 
+  	             "actividad_tag.fecha, Case actividad_tag.fecha When 1 Then 'Ene' When 2 Then 'Feb' When 3 Then 'Mar' When 4 Then 'Abr' When 5 Then 'May' When 6 Then 'Jun' " +
+                 "When 7 Then 'Jul' When 8 Then 'Ago' When 9 Then 'Sep' When 10 Then 'Oct' When 11 Then 'Nov' When 12 Then 'Dic' Else 'DEC' End From (Select date_part('month',a.fecha_jornada) fecha,a.duracion_ms,a.id_tag,a.id_turno,a.id_causa_falla from actividad_tag a " +
+                 "where to_char(a.fecha_jornada,'YYYY') = to_char(now(),'YYYY')) actividad_tag Inner Join " +
+                 "causa_falla On actividad_tag.id_causa_falla = causa_falla.id_causa_falla Inner Join tag On actividad_tag.id_tag = tag.id_tag " +
+                 "Group By causa_falla.tipo_parada, actividad_tag.fecha Order By causa_falla.tipo_parada",nativeQuery=true) 
+	List<Object[]> findParadasByTipoMensual();
+	
+    @Query(value="Select sum(actividad_tag.duracion_ms) totMin From actividad_tag Where " +   
+    			 "to_char(actividad_tag.fecha_jornada,'YYYY') = to_char(now(),'YYYY') " +
+	             "and actividad_tag.id_causa_falla is not null",nativeQuery=true)
+    long totalParosNoPlan();
+    
+		
+	
 	
 }

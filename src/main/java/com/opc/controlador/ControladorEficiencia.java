@@ -475,5 +475,12 @@ public class ControladorEficiencia {
 		return listaProduccion;
 	}
 	
+	@RequestMapping("produccionAnual")
+	@ResponseBody	
+	public long produccionAnual(){
+		long resulProd = daoEficiencia.produccionAnual();
+		return resulProd;
+	}	
+	
 
 }

@@ -329,6 +329,13 @@ public class ControladorActividadTag {
 			}
 			
 		}else if (grupo.equals("Mes")) {
+			
+			if (filtro.equals("Sucursal")){
+				resulParadas = daoActividad.findParadasByTipoMensual();
+			}else if (filtro.equals("Dispositivo")){
+				
+				 
+			}			
 		}else if (grupo.equals("Turno")) {
 			if (filtro.equals("Sucursal")){
 				
@@ -344,6 +351,13 @@ public class ControladorActividadTag {
 		
 		return resulParadas;
 	}	
+	
+	@RequestMapping("totParosNoPlan")
+	@ResponseBody	
+	public long totParosNoPlan(){
+		long resulProd = daoActividad.totalParosNoPlan();
+		return resulProd;
+	}
 	
 
 }

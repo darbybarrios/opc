@@ -54,26 +54,24 @@
 							</canvas> 
                       <div class="tiles">
                         <div class="col-md-4 tile">
-                          <span>Total Sessions</span>
-                          <h2>231,809</h2>
+                          <span>Produccion</span>
+                          <h2 ng-bind="totProdAno"> </h2>
   							<canvas id="line" class="chart chart-line" chart-data="datatotMens"
 							chart-labels="labelstotMens" chart-series="seriestotMens" chart-options="options"
 							chart-dataset-override="datasetOverride" chart-click="onClick">
 							</canvas>
                         </div>
                         <div class="col-md-4 tile">
-                          <span>Total Revenue</span>
-                          <h2>$231,809</h2>
-                          <span class="sparkline22 graph" style="height: 160px;">
-                                          <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
-                                      </span>
+                          <span>Eficiencia Men.</span>
+                          <h2 ng-bind="ind1"></h2>
+							<canvas id="bar" class="chart chart-bar" chart-data="dataPrGenM" chart-labels="labelsPrGenM" chart-series="seriesPrGenM"> 
+							</canvas>
                         </div>
                         <div class="col-md-4 tile">
-                          <span>Total Sessions</span>
-                          <h2>231,809</h2>
-                          <span class="sparkline11 graph" style="height: 160px;">
-                                          <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
-                                      </span>
+                          <span>Paros No Planeados</span>
+                          <h2 ng-bind="totParosNoPlanAno | songTime"></h2>
+							<canvas id="bar" class="chart chart-bar" chart-data="dataParaGen" chart-labels="labelsParaGen" chart-series="seriesParaGen"> 
+							</canvas>
                         </div>
                       </div>
 
@@ -108,7 +106,7 @@
                             <div class="media-body">
                               <a class="title" href="#" ng-bind="desc1"></a>
                               <p><strong ng-bind="tot1"></strong>{{tit1}}</p>
-                              <p> <small>12 Sales Today</small>
+                              <p> <small>0 hoy</small>
                               </p>
                             </div>
                           </li>
@@ -119,7 +117,7 @@
                             <div class="media-body">
                               <a class="title" href="#" ng-bind="desc2"></a>
                               <p><strong ng-bind="tot2"></strong>{{tit2}}</p>
-                              <p> <small>12 Sales Today</small>
+                              <p> <small></small>
                               </p>
                             </div>
                           </li>
@@ -130,7 +128,7 @@
                             <div class="media-body">
                               <a class="title" href="#" ng-bind="desc3"></a>
                               <p><strong ng-bind="tot3"></strong>{{tit3}}</p>
-                              <p> <small>12 Sales Today</small>
+                              <p> <small></small>
                               </p>
                             </div>
                           </li>
@@ -141,7 +139,7 @@
                             <div class="media-body">
                               <a class="title" href="#" ng-bind="desc4"></a>
                               <p><strong ng-bind="tot4"></strong>{{tit4}}</p>
-                              <p> <small>12 Sales Today</small>
+                              <p> <small></small>
                               </p>
                             </div>
                           </li>
@@ -152,7 +150,7 @@
                             <div class="media-body">
                               <a class="title" href="#" ng-bind="desc5"></a>
                               <p><strong ng-bind="tot5"></strong>{{tit5}}</p>
-                              <p> <small>12 Sales Today</small>
+                              <p> <small></small>
                               </p>
                             </div>
                           </li>
@@ -167,63 +165,7 @@
 
 
 
-            <div class="row">
-              <div class="col-md-12">
-                <div class="x_panel">
-                  <div class="x_title">
-                    <h2>Weekly Summary <small>Activity shares</small></h2>
-                    <ul class="nav navbar-right panel_toolbox">
-                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                      </li>
-                      <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                        <ul class="dropdown-menu" role="menu">
-                          <li><a href="#">Settings 1</a>
-                          </li>
-                          <li><a href="#">Settings 2</a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li><a class="close-link"><i class="fa fa-close"></i></a>
-                      </li>
-                    </ul>
-                    <div class="clearfix"></div>
-                  </div>
-                  <div class="x_content">
 
-                    <div class="row" style="border-bottom: 1px solid #E0E0E0; padding-bottom: 5px; margin-bottom: 5px;">
-                      <div class="col-md-7" style="overflow:hidden;">
-                        <span class="sparkline_one" style="height: 160px; padding: 10px 25px;">
-                                      <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
-                                  </span>
-                        <h4 style="margin:18px">Weekly sales progress</h4>
-                      </div>
-
-                      <div class="col-md-5">
-                        <div class="row" style="text-align: center;">
-                          <div class="col-md-4">
-                            <canvas id="canvas1i" height="110" width="110" style="margin: 5px 10px 10px 0"></canvas>
-                            <h4 style="margin:0">Bounce Rates</h4>
-                          </div>
-                          <div class="col-md-4">
-                            <canvas id="canvas1i2" height="110" width="110" style="margin: 5px 10px 10px 0"></canvas>
-                            <h4 style="margin:0">New Traffic</h4>
-                          </div>
-                          <div class="col-md-4">
-                            <canvas id="canvas1i3" height="110" width="110" style="margin: 5px 10px 10px 0"></canvas>
-                            <h4 style="margin:0">Device Share</h4>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
-
- 
                 </div>
               </div>
             </div>
