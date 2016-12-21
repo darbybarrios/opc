@@ -9,6 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.opc.modelo.Dispositivo;
+import com.opc.modelo.ProduccionFecha;
 import com.opc.modelo.ProductoMaquina;
 import com.opc.modelo.ResumenEficiencia;
 
@@ -113,6 +114,21 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
                  "From resumen_eficiencia r Where To_Char(r.fecha_jornada,'MM') = to_char(now(),'MM') Group By " + 
                  "To_Char(r.fecha_jornada,'MM')", nativeQuery=true)
 	List<Object[]> produccionMensual();
+	
+	
+	@Query(value="Select turno.desc_turno, producto.desc_producto, Sum(resumen_eficiencia.cant_unidades) As cant_acum " +
+				"From resumen_eficiencia " + 
+				"Inner Join turno On resumen_eficiencia.id_turno = turno.id_turno " + 
+				"Inner Join producto_maquina On resumen_eficiencia.id_producto_maquina = producto_maquina.id_producto_maquina " + 
+				"Inner Join producto On producto_maquina.id_producto = producto.id_producto " +
+				"Where " +
+				"resumen_eficiencia.id_dispositivo = :id_dispositivo and " +
+				"resumen_eficiencia.fecha_jornada between to_date(:fecha_ini,'yyyy/MM/dd') and to_date(:fecha_fin,'yyyy/MM/dd') " +
+				"Group By " +
+				"turno.desc_turno, producto.desc_producto", nativeQuery=true)
+	List<Object[]> produccionFecha(@Param("id_dispositivo") int idDispositivo, @Param("fecha_ini") String fecha_ini, @Param("fecha_fin") String fecha_fin );
+	
+	 
 	
 		
 	

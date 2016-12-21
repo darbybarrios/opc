@@ -1773,7 +1773,11 @@ app.config(['$routeProvider',function($routeProvider) {
 	  $routeProvider.when('/Fmecas por Fecha', {
 		    templateUrl: "Consulta_Fmecas_1.html",
 		    controller: "ConsultasController"
-		  });	  
+		  });
+	  $routeProvider.when('/produccionporfecha', {
+		    templateUrl: "consulta_produccion.html",
+		    controller: "ConsultaProduccionMaquinaController"
+		  });
 	  
 	  $routeProvider.otherwise({
 	        redirectTo: '/'
@@ -2683,7 +2687,7 @@ app.controller("FallasController", ['$scope','$http','$timeout','notificationSer
 //----------------------------------- Consultas ----------------------------------------------------------//
 //---------------------------------------------------------------------------------------------------------//
 
-app.controller("ConsultasController", ['$scope','$http','$timeout',function($scope, $http,$timeout) {
+app.controller("ConsultasController", ['$scope','$http','$timeout','$filter',function($scope, $http,$timeout,$filter) {
 	var baseUrl = ".";
     var idSucursal = 1;
     var total = 0;	
@@ -2695,15 +2699,13 @@ app.controller("ConsultasController", ['$scope','$http','$timeout',function($sco
 		
 	$scope.buscarConsulta = function() {
 		
-		
-		alert($scope.fecIni);
-		alert($scope.fecFin);
-		
+		var inicio = $filter('date')(new Date($scope.fecIni),'yyyy-MM-dd');
+		var fin = $filter('date')(new Date($scope.fecFin),'yyyy-MM-dd');
 		//buscar_fallas($http,$scope,baseUrl,$scope.selMaq);
 		$http.get(baseUrl + '/buscarPorMaquina?idMaquina='+$scope.selMaq).then(function (result) {
 			$scope.maq = result.data;
 			//alert($scope.maq.idDispositivo);
-			return $http.get(baseUrl + '/Fmecas-Periodo?idDispositivo='+$scope.maq.idDispositivo+'&inicio='+$scope.fecIni+'&fin='+$scope.fecFin)
+			return $http.get(baseUrl + '/Fmecas-Periodo?idDispositivo='+$scope.maq.idDispositivo+'&inicio='+inicio+'&fin='+fin)
 		}).then(function(result){
 			$scope.fallas = result.data;
 			if ($scope.fallas.length > total){
@@ -2712,6 +2714,49 @@ app.controller("ConsultasController", ['$scope','$http','$timeout',function($sco
 				total = $scope.fallas.length;
 				iniciar_elementos();
 			}			
+		})
+		
+		//$timeout($scope.buscarConsulta, 1000);
+		
+	}	
+		
+
+}]);
+
+app.controller("ConsultaProduccionMaquinaController", ['$scope','$http','$timeout','$filter',function($scope, $http,$timeout,$filter) {
+	var baseUrl = ".";
+    var idSucursal = 1;
+    var total = 0;	
+	
+	listar_maquinas($http,$scope,baseUrl);
+	//iniciar_tabla('#tbfmeca1');
+	
+
+		
+	$scope.buscarConsulta = function() {
+		
+		var inicio = $filter('date')(new Date($scope.fecIni),'yyyy-MM-dd');
+		var fin = $filter('date')(new Date($scope.fecFin),'yyyy-MM-dd');
+		
+		
+		//buscar_fallas($http,$scope,baseUrl,$scope.selMaq);
+		$http.get(baseUrl + '/buscarPorMaquina?idMaquina='+$scope.selMaq).then(function (result) {
+			$scope.maq = result.data;
+			//alert($scope.maq.idDispositivo);
+			return $http.get(baseUrl + '/produccionFecha?idDispositivo='+$scope.maq.idDispositivo+'&fecha_ini='+inicio+'&fecha_fin='+fin)
+		}).then(function(result){
+			$scope.produccion = result.data;
+			 angular.element(document).ready(function() {
+		    $('#tbproduccion').DataTable( {
+		    	responsive: true,
+		    	dom: 'Bfrtip',
+		        buttons: [
+		            'excel'
+		        ]
+		    } );
+			 } );
+	
+					
 		})
 		
 		//$timeout($scope.buscarConsulta, 1000);

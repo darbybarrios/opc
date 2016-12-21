@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.opc.modelo.ActividadTag;
 import com.opc.modelo.Dispositivo;
 import com.opc.modelo.Maquina;
+import com.opc.modelo.ProduccionFecha;
 import com.opc.modelo.ResumenEficiencia;
 import com.opc.modelo.Tag;
 import com.opc.modelo.Turno;
@@ -452,6 +453,26 @@ public class ControladorEficiencia {
 	public List<Object[]> produccionMensual(){
 		List<Object[]> resulProd = daoEficiencia.produccionMensual();
 		return resulProd;
+	}
+	
+	@RequestMapping("produccionFecha")
+	@ResponseBody	
+	public List<ProduccionFecha> produccionFecha(int idDispositivo, String fecha_ini, String fecha_fin){
+		List<Object[]> resulProd = daoEficiencia.produccionFecha(idDispositivo, fecha_ini, fecha_fin);
+		
+		List<ProduccionFecha> listaProduccion = new ArrayList<ProduccionFecha>();
+		
+		for (int i = 0; i < resulProd.size(); i++) {
+			BigInteger cantidad;
+			ProduccionFecha produccion = new ProduccionFecha();
+			cantidad = (BigInteger) resulProd.get(i)[2];
+			produccion.setTurno((String)resulProd.get(i)[0]);
+			produccion.setVersion((String)resulProd.get(i)[1]);
+			produccion.setCantidad(cantidad.intValue());
+			listaProduccion.add(produccion);
+		}		
+		
+		return listaProduccion;
 	}
 	
 
