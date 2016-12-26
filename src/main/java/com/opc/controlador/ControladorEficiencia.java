@@ -70,7 +70,7 @@ public class ControladorEficiencia {
 	    return bd.doubleValue();
 	}
 	
-	public long tiempoParadas(String tipo, int idDispositivo, int idTurno, Date inicio, Date fin){
+	public long tiempoParadas(String tipo, int idDispositivo, int idTurno, Date inicio, Date fin, int mes){
 		
 		long resul = 0;
 		DateFormat dateC = new SimpleDateFormat("yyyy-MM-dd");
@@ -80,8 +80,9 @@ public class ControladorEficiencia {
 		}else if (tipo.equals("TurnoGeneral")){	
 			resul = daoEficiencia.findTiempoRestadoByTurnoGeneral(inicioStr, idTurno);
 		}else if (tipo.equals("Dia")){
-			
 			resul = daoEficiencia.findTiempoRestadoByDia(idDispositivo, inicioStr);
+		}else if (tipo.equals("MesGeneral")){			
+			resul = daoEficiencia.findTiempoRestadoByMesGeneral(mes);
 		}else if (tipo.equals("DiaGeneral")){
 			resul = daoEficiencia.findTiempoRestadoByDiaGeneral(inicioStr);
 		}else if (tipo.equals("Rango")){
@@ -149,7 +150,7 @@ public class ControladorEficiencia {
 			int velSet = velocidadSeteada(idDispo); //Velocidad Seteada Directo en la Maquina
 			Date fecha = (Date) aux[1];
 			
-			long tRest = (tiempoParadas("Dia",idDispo,0,fecha,new Date()))/60000;
+			long tRest = (tiempoParadas("Dia",idDispo,0,fecha,new Date(),0))/60000;
 		
 			double velDou = (double) vel;     
 			if (velDou > 0){
@@ -307,15 +308,22 @@ public class ControladorEficiencia {
 	@RequestMapping("eficienciaGeneralDiaAnterior")
 	@ResponseBody	
 	public double eficienciaGeneralDia(){
-		double resul = 0.0;
+		double resul = 0.0;;
+		int ind = 0;
 		List<Object[]> resulDia = daoEficiencia.findEficienciaGeneralDiaAnterior();
 		
-		BigInteger totUnd =  (BigInteger) resulDia.get(1)[1];
-		BigDecimal vel = (BigDecimal) resulDia.get(1)[2];
+		if (resulDia.toArray().length == 1){
+			ind = 0;
+		}else{
+			ind = 1;
+		}
+		
+		BigInteger totUnd =  (BigInteger) resulDia.get(ind)[1];
+		BigDecimal vel = (BigDecimal) resulDia.get(ind)[2];
 		//double pr = (double) resulDia.get(1)[3];
-		Date fecha = (Date) resulDia.get(1)[4];
+		Date fecha = (Date) resulDia.get(ind)[4];
 		double velDou = vel.doubleValue();
-		long tRest = (tiempoParadas("DiaGeneral",0,0,fecha,new Date()))/60000;
+		long tRest = (tiempoParadas("DiaGeneral",0,0,fecha,new Date(),0))/60000;
 		int iTotUnd = totUnd.intValue();
 		
 		resul = (iTotUnd/((1440 - tRest)*velDou))*100;
@@ -327,21 +335,29 @@ public class ControladorEficiencia {
 	@ResponseBody	
 	public double eficienciaGeneralTurno() throws ParseException{
 		double resul = 0.0;
+		int  ind = 0;
 		List<Object[]> resulDia = daoEficiencia.findEficienciaGeneralTurnoAnterior();
 		//BigInteger turno = 100000000;
 		//BigInteger turno = (BigInteger) resulDia.get(1)[1];
-		BigInteger totUnd =  (BigInteger) resulDia.get(1)[2];
-		BigDecimal vel = (BigDecimal) resulDia.get(1)[3];
+		
+		if (resulDia.toArray().length == 1){
+			ind = 0;
+		}else{
+			ind = 1;
+		}
+		
+		BigInteger totUnd =  (BigInteger) resulDia.get(ind)[2];
+		BigDecimal vel = (BigDecimal) resulDia.get(ind)[3];
 		//double pr = (double) resulDia.get(1)[3];
-		Date fecha = (Date) resulDia.get(1)[5];
+		Date fecha = (Date) resulDia.get(ind)[5];
 		double velDou = vel.doubleValue();
 		//int iTurno = turno.intValue();
 		
-		Turno turno = daoTurno.findOne((Integer) resulDia.get(1)[1]);
+		Turno turno = daoTurno.findOne((Integer) resulDia.get(ind)[1]);
 		long tAgendado = tiempoTurno(turno); 		
 		//int iTurno = Integer.parseInt(turno);
 		
-		long tRest = (tiempoParadas("TurnoGeneral",0,1,fecha,new Date()))/60000;
+		long tRest = (tiempoParadas("TurnoGeneral",0,1,fecha,new Date(),0))/60000;
 		int iTotUnd = totUnd.intValue();
 		
 		resul = (iTotUnd/((tAgendado - tRest)*velDou))*100;
@@ -363,11 +379,11 @@ public class ControladorEficiencia {
 		Date fecha = (Date) resulDia.get(0)[5];
 		double velDou = vel.doubleValue();
 		//int iTurno = turno.intValue();
-		Turno turno = daoTurno.findOne((Integer) resulDia.get(1)[1]);
+		Turno turno = daoTurno.findOne((Integer) resulDia.get(0)[1]);
 		long tAgendado = tiempoTurno(turno); 		
 		//int iTurno = Integer.parseInt(turno);
 		
-		long tRest = (tiempoParadas("TurnoGeneral",0,1,fecha,new Date()))/60000;
+		long tRest = (tiempoParadas("TurnoGeneral",0,1,fecha,new Date(),0))/60000;
 		int iTotUnd = totUnd.intValue();
 		
 		resul = (iTotUnd/((tAgendado - tRest)*velDou))*100;
@@ -379,9 +395,16 @@ public class ControladorEficiencia {
 	
 	@RequestMapping("graficoEficienciaGeneral")
 	@ResponseBody		
-	public List<Object[]> graficoEficienciaGeneral(){
-
-		List<Object[]> resulMaq = daoEficiencia.findEficienciaGeneralGrafico();
+	public List<Object[]> graficoEficienciaGeneral(String tipoGr){
+		List<Object[]> resulMaq = null;
+		long tRest = 0;
+		if (tipoGr.equals("Dia")){
+			 resulMaq = daoEficiencia.findEficienciaGeneralGrafico();
+		}else if (tipoGr.equals("Mes")){
+			 resulMaq = daoEficiencia.eficicienciaGeneralMensual();
+		}
+		
+		
 		List<Object[]> resulPr = new ArrayList<Object[]>();  
 		
 
@@ -398,9 +421,17 @@ public class ControladorEficiencia {
 			BigDecimal vel = (BigDecimal) aux[2];
 			int undInt = und.intValue();
 			//int velSet = velocidadSeteada(idDispo); //Velocidad Seteada Directo en la Maquina
-			Date fecha = (Date) aux[4];
 			
-			long tRest = (tiempoParadas("DiaGeneral",0,0,fecha,new Date()))/60000;
+
+			if (tipoGr.equals("Diario")){
+				Date fecha = (Date) aux[4];
+				tRest = (tiempoParadas("DiaGeneral",0,0,fecha,new Date(),0))/60000;
+			}else if (tipoGr.equals("Mensual")){
+				int mes = (int) aux[3];
+				tRest = (tiempoParadas("MesGeneral",0,0,new Date(),new Date(),mes))/60000;
+			}			
+			
+			
 		
 			double velDou = vel.doubleValue();     
 			if (velDou > 0){
@@ -455,6 +486,13 @@ public class ControladorEficiencia {
 		return resulProd;
 	}
 	
+	@RequestMapping("produccionAnual")
+	@ResponseBody	
+	public long produccionAnual(){
+		long resulProd = daoEficiencia.produccionAnual();
+		return resulProd;
+	}	
+	
 	@RequestMapping("produccionFecha")
 	@ResponseBody	
 	public List<ProduccionFecha> produccionFecha(int idDispositivo, String fecha_ini, String fecha_fin){
@@ -475,12 +513,7 @@ public class ControladorEficiencia {
 		return listaProduccion;
 	}
 	
-	@RequestMapping("produccionAnual")
-	@ResponseBody	
-	public long produccionAnual(){
-		long resulProd = daoEficiencia.produccionAnual();
-		return resulProd;
-	}	
+
 	
 
 }
