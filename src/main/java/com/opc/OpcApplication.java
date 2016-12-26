@@ -318,8 +318,6 @@ public class OpcApplication {
 		int velSet = maq.getVelocidad();
 		
         
-        
-        
 		if (horaStr.equals("00")){
 		
 			
@@ -331,8 +329,30 @@ public class OpcApplication {
 			
 			ResumenEficiencia efic = daoEficiencia.findTopByProductoMaquinaOrderByFecRegistroDesc(prodMaq);
 			
+
+					
+			
 			if (efic != null){
-				cantAnterior = efic.getCantAcum();
+				
+				DateFormat dateD = new SimpleDateFormat("yyyy-MM-dd");
+				//Calendar fecJornada = efic.getFechaJornada();				
+				String fecReg = dateD.format(efic.getFechaJornada().getTime());
+				Date horaActual = new Date();
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(horaActual);
+				String fecActual = dateD.format(horaActual);
+				Turno turnoEfic = efic.getTurno();
+				int idTurAct = turno.getIdTurno();
+				int idTurEfc = turnoEfic.getIdTurno();
+				
+				if (fecActual.equals(fecReg)){
+					if (idTurAct == idTurEfc){
+						cantAnterior = efic.getCantAcum();
+					}else{
+						cantAnterior = 0;
+					}
+				}
+				
 			}else{
 				cantAnterior = 0;
 			}
@@ -348,6 +368,11 @@ public class OpcApplication {
 			
 			if (cantActual < cantAnterior){
 				totund = cantActual;
+			}
+			
+			if (cantAnterior == 0){
+				cantAnterior = cantActual;
+				totund = 0;
 			}
 			
 			ResumenEficiencia eficAct = new ResumenEficiencia();
