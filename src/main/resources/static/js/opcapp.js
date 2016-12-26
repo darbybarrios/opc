@@ -539,11 +539,11 @@ function graficoPrMP($http,$scope,baseUrl,notificationService,id){
 function grafico1MP($http,$scope,baseUrl,id,idSucursal,idTurno,inicio,fin,t){
 	
 	
-  $scope.labelsGr1MP = [];
-  $scope.dataGr1MP = [];
+
 	
   if (t == 60){
-	
+	  $scope.labelsGr1MP = [];
+	  $scope.dataGr1MP = [];	
    $http.get(baseUrl + '/graficosTipoParadasMp?filtro=Dispositivo&grupo=Turno&idSucursal='+idSucursal+'&idDispositivo='+id+'&idTurno='+idTurno+'&inicio='+inicio+'&fin='+fin)
 	.success(function(result){
 		$scope.grParadas1MP = result;
@@ -575,7 +575,7 @@ function grafico2MP($http,$scope,baseUrl,id,idSucursal,idTurno,inicio,fin,t){
 	$scope.labelsGr2MP = [];
 	$scope.dataGr2MP = [];
 
-	 // if (t == 60){
+	  if (t == 60){
 			
 		   $http.get(baseUrl + '/graficosCausaFallaParadasMp?filtro=Dispositivo&grupo=Turno&idSucursal='+idSucursal+'&idDispositivo='+id+'&idTurno='+idTurno+'&inicio='+inicio+'&fin='+fin)
 			.success(function(result){
@@ -597,7 +597,7 @@ function grafico2MP($http,$scope,baseUrl,id,idSucursal,idTurno,inicio,fin,t){
 
 			});  
 		    
-	//	  } 	
+	 } 	
 	
 }
 
@@ -910,12 +910,12 @@ function graficoEficienciaGenMes($http,$scope,baseUrl,notificationService){
 		                
 		                $scope.dataAuxPrGenM.push($scope.graficoPrGenM[i][3]);
 		              	//$scope.seriesPrGenM.push($scope.graficoPrGenM[i][1]);
-		               	$scope.dataPrGenM.push($scope.dataAuxPrGenM);
+		               	//$scope.dataPrGenM.push($scope.dataAuxPrGenM);
 		              	$scope.labelsPrGenM.push($scope.graficoPrGenM[i][4]);
 	         
 		        }
 
-		        $scope.dataPrGenM.push(dataAuxPrGenM);
+		        $scope.dataPrGenM.push($scope.dataAuxPrGenM);
 		        
 				} 
 			});  
@@ -1963,9 +1963,9 @@ app.config(['ChartJsProvider', function (ChartJsProvider) {
       showLines: true
     });
     
-    ChartJsProvider.setOptions('doughnut', {
+   /* ChartJsProvider.setOptions('doughnut', {
         legend: true
-      });    
+      });  */  
   }]);
 
 
@@ -2548,7 +2548,7 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 							$scope.temporizador = 0;
 						}
 
-					   $timeout($scope.activateRealtime, 1000);	
+					  $timeout($scope.activateRealtime, 1000);	
 					
 					}
 					else if ($scope.conectado == "0"){

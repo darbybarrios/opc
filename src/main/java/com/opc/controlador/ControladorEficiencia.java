@@ -386,7 +386,9 @@ public class ControladorEficiencia {
 		long tRest = (tiempoParadas("TurnoGeneral",0,1,fecha,new Date(),0))/60000;
 		int iTotUnd = totUnd.intValue();
 		
-		resul = (iTotUnd/((tAgendado - tRest)*velDou))*100;
+		//resul = (iTotUnd/((tAgendado - tRest)*velDou))*100;
+		
+		resul = 0.0;
 		
 		return round(resul,2);
 	}	

@@ -98,7 +98,7 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
 	//Pr_GeneralGrafico
 	@Query(value="Select r .id_dispositivo, Sum(r.cant_unidades), avg(r.vel_seteada),((Sum(r.cant_unidades)/(1440*avg(r.vel_seteada)))*100) Pr,date(r.fecha_jornada) " +
                  "From resumen_eficiencia r Where r.fecha_jornada is not null and to_char(fecha_jornada,'YYYY') = to_char(now(),'YYYY')  " +
-                 "Group By r.id_dispositivo, date(r.fecha_jornada)",nativeQuery=true)
+                 "Group By r.id_dispositivo, date(r.fecha_jornada) Order by date(r.fecha_jornada)",nativeQuery=true)
 	List<Object[]> findEficienciaGeneralGrafico();
 	
 	
