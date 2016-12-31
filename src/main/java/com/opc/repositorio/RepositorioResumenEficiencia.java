@@ -110,15 +110,18 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
 	List<Object[]> topMaquinas();
 	
 	
-	@Query(value="Select Sum(r.cant_unidades) Sum_cant_unidades, To_Char(r.fecha_jornada,'MM') Mes " + 
-                 "From resumen_eficiencia r Where To_Char(r.fecha_jornada,'MM') = to_char(now(),'MM') Group By " + 
-                 "To_Char(r.fecha_jornada,'MM')", nativeQuery=true)
+	@Query(value="Select Sum_cant_unidades, Case(t.Mes) When '01' then 'Ene' When '02' then 'Feb' When '03' then 'Mar' When '04' then 'Abr' " +
+				"When '05' then 'May' When '06' then 'Jun' When '07' then 'Jul' When '08' then 'Ago' When '09' then 'Sep' " +
+				"When '10' then 'Oct' When '11' then 'Nov' When '12' then 'Dic' else 'Dic' end From " +
+				"(Select Sum(r.cant_unidades) Sum_cant_unidades, To_Char(r.fecha_jornada,'MM') Mes " +
+                 "From resumen_eficiencia r Where To_Char(r.fecha_jornada,'MM') = to_char(now(),'MM') And To_Char(r.fecha_jornada,'YYYY') = to_char(now(),'YYYY')  Group By " +
+                 "To_Char(r.fecha_jornada,'MM')) t", nativeQuery=true)
 	List<Object[]> produccionMensual();
 	
 	//Pr_General_Mensual
-		@Query(value="Select t.id_dispositivo, t.totUnd, t.vel, t.mes, Case t.Mes When 1 Then 'Enero' When 2 Then 'Febrero' When '3' Then 'Marzo' " +
-	                 "When '4' Then 'Abril' When '5' Then 'Mayo' When 6 Then 'Junio' When 7 Then 'Julio' When '8' Then 'Agosto' When '9' Then 'Septiembre' " +
-	                 "When '10' Then 'Octubre' When '11' Then 'Noviembre' Else 'Diciembre' End From (Select r.id_dispositivo, " +
+		@Query(value="Select t.id_dispositivo, t.totUnd, t.vel, t.mes, Case t.Mes When 1 Then 'Ene' When 2 Then 'Feb' When 3 Then 'Mar' " +
+	                 "When 4 Then 'Abr' When 5 Then 'May' When 6 Then 'Jun' When 7 Then 'Jul' When 8 Then 'Ago' When '9' Then 'Sep' " +
+	                 "When '10' Then 'Oct' When '11' Then 'Nov' Else 'Dic' End From (Select r.id_dispositivo, " +
 	                 "Sum(r.cant_unidades) As totUnd, Avg(r.vel_seteada) As vel, Date_Part('month', r.fecha_jornada) As Mes " +
 	                 "From resumen_eficiencia r Where r.fecha_jornada Is Not Null And to_char(r.fecha_jornada,'YYYY') = to_char(now(),'YYYY') " +
 	                 "Group By r.id_dispositivo, Date_Part('month', r.fecha_jornada) Order By Mes Desc) t",nativeQuery=true)

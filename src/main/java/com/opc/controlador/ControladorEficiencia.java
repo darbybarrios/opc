@@ -157,12 +157,12 @@ public class ControladorEficiencia {
 				pr = ((undInt)/((1440 - tRest)*velDou));  //1440 Min tiene el dia
 			}
 			
+			pr = pr*100;
+			if (pr > 100){
+				pr = 100.0;
+			}
 			
-			/*if (velSet > 0){
-					pr = ((undInt)/((1440)*velSet));
-			}*/
-			
-			aux[4] = round(pr*100,2);
+     		aux[4] = round(pr,2);
         	
         	resulPr.add(i, aux);
         	          
@@ -221,7 +221,10 @@ public class ControladorEficiencia {
 				pr = ((undInt)/((tAgendado)*velDou));
 			}
 			
-		
+			pr = pr*100;
+			if (pr > 100){
+				pr = 100.0;
+			}		
 			/*if (velSet > 0){
 				
 			
@@ -231,7 +234,7 @@ public class ControladorEficiencia {
 			
 		}
 		
-		return (round(pr*100,2));
+		return (round(pr,2));
 		
 	}	
 
@@ -274,12 +277,16 @@ public class ControladorEficiencia {
 				pr = ((undInt)/((tAgendado)*velDou));  //1440 Min tiene el dia
 			}
 			
+			pr = pr*100;
+			if (pr > 100){
+				pr = 100.0;
+			}
 			/*
 			
 			if (velSet > 0){
 				pr = ((undInt)/((tAgendado)*velSet));  //1440 Min tiene el dia
 			}*/
-			aux[6] = round(pr*100,2);
+			aux[6] = round(pr,2);
         	
         	resulPr.add(i, aux);
         	          
@@ -328,6 +335,10 @@ public class ControladorEficiencia {
 		
 		resul = (iTotUnd/((1440 - tRest)*velDou))*100;
 		
+		if (resul > 100){
+			resul = 100;
+		}
+		
 		return round(resul,2);
 	}
 	
@@ -362,6 +373,10 @@ public class ControladorEficiencia {
 		
 		resul = (iTotUnd/((tAgendado - tRest)*velDou))*100;
 		
+		if (resul > 100){
+			resul = 100;
+		}		
+		
 		return round(resul,2);
 	}	
 	
@@ -386,9 +401,12 @@ public class ControladorEficiencia {
 		long tRest = (tiempoParadas("TurnoGeneral",0,1,fecha,new Date(),0))/60000;
 		int iTotUnd = totUnd.intValue();
 		
-		//resul = (iTotUnd/((tAgendado - tRest)*velDou))*100;
+		resul = (iTotUnd/((tAgendado - tRest)*velDou))*100;
 		
-		resul = 0.0;
+		
+		if (resul > 100){
+			resul = 100;
+		}		
 		
 		return round(resul,2);
 	}	
@@ -444,6 +462,10 @@ public class ControladorEficiencia {
 			/*if (velSet > 0){
 					pr = ((undInt)/((1440)*velSet));
 			}*/
+
+			if (pr*100 > 100){
+				pr = 100;
+			}
 			
 			aux[3] = round(pr*100,2);
         	

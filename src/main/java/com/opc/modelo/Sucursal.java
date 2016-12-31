@@ -20,6 +20,7 @@ public class Sucursal implements Serializable{
 	private String telefono;
 	private String Estado;
 	private int turnos;
+	private String configurado;
 	
 
 
@@ -91,6 +92,18 @@ public class Sucursal implements Serializable{
 	public void setTurnos(int turnos) {
 		this.turnos = turnos;
 	}
+
+
+	public String getConfigurado() {
+		return configurado;
+	}
+
+
+	public void setConfigurado(String configurado) {
+		this.configurado = configurado;
+	}
+	
+	
 
 
 }

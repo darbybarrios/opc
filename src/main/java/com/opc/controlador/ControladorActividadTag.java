@@ -358,6 +358,15 @@ public class ControladorActividadTag {
 		long resulProd = daoActividad.totalParosNoPlan();
 		return resulProd;
 	}
+
+	@RequestMapping("ultimaFalla")
+	@ResponseBody		
+	public ActividadTag ultima_falla(int idDispositivo){
+		Dispositivo dispo = daoDispositivo.findOne(idDispositivo);
+		Tag tag = daoTag.findBytipoInformacionAndStatRegAndDispositivo("2", "0", dispo);
+		ActividadTag act = daoActividad.findTopByTagOrderByFechaDesc(tag);
+		return act;
+	}
 	
 
 }

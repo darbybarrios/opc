@@ -41,20 +41,21 @@ public class ControladorSucursal {
 	
 	@RequestMapping("nueva-sucursal")
 	@ResponseBody	
-	public void nuevo (String estado, String direccion, String nombre, String telefono, int turnos) {
+	public void nuevo (String estado, String direccion, String nombre, String telefono, int turnos,String config) {
 		Sucursal sucursal = new Sucursal();
 		sucursal.setEstado(estado);
 		sucursal.setDireccion(direccion);
 		sucursal.setNombre(nombre);
 		sucursal.setTelefono(telefono);
 		sucursal.setTurnos(turnos);
+		sucursal.setConfigurado(config);
 		repositorioSucursal.save(sucursal);
 			
 	}
 	
 	@RequestMapping("editar-sucursal")
 	@ResponseBody	
-	public void editar (int idSuc, String estado, String direccion, String nombre, String telefono, int turnos) {
+	public void editar (int idSuc, String estado, String direccion, String nombre, String telefono, int turnos,String config) {
 		Sucursal sucursal = new Sucursal();
 		sucursal.setIdSucursal(idSuc);
 		sucursal.setEstado(estado);
@@ -62,6 +63,7 @@ public class ControladorSucursal {
 		sucursal.setNombre(nombre);
 		sucursal.setTelefono(telefono);
 		sucursal.setTurnos(turnos);
+		sucursal.setConfigurado(config);
 		repositorioSucursal.save(sucursal);
 			
 	}

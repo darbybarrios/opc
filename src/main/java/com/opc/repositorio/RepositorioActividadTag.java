@@ -24,6 +24,8 @@ public interface RepositorioActividadTag extends CrudRepository<ActividadTag, In
 	
 	List<ActividadTag> findByTagAndFechaLessThanOrderByFechaDesc(Tag tag,Calendar fecfin);
 	
+	
+	
 
  	//Paradas_ByDispositivoAndTruno   -- FlySpeed --
 	@Query(value="Select round(((Sum(actividad_tag.duracion_ms)*100)/(Select Sum(a.duracion_ms) " +

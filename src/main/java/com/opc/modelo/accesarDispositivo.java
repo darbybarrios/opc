@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -185,7 +186,17 @@ public class accesarDispositivo {
 		
 		public Server conectar() throws IllegalArgumentException, UnknownHostException, JIException, AlreadyConnectedException{
 			
-			server.connect();
+			
+			try {
+				server.connect();
+			} catch (UnknownHostException e1) {
+
+				e1.printStackTrace();
+				System.out.println("Error : UnknownHostException, Host de RSLinx");
+			} catch (JIException e2) {
+				e2.printStackTrace();
+				System.out.println("Error : JIException, Excepxion de RSLinx");
+			}
 			return server;
 		}
 		

@@ -300,7 +300,7 @@ function buscar_valor_velocidad($http,$scope,baseUrl){
 		  return $http.get(baseUrl +'/velocidadSeteada?idDispositivo='+$scope.tagDispo3.idDispositivo)
 	}).then(function(result){
 		  $scope.velSet = result.data;
-		  $scope.titVel = ' Velocidad Meta : ';
+		  $scope.titVelSet = " Velocidad Meta : " + $scope.velSet;
 	})	  
 
 }
@@ -338,11 +338,15 @@ function buscar_valor_tag5($http,$scope,baseUrl){
 		  
 		  if ($scope.tag5.parado != "0"){
 			  $scope.descDet5 = "Si"
+					  
 		  }else{
 			  
 			  $scope.descDet5 = "No"
 		  }
-		  
+		  return $http.get(baseUrl +'/ultimaFalla?idDispositivo='+$scope.tagDispo5.idDispositivo)
+	}).then(function(result){    		  
+		  $scope.tag5Falla = result.data;
+		  $scope.descFalla = " " + $scope.tag5Falla.descFalla;
 	})	  
 
 }
@@ -2034,7 +2038,7 @@ app.controller("ListadoSucursalesController", ['$scope','$http','$filter',functi
 	$scope.insertarSucursal = function(){
 		
 		$http.post(baseUrl + '/nueva-sucursal?estado='+$scope.estado+'&direccion='+$scope.direccion+'&nombre='+$scope.nombre+
-				'&telefono='+$scope.telefono+'&turnos='+$scope.turnos)
+				'&telefono='+$scope.telefono+'&turnos='+$scope.turnos+'&config='+$scope.config)
 		.success(function(response){
 			$('#crear').modal('hide');
 			$http.get(baseUrl + "/listar-sucursales").success(function (data) {      
@@ -2064,7 +2068,7 @@ app.controller("ListadoSucursalesController", ['$scope','$http','$filter',functi
 	
 	$scope.editarSucursal = function(){
 		$http.put(baseUrl + '/editar-sucursal?idSuc='+$scope.sucursales[$scope.indSucursal].idSucursal+'&estado='+$scope.estado+'&direccion='+$scope.direccion+'&nombre='+$scope.nombre+
-				'&telefono='+$scope.telefono+'&turnos='+$scope.turnos).
+				'&telefono='+$scope.telefono+'&turnos='+$scope.turnos+'&config='+$scope.config).
 		success(function(response){
 				$('#editar').modal('hide');
 				$http.get(baseUrl + "/listar-sucursales").success(function (data) {      
