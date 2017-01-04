@@ -10,5 +10,6 @@ import com.opc.modelo.Sucursal;
 public interface RepositorioSucursal extends CrudRepository<Sucursal, Integer> {
 	
 	List<Sucursal> findAll();
+	Sucursal findTopBy();
 
 }

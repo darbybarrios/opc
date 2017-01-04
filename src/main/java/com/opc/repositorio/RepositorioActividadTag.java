@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.opc.modelo.ActividadTag;
 import com.opc.modelo.Tag;
+import com.opc.modelo.Turno;
 
 public interface RepositorioActividadTag extends CrudRepository<ActividadTag, Integer> {
 	
@@ -80,7 +81,26 @@ public interface RepositorioActividadTag extends CrudRepository<ActividadTag, In
 	             "and actividad_tag.id_causa_falla is not null",nativeQuery=true)
     long totalParosNoPlan();
     
-		
-	
+    @Query(value="Select count(*) From actividad_tag a " +
+                 "Where a.id_tag = :idTag and Date(a.fecha_jornada) = Date(:fecha) and a.valor != '0'",nativeQuery=true)
+    long countByTagAndFechaJornada(@Param("idTag") int idTag, @Param("fecha") String fecha);
+
+    @Query(value="Select count(*) From actividad_tag a " +
+            "Where a.id_tag = :idTag and Date(a.fecha_jornada) = Date(:fecha) And a.id_turno = :idTurno and a.valor != '0'",nativeQuery=true)    
+	long countByTagAndTurnoAndFechaJornada(@Param("idTag") int idTag,@Param("idTurno") int idTurno, @Param("fecha") String fecha);	
+
+    @Query(value="Select sum(a.acum_und) From actividad_tag a Where a.id_tag = :idTag and " +
+		     "Date(a.fecha_jornada) = Date(:fecha) and a.id_turno = :idTurno",nativeQuery=true)
+    long findTopByTagAndTurnoAndFechaJornadaOrderByFecha(@Param("idTag") int idTag,@Param("idTurno") int idTurno, @Param("fecha") String fecha);
+
+    @Query(value="Select sum(a.acum_und) From actividad_tag a Where a.id_tag = :idTag and " +
+		     "Date(a.fecha_jornada) = Date(:fecha)",nativeQuery=true)
+    long findTopByTagAndFechaJornadaOrderByFecha(@Param("idTag") int idTag, @Param("fecha") String fecha);
+    
+    @Query(value="Select valor From actividad_tag a Where a.id_tag = :idTag and " +
+		     "Date(a.fecha_jornada) = Date(:fecha) and a.id_turno = :idTurno Order by a.fecha Desc limit 1",nativeQuery=true)
+    String findTopByTagAndTurnoAndFechaJornadaOrderByFechaDesc(@Param("idTag") int idTag,@Param("idTurno") int idTurno, @Param("fecha") String fecha);
+ 
+    
 	
 }

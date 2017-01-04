@@ -272,6 +272,38 @@ function buscar_valor_tag2($http,$scope,baseUrl){
 
 }
 
+function buscar_valor_totParosDia($http,$scope,baseUrl,turno){
+	
+
+	$http.get(baseUrl + "/buscarPorMaquina?idMaquina="+$scope.selLinea).then(function (result) {
+		  $scope.idDispo = result.data;
+		  return $http.get(baseUrl +'/totParosDia?idDispositivo='+$scope.idDispo.idDispositivo+'&idTurno='+turno+'&tipo=Dia')
+	}).then(function(result){
+		  $scope.totParosDia = result.data;
+		  return $http.get(baseUrl +'/totParosDia?idDispositivo='+$scope.idDispo.idDispositivo+'&idTurno='+turno+'&tipo=Turno')
+	}).then(function(result){
+		  $scope.totParosTurno = result.data;
+		  $scope.titParosTurno = 'Turno : ' + $scope.totParosTurno;
+	})	  
+
+}
+
+function buscar_valor_undProducidas($http,$scope,baseUrl,turno){
+	
+
+	$http.get(baseUrl + "/buscarPorMaquina?idMaquina="+$scope.selLinea).then(function (result) {
+		  $scope.idDispo = result.data;
+		  return $http.get(baseUrl +'/totUndProducidas?idDispositivo='+$scope.idDispo.idDispositivo+'&idTurno='+turno+'&filtro=Dia')
+	}).then(function(result){
+		  $scope.totUndDia = result.data;
+		  return $http.get(baseUrl +'/totUndProducidas?idDispositivo='+$scope.idDispo.idDispositivo+'&idTurno='+turno+'&filtro=Turno')
+	}).then(function(result){
+		  $scope.totUndTurno = result.data;
+		  $scope.titUndTurno = 'Turno : ' + $scope.totUndTurno;
+	})	  
+
+}
+
 function buscar_valor_tag3($http,$scope,baseUrl){
 	
 
@@ -2063,10 +2095,12 @@ app.controller("ListadoSucursalesController", ['$scope','$http','$filter',functi
 			$scope.nombre=$scope.modifSucursal.nombre;
 			$scope.telefono=$scope.modifSucursal.telefono;
 			$scope.turnos=$scope.modifSucursal.turnos;
+			$scope.config=$scope.modifSucursal.config;
 			});
 	};
 	
 	$scope.editarSucursal = function(){
+		alert($scope.config);
 		$http.put(baseUrl + '/editar-sucursal?idSuc='+$scope.sucursales[$scope.indSucursal].idSucursal+'&estado='+$scope.estado+'&direccion='+$scope.direccion+'&nombre='+$scope.nombre+
 				'&telefono='+$scope.telefono+'&turnos='+$scope.turnos+'&config='+$scope.config).
 		success(function(response){
@@ -2544,6 +2578,8 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 					   //buscar_valor_tag2($http,$scope,baseUrl);
 					   //buscar_valor_tag3($http,$scope,baseUrl);
 					   buscar_valor_velocidad($http,$scope,baseUrl);
+					   buscar_valor_totParosDia($http,$scope,baseUrl,$scope.turnoActual.idTurno);
+					   buscar_valor_undProducidas($http,$scope,baseUrl,$scope.turnoActual.idTurno);
 					   buscar_valor_tag4($http,$scope,baseUrl);
 					   buscar_valor_tag5($http,$scope,baseUrl);
 					   //buscar_valor_tag6($http,$scope,baseUrl); 

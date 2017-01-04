@@ -38,6 +38,7 @@ import com.opc.modelo.Maquina;
 import com.opc.modelo.ProductoMaquina;
 import com.opc.modelo.ResumenConectividad;
 import com.opc.modelo.ResumenEficiencia;
+import com.opc.modelo.Sucursal;
 import com.opc.modelo.Tag;
 import com.opc.modelo.TipoValor;
 import com.opc.modelo.Turno;
@@ -50,6 +51,7 @@ import com.opc.repositorio.RepositorioProducto;
 import com.opc.repositorio.RepositorioProductoMaquina;
 import com.opc.repositorio.RepositorioResumenConectividad;
 import com.opc.repositorio.RepositorioResumenEficiencia;
+import com.opc.repositorio.RepositorioSucursal;
 import com.opc.repositorio.RepositorioTag;
 import com.opc.repositorio.RepositorioTurno;
 
@@ -318,7 +320,7 @@ public class OpcApplication {
 		int velSet = maq.getVelocidad();
 		
         
-		if (horaStr.equals("00")){
+		//if (horaStr.equals("00")){
 		
 			
 			Tag unidades = daoTag.findBytipoInformacionAndStatRegAndDispositivo("4", "0", dispo);
@@ -397,7 +399,7 @@ public class OpcApplication {
 			eficAct.setFechaJornada(f_Jornada);
 			daoEficiencia.save(eficAct);
 		
-		}
+		//}
 				
 		
     }
@@ -407,7 +409,7 @@ public class OpcApplication {
 			RepositorioDispositivo repositorioDispositivo,RepositorioActividadTag daoActividadTag,
 			RepositorioDetalleTag daoDetalleTag, RepositorioProducto daoProducto,RepositorioProductoMaquina daoProductoMaq, 
 			RepositorioTurno daoTurno, RepositorioResumenEficiencia daoEficiencia, RepositorioResumenConectividad daoResumenConn,
-			RepositorioMaquina daoMaquina){
+			RepositorioMaquina daoMaquina, RepositorioSucursal daoSucursal){
 		return (args) -> {
 			
 			List<Dispositivo> listaDispo = daoDispositivo.findByStatReg("0");
@@ -417,7 +419,12 @@ public class OpcApplication {
 
 			Server server = acceso.conectar();
 			final Group group = server.addGroup ( "fallas" );
+			Sucursal suc = daoSucursal.findTopBy();
 			
+			if (suc.getConfigurado().equals("No")){
+				acceso.cargarPlcs();
+				acceso.cargarTags("Todos");				
+			}
 			
 			//acceso.cargarPlcs();
 			//acceso.cargarTags("Todos");
@@ -478,8 +485,10 @@ public class OpcApplication {
 				        	boolean conexion = true;
 				        	boolean arranco = false;
 				        	String minAnt = "99";
-				        	
-				        	
+				        	long valorAntL = 0;
+				        	long valorAcum = 0;
+				        	int sw = 0;
+			        	
 				        	
 				        	
 				        	
@@ -621,7 +630,16 @@ public class OpcApplication {
 					                	if (Objects.equals(tag.getTipoInformacion(),"4")){
 					                	
 						                	try {
-						                		
+						                		long valorL = Long.parseLong(valor);
+						                		if (sw > 0){
+							                		
+							                		if (valorL > 0){
+							                			valorAcum = valorL - valorAntL;
+							                		}
+							                		
+						                		}	
+						                		valorAntL = valorL;
+						                		sw = 1;
 						                		DateFormat mm = new SimpleDateFormat("mm");
 						                		String minStr = mm.format(new Date());
 						                		if (!minStr.equals(minAnt)){
@@ -708,6 +726,7 @@ public class OpcApplication {
 						                    
 						                    evento.setFechaJornada(fJornada);
 						                    evento.setTurno(tJornada);
+						                    evento.setAcumUnd(valorAcum);
 						                    
 						                    daoActividadTag.save(evento);
 					                	}

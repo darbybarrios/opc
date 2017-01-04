@@ -352,7 +352,7 @@ public class ControladorActividadTag {
 		return resulParadas;
 	}	
 	
-	@RequestMapping("totParosNoPlan")
+	@RequestMapping("totParosNoPlan") //Tiempo Total
 	@ResponseBody	
 	public long totParosNoPlan(){
 		long resulProd = daoActividad.totalParosNoPlan();
@@ -367,6 +367,60 @@ public class ControladorActividadTag {
 		ActividadTag act = daoActividad.findTopByTagOrderByFechaDesc(tag);
 		return act;
 	}
+	
+	@RequestMapping("totParosDia") //Numero de Paros del Dia
+	@ResponseBody		
+	public Long totParosDia(String tipo, int idDispositivo, int idTurno) throws ParseException{
+		long tot = 0;
+		Dispositivo dispo = daoDispositivo.findOne(idDispositivo);
+		Turno turno = daoTurno.findOne(idTurno);
+		Tag tag = daoTag.findBytipoInformacionAndStatRegAndDispositivo("2", "0", dispo);
+				
+		ControladorTurnos ct = new ControladorTurnos();
+    	Calendar fecha = Calendar.getInstance();
+    	fecha.setTime(new Date());
+    	Calendar fjornada = ct.determinarFechaJornada(fecha, turno);
+		DateFormat dateC = new SimpleDateFormat("yyyy-MM-dd");
+		String jornadaStr = dateC.format(fjornada.getTime());   	
+    	
+    	
+    	if (tipo.equals("Dia")){
+    		tot = daoActividad.countByTagAndFechaJornada(tag.getIdTag(), jornadaStr);
+    	}else if (tipo.equals("Turno")){
+    		tot = daoActividad.countByTagAndTurnoAndFechaJornada(tag.getIdTag(), turno.getIdTurno(), jornadaStr);
+		}
+    			
+		return tot;
+	}	
+
+	@RequestMapping("totUndProducidas") //Numero de Und Producidas al Momento
+	@ResponseBody	
+	public long valorUnidades(String filtro, int idDispositivo, int idTurno) throws ParseException{
+		long tot = 0;
+		Dispositivo dispo = daoDispositivo.findOne(idDispositivo);
+		Turno turno = daoTurno.findOne(idTurno);
+		Tag tag = daoTag.findBytipoInformacionAndStatRegAndDispositivo("4", "0", dispo);
+				
+		ControladorTurnos ct = new ControladorTurnos();
+    	Calendar fecha = Calendar.getInstance();
+    	fecha.setTime(new Date());
+    	Calendar fjornada = ct.determinarFechaJornada(fecha, turno);
+		DateFormat dateC = new SimpleDateFormat("yyyy-MM-dd");
+		String jornadaStr = dateC.format(fjornada.getTime()); 
+		
+		if (filtro.equals("Dia")){
+			tot = daoActividad.findTopByTagAndFechaJornadaOrderByFecha(tag.getIdTag(),jornadaStr);
+		
+		}else if (filtro.equals("Turno")){
+			tot = daoActividad.findTopByTagAndTurnoAndFechaJornadaOrderByFecha(tag.getIdTag(), turno.getIdTurno(), jornadaStr);
+			
+		}
+		
+		//String valorFin = daoActividad.findTopByTagAndTurnoAndFechaJornadaOrderByFechaDesc(tag.getIdTag(), turno.getIdTurno(), jornadaStr);
+		
+		return tot;
+	}
+	
 	
 
 }

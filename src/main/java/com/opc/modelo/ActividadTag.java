@@ -28,6 +28,7 @@ public class ActividadTag {
 		private String descFalla;
 		private Calendar fechaJornada;
 		private Turno turno;
+		private long acumUnd;
 		
 		public ActividadTag() {
 			super();
@@ -279,9 +280,20 @@ public class ActividadTag {
 		}
 
 
-
 		public void setTurno(Turno turno) {
 			this.turno = turno;
+		}
+
+
+
+		public long getAcumUnd() {
+			return acumUnd;
+		}
+
+
+
+		public void setAcumUnd(long acumUnd) {
+			this.acumUnd = acumUnd;
 		}
 
 

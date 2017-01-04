@@ -96,7 +96,7 @@ public class ControladorTurnos {
 	public Calendar determinarFechaJornada(Calendar fecha, Turno turno) throws ParseException{
 		Calendar fechaInicio = null;
 		DateFormat dateF = new SimpleDateFormat("HH:mm");
-		String horaCorte = "00:00";
+		String horaCorte = "23:59";
 		Date horaC = dateF.parse(horaCorte);
 		String ini = dateF.format(fecha.getTime());
 		Date horaActual = dateF.parse(ini);
