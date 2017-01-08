@@ -141,7 +141,7 @@ public class ControladorTurnos {
 			Date horaIni = dateF.parse(ini);
 			Date horaFin = dateF.parse(fin);
 			
-			if ((horaActual.compareTo(horaIni) > 0) && (horaActual.compareTo(horaFin) < 0)) {
+			if ((horaActual.compareTo(horaIni) >= 0) && (horaActual.compareTo(horaFin) <= 0)) {
 				enc = true;
 				turnoActual = tur;
 				break;

@@ -95,11 +95,17 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
                  "And causa_falla.resta_tiempo = 'si' And date(actividad_tag.fecha_jornada) = date(:Fecha) And actividad_tag.id_turno = :idTurno",nativeQuery=true)
 	long findTiempoRestadoByTurnoGeneral(@Param("Fecha") String fecha, @Param("idTurno") int idTurno );	
 	
-	//Pr_GeneralGrafico
+	//Pr_Grafico_por_maquina
 	@Query(value="Select r .id_dispositivo, Sum(r.cant_unidades), avg(r.vel_seteada),((Sum(r.cant_unidades)/(1440*avg(r.vel_seteada)))*100) Pr,date(r.fecha_jornada) " +
                  "From resumen_eficiencia r Where r.fecha_jornada is not null and to_char(fecha_jornada,'YYYY') = to_char(now(),'YYYY')  " +
                  "Group By r.id_dispositivo, date(r.fecha_jornada) Order by date(r.fecha_jornada)",nativeQuery=true)
-	List<Object[]> findEficienciaGeneralGrafico();
+	List<Object[]> findEficienciaGeneralGraficoMaq();
+	
+	//Pr_GeneralGrafico
+	@Query(value="Select Sum(r.cant_unidades), avg(r.vel_seteada),((Sum(r.cant_unidades)/(1440*avg(r.vel_seteada)))*100) Pr,date(r.fecha_jornada) " +
+                 "From resumen_eficiencia r Where r.fecha_jornada is not null and to_char(fecha_jornada,'YYYY') = to_char(now(),'YYYY')  " +
+                 "Group By date(r.fecha_jornada) Order by date(r.fecha_jornada)",nativeQuery=true)
+	List<Object[]> findEficienciaGeneralGrafico();	
 	
 	
 	@Query(value="Select r.id_dispositivo, Sum(r.cant_unidades) TotalUnd, Avg(r.vel_seteada), ((Sum(r.cant_unidades) / (1440 * Avg(r.vel_seteada))) * 100) As Pr, " +
@@ -119,23 +125,23 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
 	List<Object[]> produccionMensual();
 	
 	//Pr_General_Mensual
-		@Query(value="Select t.id_dispositivo, t.totUnd, t.vel, t.mes, Case t.Mes When 1 Then 'Ene' When 2 Then 'Feb' When 3 Then 'Mar' " +
+	@Query(value="Select t.totUnd, t.vel, t.mes, Case t.Mes When 1 Then 'Ene' When 2 Then 'Feb' When 3 Then 'Mar' " +
 	                 "When 4 Then 'Abr' When 5 Then 'May' When 6 Then 'Jun' When 7 Then 'Jul' When 8 Then 'Ago' When '9' Then 'Sep' " +
-	                 "When '10' Then 'Oct' When '11' Then 'Nov' Else 'Dic' End From (Select r.id_dispositivo, " +
+	                 "When '10' Then 'Oct' When '11' Then 'Nov' Else 'Dic' End From (Select " +
 	                 "Sum(r.cant_unidades) As totUnd, Avg(r.vel_seteada) As vel, Date_Part('month', r.fecha_jornada) As Mes " +
 	                 "From resumen_eficiencia r Where r.fecha_jornada Is Not Null And to_char(r.fecha_jornada,'YYYY') = to_char(now(),'YYYY') " +
-	                 "Group By r.id_dispositivo, Date_Part('month', r.fecha_jornada) Order By Mes Desc) t",nativeQuery=true)
-		List<Object[]> eficicienciaGeneralMensual();
+	                 "Group By Date_Part('month', r.fecha_jornada) Order By Mes Desc) t",nativeQuery=true)
+	List<Object[]> eficicienciaGeneralMensual();
 
-		@Query(value="Select case when Sum(actividad_tag.duracion_ms) is null then 0 else Sum(actividad_tag.duracion_ms) end " +
+	@Query(value="Select case when Sum(actividad_tag.duracion_ms) is null then 0 else Sum(actividad_tag.duracion_ms) end " +
 	            	 "From actividad_tag Inner Join tag On actividad_tag.id_tag = tag.id_tag Inner Join causa_falla " +
 	                 "On actividad_tag.id_causa_falla = causa_falla.id_causa_falla Where actividad_tag.duracion_ms > 0 and actividad_tag.id_causa_falla is not null " +
 	                 "And causa_falla.resta_tiempo = 'si' And date_part('month',actividad_tag.fecha_jornada) = :Mes",nativeQuery=true)
-		long findTiempoRestadoByMesGeneral(@Param("Mes") int mes);	
+	long findTiempoRestadoByMesGeneral(@Param("Mes") int mes);	
 		
-		@Query(value="Select Sum(r.cant_unidades) Sum_cant_unidades " +
-	                 "From resumen_eficiencia r Where To_Char(r.fecha_jornada,'YYYY') = to_char(now(),'YYYY') ", nativeQuery=true)
-	    long produccionAnual();	
+	@Query(value="Select Sum(r.cant_unidades) Sum_cant_unidades " +
+	             "From resumen_eficiencia r Where To_Char(r.fecha_jornada,'YYYY') = to_char(now(),'YYYY') ", nativeQuery=true)
+	long produccionAnual();	
 	
 	@Query(value="Select turno.desc_turno, producto.desc_producto, Sum(resumen_eficiencia.cant_unidades) As cant_acum " +
 				"From resumen_eficiencia " + 

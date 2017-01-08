@@ -304,12 +304,47 @@ public class ControladorEficiencia {
 		
 	}
 
+	//Mes Anterior
 	@RequestMapping("eficienciaGeneral")
 	@ResponseBody		
 	public double eficienciaGeneral(){
 		double resul = 0.0;
-		resul = daoEficiencia.findEficienciaGeneral();
-		return resul;
+		long tRest = 0;
+		double pr = 0.0;
+		List<Object[]> resulMes = daoEficiencia.eficicienciaGeneralMensual();
+		if (resulMes.size() < 2){
+			resul = 0.0;
+		}else{
+
+			
+        	Object[] aux = new Object[5];
+          	aux[0] = resulMes.get(1)[0];
+          	aux[1] = resulMes.get(1)[1];//unidades
+          	aux[2] = resulMes.get(1)[2];//velocidad
+          	aux[3] = resulMes.get(1)[3];
+          	aux[4] = resulMes.get(1)[4];//pr
+ 
+			BigInteger und = (BigInteger) aux[0];		
+			BigDecimal vel = (BigDecimal) aux[1];
+			int undInt = und.intValue();
+			//int velSet = velocidadSeteada(idDispo); //Velocidad Seteada Directo en la Maquina
+			
+    		int mes = (int) aux[2];			
+    		tRest = (tiempoParadas("MesGeneral",0,0,new Date(),new Date(),mes))/60000;
+    		double velDou = vel.doubleValue();     
+			if (velDou > 0){
+				pr = ((undInt)/((43200 - tRest)*velDou));  //43200 Min tiene el Mes
+			}
+	
+			if (pr*100 > 100){
+				pr = 100;
+			}			
+				
+				
+			}
+		
+		
+		return pr;
 	}
 
 	@RequestMapping("eficienciaGeneralDiaAnterior")
@@ -435,28 +470,36 @@ public class ControladorEficiencia {
           	aux[1] = resulMaq.get(i)[1];//unidades
           	aux[2] = resulMaq.get(i)[2];//velocidad
           	aux[3] = resulMaq.get(i)[3];
-          	aux[4] = resulMaq.get(i)[4];//pr
+          	//aux[4] = resulMaq.get(i)[4];//pr
  
-			BigInteger und = (BigInteger) aux[1];		
-			BigDecimal vel = (BigDecimal) aux[2];
-			int undInt = und.intValue();
+
 			//int velSet = velocidadSeteada(idDispo); //Velocidad Seteada Directo en la Maquina
 			
 
-			if (tipoGr.equals("Diario")){
-				Date fecha = (Date) aux[4];
+			if (tipoGr.equals("Dia")){
+				BigInteger und = (BigInteger) aux[0];		
+				BigDecimal vel = (BigDecimal) aux[1];
+				int undInt = und.intValue();				
+				Date fecha = (Date) aux[3];
 				tRest = (tiempoParadas("DiaGeneral",0,0,fecha,new Date(),0))/60000;
-			}else if (tipoGr.equals("Mensual")){
-				int mes = (int) aux[3];
+				double velDou = vel.doubleValue();     
+				if (velDou > 0){
+					
+					pr = ((undInt)/((1440 - tRest)*velDou));  //1440 Min tiene el dia
+				}				
+			}else if (tipoGr.equals("Mes")){
+				BigInteger und = (BigInteger) aux[0];		
+				BigDecimal vel = (BigDecimal) aux[1];
+				int undInt = und.intValue();				
+				double mesD = (double) aux[2];
+				int mes = (int) mesD;
 				tRest = (tiempoParadas("MesGeneral",0,0,new Date(),new Date(),mes))/60000;
+				double velDou = vel.doubleValue();   
+				if (velDou > 0){
+					
+					pr = ((undInt)/((43200 - tRest)*velDou));  //43200 Min tiene el Mesjyuiiio0'p9p´´popñ´+p{+opoopño 
+				}				
 			}			
-			
-			
-		
-			double velDou = vel.doubleValue();     
-			if (velDou > 0){
-				pr = ((undInt)/((1440 - tRest)*velDou));  //1440 Min tiene el dia
-			}
 			
 			
 			/*if (velSet > 0){
@@ -467,7 +510,7 @@ public class ControladorEficiencia {
 				pr = 100;
 			}
 			
-			aux[3] = round(pr*100,2);
+			aux[4] = round(pr*100,2);
         	
         	resulPr.add(i, aux);
         	          
@@ -536,6 +579,8 @@ public class ControladorEficiencia {
 		
 		return listaProduccion;
 	}
+	
+	
 	
 
 	

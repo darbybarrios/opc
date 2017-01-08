@@ -76,24 +76,24 @@ public interface RepositorioActividadTag extends CrudRepository<ActividadTag, In
                  "Group By causa_falla.tipo_parada, actividad_tag.fecha Order By causa_falla.tipo_parada",nativeQuery=true) 
 	List<Object[]> findParadasByTipoMensual();
 	
-    @Query(value="Select sum(actividad_tag.duracion_ms) totMin From actividad_tag Where " +   
+    @Query(value="Select coalesce(sum(actividad_tag.duracion_ms),0) totMin From actividad_tag Where " +   
     			 "to_char(actividad_tag.fecha_jornada,'YYYY') = to_char(now(),'YYYY') " +
 	             "and actividad_tag.id_causa_falla is not null",nativeQuery=true)
     long totalParosNoPlan();
     
-    @Query(value="Select count(*) From actividad_tag a " +
+    @Query(value="Select coalesce(count(*),0) From actividad_tag a " +
                  "Where a.id_tag = :idTag and Date(a.fecha_jornada) = Date(:fecha) and a.valor != '0'",nativeQuery=true)
     long countByTagAndFechaJornada(@Param("idTag") int idTag, @Param("fecha") String fecha);
 
-    @Query(value="Select count(*) From actividad_tag a " +
+    @Query(value="Select coalesce(count(*),0) From actividad_tag a " +
             "Where a.id_tag = :idTag and Date(a.fecha_jornada) = Date(:fecha) And a.id_turno = :idTurno and a.valor != '0'",nativeQuery=true)    
 	long countByTagAndTurnoAndFechaJornada(@Param("idTag") int idTag,@Param("idTurno") int idTurno, @Param("fecha") String fecha);	
 
-    @Query(value="Select sum(a.acum_und) From actividad_tag a Where a.id_tag = :idTag and " +
+    @Query(value="Select coalesce(sum(a.acum_und),0) From actividad_tag a Where a.id_tag = :idTag and " +
 		     "Date(a.fecha_jornada) = Date(:fecha) and a.id_turno = :idTurno",nativeQuery=true)
     long findTopByTagAndTurnoAndFechaJornadaOrderByFecha(@Param("idTag") int idTag,@Param("idTurno") int idTurno, @Param("fecha") String fecha);
 
-    @Query(value="Select sum(a.acum_und) From actividad_tag a Where a.id_tag = :idTag and " +
+    @Query(value="Select coalesce(sum(a.acum_und),0) From actividad_tag a Where a.id_tag = :idTag and " +
 		     "Date(a.fecha_jornada) = Date(:fecha)",nativeQuery=true)
     long findTopByTagAndFechaJornadaOrderByFecha(@Param("idTag") int idTag, @Param("fecha") String fecha);
     

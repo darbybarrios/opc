@@ -304,6 +304,19 @@ function buscar_valor_undProducidas($http,$scope,baseUrl,turno){
 
 }
 
+function buscar_valor_undProducidasMaqDia($http,$scope,baseUrl,idDispo){
+	
+
+	$http.get(baseUrl + '/turno-actual').then(function (result) {
+		  $scope.Turno = result.data;
+		  return $http.get(baseUrl +'/totUndProducidas?idDispositivo='+idDispo+'&idTurno='+$scope.Turno.idTurno+'&filtro=Dia')
+	}).then(function(result){
+		  $scope.totalUndDia = result.data;
+		  $scope.tittotalUndDia = $scope.totalUndDia + " Hoy"
+	})	  
+
+}
+
 function buscar_valor_tag3($http,$scope,baseUrl){
 	
 
@@ -580,6 +593,7 @@ function grafico1MP($http,$scope,baseUrl,id,idSucursal,idTurno,inicio,fin,t){
   if (t == 60){
 	  $scope.labelsGr1MP = [];
 	  $scope.dataGr1MP = [];	
+	  $scope.optionsGr1MP = {legend : {display: true}};
    $http.get(baseUrl + '/graficosTipoParadasMp?filtro=Dispositivo&grupo=Turno&idSucursal='+idSucursal+'&idDispositivo='+id+'&idTurno='+idTurno+'&inicio='+inicio+'&fin='+fin)
 	.success(function(result){
 		$scope.grParadas1MP = result;
@@ -712,12 +726,13 @@ function graficoPrGeneral($http,$scope,baseUrl,notificationService){
 		$scope.labelsGen = [];
 		$scope.dataGen = [];
 		$scope.dataAuxGen = [];
+		$scope.optionsPrGen = {};
 		
         for (var i = 0; i < $scope.graficoPrGen.length; i++) {
                 
                // notificationService.error($scope.graficoPrMP[0][2]);
-                $scope.labelsGen.push($scope.graficoPrGen[i][4]);
-                $scope.dataAuxGen.push($scope.graficoPrGen[i][3]);
+                $scope.labelsGen.push($scope.graficoPrGen[i][3]);
+                $scope.dataAuxGen.push($scope.graficoPrGen[i][4]);
                 
          
         }
@@ -823,7 +838,8 @@ function indicadoresGenerales($http,$scope,baseUrl){
 function topMaquinasProduccion($http,$scope,baseUrl){
 	
 	$scope.topMaquinas = []
-
+	
+    
 	$http.get(baseUrl +'/topProduccion').success(function (data) {
 		{ 
 			$scope.topMaquinas = data;
@@ -832,7 +848,8 @@ function topMaquinasProduccion($http,$scope,baseUrl){
 				
 				$scope.desc1 = $scope.topMaquinas[0][6] ;
 				$scope.tot1 =  $scope.topMaquinas[0][1];
-				$scope.tit1 = ". Unidades Producidas"
+				$scope.tit1 = ". Unidades Producidas";
+				buscar_valor_undProducidasMaqDia($http,$scope,baseUrl,$scope.topMaquinas[0][0]);
 				
 				if ($scope.topMaquinas.length > 1){
 					$scope.desc2 = $scope.topMaquinas[1][6];
@@ -944,10 +961,10 @@ function graficoEficienciaGenMes($http,$scope,baseUrl,notificationService){
 		               // notificationService.error($scope.graficoPrMP[0][2]);
 		        	    
 		                
-		                $scope.dataAuxPrGenM.push($scope.graficoPrGenM[i][3]);
+		                $scope.dataAuxPrGenM.push($scope.graficoPrGenM[i][4]);
 		              	//$scope.seriesPrGenM.push($scope.graficoPrGenM[i][1]);
 		               	//$scope.dataPrGenM.push($scope.dataAuxPrGenM);
-		              	$scope.labelsPrGenM.push($scope.graficoPrGenM[i][4]);
+		              	$scope.labelsPrGenM.push($scope.graficoPrGenM[i][3]);
 	         
 		        }
 
@@ -1936,7 +1953,10 @@ app.config(['$routeProvider',function($routeProvider) {
 		    templateUrl: "consulta_produccion.html",
 		    controller: "ConsultaProduccionMaquinaController"
 		  });
-	  
+	  $routeProvider.when('/reportedeldia', {
+		    templateUrl: "reportedeldia.html",
+		    controller: "ConsultaProduccionMaquinaController"
+		  });	  
 	  $routeProvider.otherwise({
 	        redirectTo: '/'
 	  });   
@@ -2623,12 +2643,15 @@ app.controller("MonitoreoController", ['$scope','$http','$timeout','$rootScope',
 	var baseUrl = ".";
 	inicio = '01/01/1970';
 	fin = '01/01/1970';	
+
 	indicadoresGenerales($http,$scope,baseUrl);
 	graficoPrGeneral($http,$scope,baseUrl,notificationService);
 	topMaquinasProduccion($http,$scope,baseUrl);
 	graficoProduccionMensual($http,$scope,baseUrl,notificationService);
 	graficoEficienciaGenMes($http,$scope,baseUrl,notificationService);
-	graficoParadasGeneral($http,$scope,baseUrl,1,1,1,inicio,fin,60)
+	graficoParadasGeneral($http,$scope,baseUrl,1,1,1,inicio,fin,60);
+
+    
 	
 	
 }]);

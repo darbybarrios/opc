@@ -209,7 +209,7 @@ public class OpcApplication {
 			Date horaIni = dateF.parse(ini);
 			Date horaFin = dateF.parse(fin);
 			
-			if ((horaActual.compareTo(horaIni) > 0) && (horaActual.compareTo(horaFin) < 0)) {
+			if ((horaActual.compareTo(horaIni) >= 0) && (horaActual.compareTo(horaFin) <= 0)) {
 				enc = true;
 				turnoActual = tur;
 				break;
@@ -528,8 +528,20 @@ public class OpcApplication {
 						                valor = valor.substring(1, valor.length());
 				                		//System.out.println("TIPO FALLA");
 				                		valorInt = Integer.parseInt(valor);
+				                		
+				                		if (tag.getEscala() == 1){ //El Valor es Inverso en los Binarios
+				                			if (valorInt == 0){
+				                				valorInt = 1;
+				                			}else if (valorInt == 1){
+				                				valorInt = 0;
+				                			}
+				                		}
+				                		
+				                	 
 						                
 						                if (Objects.equals(tag.getTipoInformacion(),"1")){
+						                	
+						                	
 					                		
 						                	if (valorInt > 0){
 					                			//parado = false;
