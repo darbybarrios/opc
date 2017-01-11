@@ -532,8 +532,10 @@ public class OpcApplication {
 				                		if (tag.getEscala() == 1){ //El Valor es Inverso en los Binarios
 				                			if (valorInt == 0){
 				                				valorInt = 1;
+				                				valor = "1";
 				                			}else if (valorInt == 1){
 				                				valorInt = 0;
+				                				valor = "0";
 				                			}
 				                		}
 				                		
