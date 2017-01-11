@@ -155,7 +155,14 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
 				"turno.desc_turno, producto.desc_producto", nativeQuery=true)
 	List<Object[]> produccionFecha(@Param("id_dispositivo") int idDispositivo, @Param("fecha_ini") String fecha_ini, @Param("fecha_fin") String fecha_fin );
 	
-	 
+	@Query(value="Select coalesce(Count(*),0) From (Select Sum(r.cant_unidades), avg(r.vel_seteada),Sum(r.cant_unidades), " +
+				 "date(r.fecha_jornada),id_dispositivo " +
+				 "From resumen_eficiencia r Where r.fecha_jornada is not null and to_char(fecha_jornada,'YYYY') = to_char(now(),'YYYY') " +
+				 "And to_char(r.fecha_jornada,'YYYY/MM/DD') = :fecha " +
+				 "Group By date(r.fecha_jornada), id_dispositivo " +
+				 "Having Sum(r.cant_unidades) > 0) Q1",nativeQuery=true)
+	int findcantidadLineas(@Param("fecha") String fecha);
+	
 	
 	
 		

@@ -91,6 +91,11 @@ public class ControladorEficiencia {
 		return resul;
 	}
 	
+	public int cantidadLineas(String fecha){
+		int tot = daoEficiencia.findcantidadLineas(fecha);
+		return tot;
+	}
+	
 	
 	@RequestMapping("velocidadSeteada")
 	@ResponseBody	
@@ -481,11 +486,14 @@ public class ControladorEficiencia {
 				BigDecimal vel = (BigDecimal) aux[1];
 				int undInt = und.intValue();				
 				Date fecha = (Date) aux[3];
+				DateFormat dateC = new SimpleDateFormat("yyyy-MM-dd");
+				String fechaStr = dateC.format(fecha);
+				int tLin = cantidadLineas(fechaStr);
 				tRest = (tiempoParadas("DiaGeneral",0,0,fecha,new Date(),0))/60000;
 				double velDou = vel.doubleValue();     
-				if (velDou > 0){
+				if ((velDou > 0) && (tLin > 0)){
 					
-					pr = ((undInt)/((1440 - tRest)*velDou));  //1440 Min tiene el dia
+					pr = ((undInt)/(((1440 * tLin) - tRest)*velDou));  //1440 Min tiene el dia
 				}				
 			}else if (tipoGr.equals("Mes")){
 				BigInteger und = (BigInteger) aux[0];		
@@ -505,8 +513,10 @@ public class ControladorEficiencia {
 			/*if (velSet > 0){
 					pr = ((undInt)/((1440)*velSet));
 			}*/
+			
+			pr = pr*100;
 
-			if (pr*100 > 100){
+			if (pr > 100){
 				pr = 100;
 			}
 			
