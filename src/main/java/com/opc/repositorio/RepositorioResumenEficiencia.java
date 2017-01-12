@@ -2,6 +2,7 @@ package com.opc.repositorio;
 
 import java.sql.Array;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -162,6 +163,18 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
 				 "Group By date(r.fecha_jornada), id_dispositivo " +
 				 "Having Sum(r.cant_unidades) > 0) Q1",nativeQuery=true)
 	int findcantidadLineas(@Param("fecha") String fecha);
+	
+	@Query(value="Select * From (Select distinct date(fecha_jornada) " +
+                 "From resumen_eficiencia r Where r.fecha_jornada is not null and to_char(fecha_jornada,'YYYY') = to_char(now(),'YYYY') " +
+                 "Order by date(fecha_jornada) " +
+                 "limit 15) t1",nativeQuery=true)
+	List<Object[]> findDispositivosEficiencia();
+	
+	@Query(value="Select Sum(r.cant_unidades), avg(r.vel_seteada),((Sum(r.cant_unidades)/(1440*avg(r.vel_seteada)))*100) Pr,date(r.fecha_jornada), id_dispositivo " +
+				 "From resumen_eficiencia r Where to_date(to_char(r.fecha_jornada,'yyyy/MM/dd'),'yyyy/MM/dd') = to_date(:fecha,'yyyy/MM/dd') And r.fecha_jornada is not null and to_char(fecha_jornada,'YYYY') = to_char(now(),'YYYY') " +
+				 "Group By date(r.fecha_jornada), id_dispositivo Order by date(r.fecha_jornada)",nativeQuery=true)
+	List<Object[]> findEficGenByDispoDia(@Param("fecha") String fecha);
+	
 	
 	
 	

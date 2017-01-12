@@ -97,6 +97,71 @@ public class ControladorEficiencia {
 	}
 	
 	
+	public List<Object[]> eficienciaMaquinas(){
+		List<Object[]> listaDispo = daoEficiencia.findDispositivosEficiencia();
+		DateFormat dateC = new SimpleDateFormat("yyyy-MM-dd");
+		double pr = 0.0;
+		
+		List<Object[]> resulPr = new ArrayList<Object[]>();  
+		
+		for (int i = 0; i < listaDispo.size(); i++){
+			Object[] aux = new Object[5];
+			double sumPr = 0.0;
+			double prDispo = 0.0;
+			int contDispo = 0;
+			
+			aux[3] = listaDispo.get(i);
+			Date fecD = (Date) aux[3];
+			//String fecStr = (String) aux[3];
+			String fec = dateC.format(fecD);
+			List<Object[]> listaDiaDispo = daoEficiencia.findEficGenByDispoDia(fec);
+			for (int j = 0; j < listaDiaDispo.size(); j++){  //Filtro los Dispositivos por Dia
+				
+				BigInteger und = (BigInteger) listaDiaDispo.get(j)[0];		
+				BigDecimal vel = (BigDecimal) listaDiaDispo.get(j)[1];
+				int undInt = und.intValue();
+				Date fecha = (Date) listaDiaDispo.get(j)[3];
+				
+				int idDispo = (int) listaDiaDispo.get(j)[4];
+				//int idDispo = dis.intValue();
+				
+				long tRest = (tiempoParadas("Dia",idDispo,0,fecha,new Date(),0))/60000;
+				double velDou = vel.doubleValue();   
+				
+				if (velDou > 0){
+					prDispo = ((undInt)/((1440 - tRest)*velDou));  //1440 Min tiene el dia
+				}
+				
+				sumPr = sumPr + prDispo;
+				contDispo = contDispo + 1;
+				
+				if ((undInt == 0) && (tRest == 0 )){ //Verifico si la Maquia no estuvo para las 24H
+					contDispo = contDispo - 1;
+				}
+				
+			}
+			
+			if (contDispo > 0){
+				pr = sumPr/contDispo;
+			}
+			
+			pr = pr*100;
+			if (pr > 100){
+				pr = 100;
+			}
+			aux[0] = 0;
+			aux[1] = 0;
+			aux[2] = 0;
+			aux[3] = listaDispo.get(i);
+			aux[4] = round(pr,2);
+			resulPr.add(i, aux);
+			
+		}
+		
+		return resulPr;
+	}
+	
+	
 	@RequestMapping("velocidadSeteada")
 	@ResponseBody	
 	public int velocidadSeteada(int idDispositivo){
@@ -458,17 +523,17 @@ public class ControladorEficiencia {
 	public List<Object[]> graficoEficienciaGeneral(String tipoGr){
 		List<Object[]> resulMaq = null;
 		long tRest = 0;
+		List<Object[]> resulPr = new ArrayList<Object[]>();
 		if (tipoGr.equals("Dia")){
-			 resulMaq = daoEficiencia.findEficienciaGeneralGrafico();
+			 //resulMaq = daoEficiencia.findEficienciaGeneralGrafico();
+			resulMaq = eficienciaMaquinas();
+			resulPr = resulMaq;
+			
 		}else if (tipoGr.equals("Mes")){
 			 resulMaq = daoEficiencia.eficicienciaGeneralMensual();
 		}
 		
-		
-		List<Object[]> resulPr = new ArrayList<Object[]>();  
-		
-
-        for (int i = 0; i < resulMaq.size(); i++) {
+       for (int i = 0; i < resulMaq.size(); i++) {
         	double pr = 0.0;
         	Object[] aux = new Object[5];
           	aux[0] = resulMaq.get(i)[0];
@@ -482,7 +547,7 @@ public class ControladorEficiencia {
 			
 
 			if (tipoGr.equals("Dia")){
-				BigInteger und = (BigInteger) aux[0];		
+			/*	BigInteger und = (BigInteger) aux[0];		
 				BigDecimal vel = (BigDecimal) aux[1];
 				int undInt = und.intValue();				
 				Date fecha = (Date) aux[3];
@@ -494,7 +559,7 @@ public class ControladorEficiencia {
 				if ((velDou > 0) && (tLin > 0)){
 					
 					pr = ((undInt)/(((1440 * tLin) - tRest)*velDou));  //1440 Min tiene el dia
-				}				
+				}				*/
 			}else if (tipoGr.equals("Mes")){
 				BigInteger und = (BigInteger) aux[0];		
 				BigDecimal vel = (BigDecimal) aux[1];
@@ -507,23 +572,21 @@ public class ControladorEficiencia {
 					
 					pr = ((undInt)/((43200 - tRest)*velDou));  //43200 Min tiene el Mesjyuiiio0'p9p´´popñ´+p{+opoopño 
 				}				
+
+			
+				pr = pr*100;
+
+				if (pr > 100){
+					pr = 100;
+				}
+				
+				aux[4] = round(pr*100,2);
+	        	
+	        	resulPr.add(i, aux);
+			
 			}			
 			
-			
-			/*if (velSet > 0){
-					pr = ((undInt)/((1440)*velSet));
-			}*/
-			
-			pr = pr*100;
-
-			if (pr > 100){
-				pr = 100;
-			}
-			
-			aux[4] = round(pr*100,2);
-        	
-        	resulPr.add(i, aux);
-        	          
+   
       
         }
 		return resulPr;
