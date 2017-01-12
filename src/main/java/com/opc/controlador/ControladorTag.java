@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.opc.modelo.DetalleTag;
 import com.opc.modelo.Dispositivo;
+import com.opc.modelo.ProduccionFecha;
 import com.opc.modelo.Tag;
 import com.opc.modelo.TipoValor;
 import com.opc.modelo.UnidadMedida;
@@ -159,6 +160,77 @@ public class ControladorTag {
 		return det.getDescDetalleTag();
 	}
 	
+	@RequestMapping(value = "detalle-tag")
+	@ResponseBody	
+	public List<DetalleTag> detalletag(int idTag){
+		Tag tag = new Tag();
+		tag.setIdTag(idTag);
+		
+		List<DetalleTag> listaDetalleTag = daoDetalleTag.findByTag(tag);
+		
+		return listaDetalleTag;
+	}
+	
+	@RequestMapping(value = "listar-tag")
+	@ResponseBody	
+	public List<Tag> ListarTag(int idMaquina){
+		List<Object[]> tag =daoTag.BuscarTagxMaquina(idMaquina);
+		List<Tag> listaTag = new ArrayList<Tag>();
+		for (int i = 0; i < tag.size(); i++) {
+			Tag Tag = new Tag();
+			Tag.setIdTag((Integer)tag.get(i)[0]);
+			Tag.setdescTag((String)tag.get(i)[1]);
+			listaTag.add(Tag);
+		}
+		return listaTag;
+	}
+	
+	@RequestMapping(value = "insertar-detalle")
+	@ResponseBody	
+	public void InsertarDetalle(int idTag, String valor, String descripcion){
+		Tag tag = new Tag();
+		tag.setIdTag(idTag);
+		DetalleTag detalle = new DetalleTag();
+		detalle.setDescDetalleTag(descripcion);
+		detalle.setTag(tag);
+		detalle.setTipoDetalle("F");
+		detalle.setStatDetalleTag("0");
+		detalle.setValorDetTag(valor);
+		daoDetalleTag.save(detalle);
+	
+		
+	}
+	
+	@RequestMapping(value = "buscar-detalle")
+	@ResponseBody	
+	public DetalleTag BuscarDetalle(int idDetalleTag){
+		DetalleTag detalle = daoDetalleTag.findByIdDetalleTag(idDetalleTag);
+			
+		return detalle;
+		
+	}
+	
+	@RequestMapping(value = "editar-detalle")
+	@ResponseBody	
+	public void EditarDetalle(int idDetalleTag, String valor, String descripcion){
+		
+		DetalleTag detalle = daoDetalleTag.findOne(idDetalleTag);
+		detalle.setValorDetTag(valor);
+		detalle.setDescDetalleTag(descripcion);
+		daoDetalleTag.save(detalle);
+	
+		
+	}
+	@RequestMapping(value = "eliminar-detalle")
+	@ResponseBody	
+	public void EliminarDetalle(int idDetalleTag){
+		
+		DetalleTag detalle = daoDetalleTag.findOne(idDetalleTag);
+		detalle.setStatDetalleTag("1");
+		daoDetalleTag.save(detalle);
+	
+		
+	}
 	
 	
 	

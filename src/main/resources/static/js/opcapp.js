@@ -1912,7 +1912,11 @@ app.config(['$routeProvider',function($routeProvider) {
 	  $routeProvider.when('/listar-tags', {
 		    templateUrl: "construccion.html",
 		   // controller: "Pagina3Controller"
-		  }); 
+		  });
+	  $routeProvider.when('/defincion-tags-fallas', {
+		    templateUrl: "definicion_tags_fallas.html",
+		    controller: "DefincionTagsFallasController"
+		  });
 	  $routeProvider.when('/agregar-dispositivo', {
 		    templateUrl: "dispositivos.html",
 		    controller: "DispositivosController"
@@ -2077,6 +2081,90 @@ app.filter('fecActual',['$filter',  function($filter) {
     	//return $filter('date')(new Date(), 'HH:mm:ss');
     };
 }])
+
+//----------------------------------- Defincion Tags Fallas ----------------------------------------------------------//
+
+app.controller("DefincionTagsFallasController", ['$scope','$http','$filter',function($scope, $http,$filter) {
+	$http.defaults.headers.post["Content-Type"] = "application/json";
+	var baseUrl = ".";
+	listar_maquinas($http,$scope,baseUrl);
+	
+	$scope.BuscarTag = function() {
+		
+		$scope.detalletags = null;
+		$http.get(baseUrl + '/listar-tag?idMaquina='+$scope.selMaq).success(function (data) {
+			$scope.tags = data;			
+		})		
+	}
+	
+	$scope.BuscarDetalleTag = function() {		
+		
+		$http.get(baseUrl +'/detalle-tag?idTag='+$scope.selTag).success(function (data) {
+			$scope.detalletags = data;			
+		})	
+	}
+	
+	
+	$scope.insertarDetalle = function(){
+			
+			$http.post(baseUrl + '/insertar-detalle?idTag='+$scope.selTag+'&valor='+$scope.valor+'&descripcion='+$scope.descripcion)
+			.success(function(response){
+				$('#crear').modal('hide');
+				$http.get(baseUrl +'/detalle-tag?idTag='+$scope.selTag).success(function (data) {
+					$scope.detalletags = data;			
+				})
+				$scope.valor=null;
+				$scope.descripcion=null;
+			});	
+			
+		}
+	
+	$scope.editar = function (index) {
+		$scope.indDetalle= index;
+		$http.get(baseUrl + '/buscar-detalle?idDetalleTag='+$scope.detalletags[$scope.indDetalle].idDetalleTag).
+		success(function(data){
+			$scope.modifDetalle = data;
+			$scope.valor=$scope.modifDetalle.valorDetTag;
+			$scope.descripcion=$scope.modifDetalle.descDetalleTag;
+			});
+	};
+	
+	$scope.eliminar = function (index) {
+		$scope.indDetalle= index;
+	};
+	
+	
+	$scope.editarDetalle = function(){
+		
+		$http.put(baseUrl + '/editar-detalle?idDetalleTag='+$scope.detalletags[$scope.indDetalle].idDetalleTag+'&valor='+$scope.valor+'&descripcion='+$scope.descripcion)
+		.success(function(response){
+			$('#editar').modal('hide');
+			$http.get(baseUrl +'/detalle-tag?idTag='+$scope.selTag).success(function (data) {
+				$scope.detalletags = data;			
+			})
+			$scope.valor=null;
+			$scope.descripcion=null;
+		});	
+		
+	}
+	
+	$scope.eliminarDetalle = function(){
+		
+		$http.put(baseUrl + '/eliminar-detalle?idDetalleTag='+$scope.detalletags[$scope.indDetalle].idDetalleTag)
+		.success(function(response){
+			$('#eliminar').modal('hide');
+			$http.get(baseUrl +'/detalle-tag?idTag='+$scope.selTag).success(function (data) {
+				$scope.detalletags = data;			
+			})
+		});	
+		
+	}
+	
+	}]);
+
+
+
+
 
 //----------------------------------- Sucursales ----------------------------------------------------------//
 
@@ -2592,7 +2680,6 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 			  $scope.conectado = result.data;
 			  //impiar_tags($http,$scope,baseUrl);
 				if ($scope.conectado == "1"){
-					
 					
 					   buscar_valor_tag1($http,$scope,baseUrl);
 					   //buscar_valor_tag2($http,$scope,baseUrl);
