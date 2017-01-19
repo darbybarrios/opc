@@ -6,14 +6,24 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.jinterop.dcom.common.JIException;
 import org.openscada.opc.lib.common.AlreadyConnectedException;
+import org.openscada.opc.lib.common.NotConnectedException;
+import org.openscada.opc.lib.da.AddFailedException;
+import org.openscada.opc.lib.da.DuplicateGroupException;
+import org.openscada.opc.lib.da.Group;
+import org.openscada.opc.lib.da.Item;
+import org.openscada.opc.lib.da.ItemState;
+import org.openscada.opc.lib.da.Server;
+import org.openscada.opc.lib.da.UnknownGroupException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.opc.modelo.ActividadTag;
 import com.opc.modelo.DetalleTag;
 import com.opc.modelo.Dispositivo;
 import com.opc.modelo.ProduccionFecha;
@@ -81,9 +91,83 @@ public class ControladorTag {
 	public List<Tag> listarTags(int idDispositivo){
 		Dispositivo dispo2 = daoDispo.findOne(idDispositivo);
 		List<Tag> unidad = (List<Tag>) daoTag.findByDispositivoAndStatReg(dispo2, "0");
+		
 		return unidad;
 		
 	}
+	
+	@RequestMapping("listar-tags-valores")
+	@ResponseBody
+	public List<ActividadTag> listarTagsValores(int idDispositivo) throws IllegalArgumentException, JIException, AlreadyConnectedException, IOException, NotConnectedException, DuplicateGroupException, AddFailedException, UnknownGroupException{
+		Dispositivo dispo2 = daoDispo.findOne(idDispositivo);
+		List<Tag> unidad = (List<Tag>) daoTag.findByDispositivoAndStatReg(dispo2, "0");
+		accesarDispositivo acceso = accesarDispositivo.getInstancia();
+		List<ActividadTag> listaTags = new ArrayList<ActividadTag>();
+		String valor;
+		int valorInt;
+		Group group = null;
+		
+		
+		if (unidad!=null){
+		
+		Server server = acceso.sesion();
+	    
+		if (group == null){
+			group = server.findGroup("Tags");
+		}
+		
+		for (int i=0; i < unidad.size(); i++){
+			ActividadTag atag = new ActividadTag();
+			Tag tag = new Tag();
+			
+			String itemId = unidad.get(i).getItemId();
+			TipoValor tipoValor = unidad.get(i).getTipoValor();
+			String descTipo = tipoValor.getDescTipoValor();
+			
+    		if (descTipo.equals("Binario")){
+    			itemId = itemId + "/" + unidad.get(i).getValorBit();
+    			//System.out.println(itemId);
+    		}	
+    		
+			tag.setItemId(itemId);
+			tag.setdescTag(unidad.get(i).getdescTag());
+			atag.setTag(tag);
+			
+		
+			final Item item = group.addItem ( itemId );
+			final ItemState itemState = item.read ( true );
+			valor = ":" +itemState.getValue();
+			valor = valor.replaceAll("\\[", "");
+            valor = valor.replaceAll("\\]", "");
+            valor = valor.substring(1, valor.length());
+    		//System.out.println("TIPO FALLA");
+    		valorInt = Integer.parseInt(valor);	
+    		
+    		if ( unidad.get(i).getEscala() == 1){ //El Valor es Inverso en los Binarios
+    			if (valorInt == 0){
+    				valorInt = 1;
+    				valor = "1";
+    			}else if (valorInt == 1){
+    				valorInt = 0;
+    				valor = "0";
+    			}
+    		}
+    		
+    		atag.setCalidad(itemState.getQuality());
+    		atag.setFecha(itemState.getTimestamp());
+    		atag.setValor(valor);
+    		listaTags.add(atag);
+		}
+		
+		
+		
+		}
+		return listaTags;
+		
+	}	
+	
+	
+	
 	
 	@RequestMapping("listar-unidades")
 	@ResponseBody
