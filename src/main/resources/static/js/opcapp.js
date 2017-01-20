@@ -85,6 +85,19 @@ function listar_tags_dispo_server($http,$scope,baseUrl,id){
 	});	
 }
 
+function listar_tags_valores_server($http,$scope,baseUrl,id){
+	
+	
+	$http.get(baseUrl +'/listar-tags-valores?idDispositivo='+id).success(function (data) {
+		
+	       
+		{ 
+		  $scope.tagsValores = data;
+        }
+		
+	});	
+}
+
 function cargarValores($http,$scope,baseUrl){
 	$scope.unidadMedida = [];
 	$scope.tipoValor = [];
@@ -525,13 +538,13 @@ function iniciarGraficos123PrMP($http,$scope,$filter,baseUrl){
 	  $scope.seriesGr3MP = ['Planeados'];
 }
 
-function graficoPrMP($http,$scope,baseUrl,notificationService,id){
+function graficoPrMP($http,$scope,baseUrl,notificationService,id,turno){
       
 			$scope.series = ['Valor Pr'];
 			
 		   // $scope.labels = ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
 			
-            $http.get(baseUrl + '/graficoEficienciaMaquinaDia?idDispo='+id)
+            $http.get(baseUrl + '/graficoEficienciaMaquinaDia?idDispo='+id+'&tipo=Dia&idTurno='+turno)
 			.success(function(result){
 				{
 				
@@ -581,6 +594,65 @@ function graficoPrMP($http,$scope,baseUrl,notificationService,id){
               };
    	
 	
+}
+
+
+function graficoPrMPHora($http,$scope,baseUrl,notificationService,id,turno){
+    
+	$scope.seriesHr = ['Valor Pr'];
+	
+   // $scope.labels = ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
+	
+    $http.get(baseUrl + '/graficoEficienciaMaquinaDia?idDispo='+id+'&tipo=Hora&idTurno='+turno)
+	.success(function(result){
+		{
+		
+		$scope.graficoPrMPHr = result;
+		$scope.labelsHr = [];
+		$scope.dataHr = [];
+		$scope.dataAuxHr = [];
+		
+        for (var i = 0; i < $scope.graficoPrMPHr.length; i++) {
+                
+               // notificationService.error($scope.graficoPrMP[0][2]);
+                $scope.labelsHr.push($scope.graficoPrMPHr[i][1]);
+                $scope.dataAuxHr.push($scope.graficoPrMPHr[i][4]);
+                
+         
+        }
+        
+        $scope.dataHr.push($scope.dataAuxHr);
+        
+		} 
+	});
+
+    $scope.onClick = function (points, evt) {
+        console.log(points, evt);
+      };
+      
+      $scope.onHover = function (points) {
+        if (points.length > 0) {
+          console.log('Point', points[0].value);
+        } else {
+          console.log('No point');
+        }
+      };
+      $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }];
+
+      $scope.options = {
+        scales: {
+          yAxes: [
+            {
+              id: 'y-axis-1',
+              type: 'linear',
+              display: true,
+              position: 'left'
+            }
+          ]
+        }
+      };
+
+
 }
 
 
@@ -1910,8 +1982,8 @@ app.config(['$routeProvider',function($routeProvider) {
 		    controller: "TagsController"
 		  }); 
 	  $routeProvider.when('/listar-tags', {
-		    templateUrl: "construccion.html",
-		   // controller: "Pagina3Controller"
+		    templateUrl: "listartags.html",
+		    controller: "TagsController"
 		  });
 	  $routeProvider.when('/defincion-tags-fallas', {
 		    templateUrl: "definicion_tags_fallas.html",
@@ -2523,6 +2595,22 @@ app.controller("TagsController", ['$scope','$http','notificationService',functio
     	listar_tags($http,$scope,baseUrl,$scope.selDispo);
     	cargarValores($http,$scope,baseUrl);
     };	
+    
+    $scope.mostrarTagsValores = function(){
+    	
+ 
+    	$http.get(baseUrl + '/verificar-conexion?id='+$scope.selDispo).success(function (data) {
+    		{ 
+    			$scope.conex = data;
+    			listar_tags_valores_server($http,$scope,baseUrl,$scope.selDispo);
+    			/*if ($scope.conex == "1"){
+    				notificationService.error('No hay hay conexion con la Linea');
+    			} */
+            }
+    	});
+    	
+    	
+    }	
 
 
     $scope.insertarTag = function(){
@@ -2654,7 +2742,7 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 		$rootScope.selLineaG = $scope.selLinea;
 		buscar_turno_actual($http,$scope,baseUrl);
 		$scope.temporizador = $scope.temporizador + 1;
-		
+				
 
 		
 		//alert("Seleccciom :"+$scope.selLinea);
@@ -2667,7 +2755,8 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 				   limpiar_tags($http,$scope,baseUrl);
 				   //alert($scope.tag1Vacio);
 			  }else{
-				  graficoPrMP($http,$scope,baseUrl,notificationService,$scope.tagDispo2.idDispositivo);
+				  graficoPrMP($http,$scope,baseUrl,notificationService,$scope.tagDispo2.idDispositivo,$scope.turnoActual.idTurno);
+				  graficoPrMPHora($http,$scope,baseUrl,notificationService,$scope.tagDispo2.idDispositivo,$scope.turnoActual.idTurno);
 				  buscar_ultimosTurnos($http,$scope,baseUrl,ngProgressFactory,$scope.tagDispo2.idDispositivo);
 				  grafico1MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo,idSucursal,$scope.turnoActual.idTurno,inicio,fin,$scope.temporizador);
 				  grafico2MP($http,$scope,baseUrl,$scope.tagDispo2.idDispositivo,idSucursal,$scope.turnoActual.idTurno,inicio,fin,$scope.temporizador);
@@ -2681,7 +2770,7 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 			  //impiar_tags($http,$scope,baseUrl);
 				if ($scope.conectado == "1"){
 					
-					   buscar_valor_tag1($http,$scope,baseUrl);
+					   //buscar_valor_tag1($http,$scope,baseUrl);
 					   //buscar_valor_tag2($http,$scope,baseUrl);
 					   //buscar_valor_tag3($http,$scope,baseUrl);
 					   buscar_valor_velocidad($http,$scope,baseUrl);
@@ -2730,10 +2819,11 @@ app.controller("MonitoreoController", ['$scope','$http','$timeout','$rootScope',
 	var baseUrl = ".";
 	inicio = '01/01/1970';
 	fin = '01/01/1970';	
-
+	
+	topMaquinasProduccion($http,$scope,baseUrl);
 	indicadoresGenerales($http,$scope,baseUrl);
 	graficoPrGeneral($http,$scope,baseUrl,notificationService);
-	topMaquinasProduccion($http,$scope,baseUrl);
+	
 	graficoProduccionMensual($http,$scope,baseUrl,notificationService);
 	graficoEficienciaGenMes($http,$scope,baseUrl,notificationService);
 	graficoParadasGeneral($http,$scope,baseUrl,1,1,1,inicio,fin,60);

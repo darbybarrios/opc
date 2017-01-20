@@ -61,20 +61,37 @@
 				  <div class="x_title">
                     <h2>Sumario de Eficiencia <small>Progreso diario</small></h2>
                     <div class="filter">
-                      <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
-                        <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
-                        <span>December 30, 2014 - January 28, 2015</span> <b class="caret"></b>
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-11"></label>
+                        <div class="col-md-5 col-sm-5 col-xs-11">
+                          <div id="gender" class="radio">
+                            <label>
+                              <input type="radio" class="flat" name="gender" value="D" ng-model="opGrafico" checked=""> &nbsp; Dia &nbsp;
+                            </label>
+                            <label>
+                              <input type="radio" class="flat" name="gender" value="H" ng-model="opGrafico"> &nbsp; Hora &nbsp;
+                            </label>
+                          </div>  
+                          
+                        </div>
                       </div>
                     </div>
                     <div class="clearfix"></div>
                   </div>
 
-                <div class="col-md-9 col-sm-9 col-xs-12">
+                <div class="col-md-9 col-sm-9 col-xs-12"  ng-show="opGrafico=='D'">
 							<canvas id="line" class="chart chart-line" chart-data="data"
 							chart-labels="labels" chart-series="series" chart-options="options"
 							chart-dataset-override="datasetOverride" chart-click="onClick">
 							</canvas> 
                 </div>
+                
+                <div class="col-md-9 col-sm-9 col-xs-12"  ng-show="opGrafico=='H'">
+							<canvas id="line" class="chart chart-line" chart-data="dataHr"
+							chart-labels="labelsHr" chart-series="seriesHr" chart-options="options"
+							chart-dataset-override="datasetOverride" chart-click="onClick">
+							</canvas> 
+                </div>                
                 
                 <div class="col-md-3 col-sm-3 col-xs-12 bg-white">
                   <div class="x_title">

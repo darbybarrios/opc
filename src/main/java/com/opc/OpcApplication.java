@@ -359,23 +359,26 @@ public class OpcApplication {
 				cantAnterior = 0;
 			}
 			
+			
 			if (undAct != null){
 				cantActual = Integer.parseInt(undAct.getValor());
 			}else
 			{
 				cantActual = 0;
 			}
-			
+									
 			int totund = (cantActual - cantAnterior);
-			
-			if (cantActual < cantAnterior){
-				totund = cantActual;
-			}
 			
 			if (cantAnterior == 0){
 				cantAnterior = cantActual;
 				totund = 0;
 			}
+			
+			if (cantActual < cantAnterior){
+				totund = cantActual;
+			}
+			
+
 			
 			ResumenEficiencia eficAct = new ResumenEficiencia();
 			eficAct.setFecRegistro(fecha);
@@ -419,6 +422,7 @@ public class OpcApplication {
 
 			Server server = acceso.conectar();
 			final Group group = server.addGroup ( "fallas" );
+			final Group group2 = server.addGroup ( "Tags" );
 			Sucursal suc = daoSucursal.findTopBy();
 			
 			if (suc.getConfigurado().equals("No")){
@@ -455,7 +459,8 @@ public class OpcApplication {
 					//String itemId = "[Antares]N7:30";
 			        // create a new server
 			        //final Server server= new Server(ci, Executors.newSingleThreadScheduledExecutor());
-         
+                
+					
 			        try {
 
 						final Tag tag = vectorTag.next();
@@ -475,7 +480,8 @@ public class OpcApplication {
                 		
 						int intervalo = tag.getIntervalo();
 						final AccessBase access = new SyncAccess(server, intervalo);
-
+                        
+						if (!tag.getTipoInformacion().equals("3")){
 			              			            
 			            access.addItem(itemId, new DataCallback() {
 				        	int valorInt;
@@ -702,47 +708,66 @@ public class OpcApplication {
 							                		
 						                		
 					                		}
-				                		    
-
-											
-											
-					                		DetalleTag detalle = daoDetalleTag.findByTagAndValorDetTag(tag, valor);
-						                    ActividadTag evento = new ActividadTag();
-						                    evento.setFecha(state.getTimestamp());
-						                    evento.setCalidad(state.getQuality());
-						                    evento.setValor(valor);
-						                    //System.out.println(detalle);
-						                    //evento.setValor(valor.substring(1, valor.length()));
-						                    evento.setTag(tag);
-						                    evento.setDetalleTag(detalle);
-						                    //evento.setTiempoFunc(tiempoFunc);
-						                    evento.setStatEditado("0");
-						                    evento.setTiempoFuncMs(tiempoFunc);
-						                    evento.setDescFalla(falla);
-						                    
-						                   // ControladorTurnos cTurnos = new ControladorTurnos();
-					                		Turno tJornada = null;
-					                		Calendar fJornada = null;
 					                		
-											try {
-												tJornada = turno_actual(daoTurno);
-											} catch (ParseException e1) {
-												// TODO Auto-generated catch block
-												e1.printStackTrace();
+					                		Calendar cal = Calendar.getInstance();
+					                		cal.setTime(new Date());
+					                		boolean confirmado = true;
+					                		DateFormat dateF = new SimpleDateFormat("yyyy-MM-dd");
+					                		
+					                		String valorG = null;
+					                		String fecAct = dateF.format(cal.getTime());
+					                		
+					                		ActividadTag tagAct = daoActividadTag.findTopByTagOrderByFechaDesc(tag);
+											if (tagAct != null){
+												valorG = tagAct.getValor();
+												String fecG = dateF.format(tagAct.getFecha().getTime());
+						                		if ((valorG.equals(valor) && (fecG.equals(fecAct)))){
+						                			confirmado = false;						                			
+						                		}
 											}
-					                		try {
-					                			Calendar fecReg = state.getTimestamp();
-												fJornada = determinarFechaJornada(fecReg, tJornada);
-											} catch (ParseException e) {
-												// TODO Auto-generated catch block
-												e.printStackTrace();
-											} 
+					                		
+					                		
+                                            if (confirmado) { 
+											
+						                		DetalleTag detalle = daoDetalleTag.findByTagAndValorDetTag(tag, valor);
+							                    ActividadTag evento = new ActividadTag();
+							                    evento.setFecha(state.getTimestamp());
+							                    evento.setCalidad(state.getQuality());
+							                    evento.setValor(valor);
+							                    //System.out.println(detalle);
+							                    //evento.setValor(valor.substring(1, valor.length()));
+							                    evento.setTag(tag);
+							                    evento.setDetalleTag(detalle);
+							                    //evento.setTiempoFunc(tiempoFunc);
+							                    evento.setStatEditado("0");
+							                    evento.setTiempoFuncMs(tiempoFunc);
+							                    evento.setDescFalla(falla);
+							                    
+							                   // ControladorTurnos cTurnos = new ControladorTurnos();
+						                		Turno tJornada = null;
+						                		Calendar fJornada = null;
+						                		
+												try {
+													tJornada = turno_actual(daoTurno);
+												} catch (ParseException e1) {
+													// TODO Auto-generated catch block
+													e1.printStackTrace();
+												}
+						                		try {
+						                			Calendar fecReg = state.getTimestamp();
+													fJornada = determinarFechaJornada(fecReg, tJornada);
+												} catch (ParseException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												} 
+							                    
+							                    evento.setFechaJornada(fJornada);
+							                    evento.setTurno(tJornada);
+							                    evento.setAcumUnd(valorAcum);
+							                    
+							                    daoActividadTag.save(evento);
 						                    
-						                    evento.setFechaJornada(fJornada);
-						                    evento.setTurno(tJornada);
-						                    evento.setAcumUnd(valorAcum);
-						                    
-						                    daoActividadTag.save(evento);
+                                            }
 					                	}
 				                	}			                		
 			                	}
@@ -755,7 +780,7 @@ public class OpcApplication {
 			            // wait a little bit
 			            //Thread.sleep(10 * 1000);
 			            
-			           
+						} // Fin del Validar si tipo informacion = 3
 			            // stop reading
 			            //access.unbind();
 			        } catch (final JIException e) {

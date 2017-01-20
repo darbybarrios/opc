@@ -24,7 +24,7 @@ import com.opc.repositorio.RepositorioTurno;
 public class ControladorTurnos {
 	
 	@Autowired
-	private RepositorioTurno daoTurno;
+	public RepositorioTurno daoTurno;
 
 	@Autowired
 	private RepositorioSucursal daoSucursal;

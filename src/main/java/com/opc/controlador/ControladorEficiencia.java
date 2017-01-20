@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,71 @@ public class ControladorEficiencia {
 	    return bd.doubleValue();
 	}
 	
+	public Turno turno_actual(RepositorioTurno daoTurno) throws ParseException
+	{
+		DateFormat dateF = new SimpleDateFormat("HH:mm");
+		String horaStr = dateF.format(new Date());
+		boolean enc = false;
+		Turno turnoActual = null;
+		List<Turno> turno = new ArrayList<Turno>();
+
+		List<Turno> turnos = (List<Turno>) daoTurno.findAll();
+		Iterator<Turno> vectorTurno = turnos.iterator();
+		
+		while (vectorTurno.hasNext()){
+			Turno tur = vectorTurno.next();
+			String ini = dateF.format(tur.getInicio().getTime());
+			String fin = dateF.format(tur.getFin().getTime());
+			
+			Date horaActual = dateF.parse(horaStr);
+			Date horaIni = dateF.parse(ini);
+			Date horaFin = dateF.parse(fin);
+			
+			if ((horaActual.compareTo(horaIni) >= 0) && (horaActual.compareTo(horaFin) <= 0)) {
+				enc = true;
+				turnoActual = tur;
+				break;
+			}
+			
+		}
+
+		@SuppressWarnings("unchecked")
+		List<Turno> turnosR = (List<Turno>) daoTurno.findAll();
+		Iterator<Turno> vectorTurnoR = turnosR.iterator();		
+		if (!enc){
+			
+			while (vectorTurnoR.hasNext()){
+				Turno tur = vectorTurnoR.next();
+				String ini = dateF.format(tur.getInicio().getTime());
+				String fin = dateF.format(tur.getFin().getTime());
+				
+				Date horaActual = dateF.parse(horaStr);
+				Date horaIni = dateF.parse(ini);
+				Date horaFin = dateF.parse(fin);
+
+				if (horaIni.compareTo(horaFin) > 0){
+					enc = true;
+					turnoActual = tur;
+					break;
+				}
+				
+				/*
+				if (((horaActual.compareTo(horaIni) < 0) && (horaActual.compareTo(horaFin) < 0)) || 
+				((horaActual.compareTo(horaIni) > 0) && (horaActual.compareTo(horaFin) > 0))) {
+					enc = true;
+					turnoActual = tur;
+					break;
+				} */
+				
+			}			
+			
+		}
+		
+		
+		return turnoActual;
+		
+	}
+	
 	public long tiempoParadas(String tipo, int idDispositivo, int idTurno, Date inicio, Date fin, int mes){
 		
 		long resul = 0;
@@ -96,66 +162,152 @@ public class ControladorEficiencia {
 		return tot;
 	}
 	
+	public Object[] calculoEfic_General(String fec, List<Object[]> listaDiaDispo, String tipoResta, long tagenda){
+		Object[] aux = new Object[5];
+		double pr = 0.0;
+		double sumPr = 0.0;
+		double prDispo = 0.0;
+		int contDispo = 0;
+		
+		for (int j = 0; j < listaDiaDispo.size(); j++){  //Filtro los Dispositivos por Dia
+			
+			BigInteger und = (BigInteger) listaDiaDispo.get(j)[0];		
+			BigDecimal vel = (BigDecimal) listaDiaDispo.get(j)[1];
+			int undInt = und.intValue();
+			Date fecha = (Date) listaDiaDispo.get(j)[3];
+			int idDispo = (int) listaDiaDispo.get(j)[4];
+			long tRest = (tiempoParadas(tipoResta,idDispo,0,fecha,new Date(),0))/60000;
+			double velDou = vel.doubleValue();   
+			
+			if (velDou > 0){
+				if (tipoResta.equals("Dia")){
+					prDispo = ((undInt)/((tagenda - tRest)*velDou));  //1440 Min tiene el dia
+				}else if (tipoResta.equals("TurnoGeneral")){
+					
+					prDispo = ((undInt)/((tagenda - tRest)*velDou));  //1440 Min tiene el dia
+				}
+			}
+			
+			sumPr = sumPr + prDispo;
+			contDispo = contDispo + 1;
+			
+			if ((undInt == 0) && (tRest == 0 )){ //Verifico si la Maquia no estuvo para las 24H
+				contDispo = contDispo - 1;
+			}
+			
+		}
+		
+		if (contDispo > 0){
+			pr = sumPr/contDispo;
+		}
+		
+		pr = pr*100;
+		if (pr > 100){
+			pr = 100;
+		}
+		aux[0] = 0;
+		aux[1] = 0;
+		aux[2] = 0;
+		aux[3] = fec;
+		aux[4] = round(pr,2);
+		
+		return aux; 
+		
+	}
 	
-	public List<Object[]> eficienciaMaquinas(){
+	//Eficiencias Maquinas Generales (Planta)
+	public List<Object[]> eficienciaMaquinas(String tipo, String mes) throws ParseException{
 		List<Object[]> listaDispo = daoEficiencia.findDispositivosEficiencia();
 		DateFormat dateC = new SimpleDateFormat("yyyy-MM-dd");
 		double pr = 0.0;
+	
 		
 		List<Object[]> resulPr = new ArrayList<Object[]>();  
+		ControladorTurnos ct = new ControladorTurnos();
+		Turno turno = turno_actual(daoTurno);
 		
-		for (int i = 0; i < listaDispo.size(); i++){
-			Object[] aux = new Object[5];
-			double sumPr = 0.0;
-			double prDispo = 0.0;
-			int contDispo = 0;
-			
-			aux[3] = listaDispo.get(i);
-			Date fecD = (Date) aux[3];
-			//String fecStr = (String) aux[3];
-			String fec = dateC.format(fecD);
-			List<Object[]> listaDiaDispo = daoEficiencia.findEficGenByDispoDia(fec);
-			for (int j = 0; j < listaDiaDispo.size(); j++){  //Filtro los Dispositivos por Dia
+		if (tipo.equals("Lista")){
+			for (int i = 0; i < listaDispo.size(); i++){
+				Object[] aux = new Object[5];
+				aux[3] = listaDispo.get(i);
+				Date fecD = (Date) aux[3];
+				//String fecStr = (String) aux[3];
+				String fec = dateC.format(fecD);
+				List<Object[]> listaDiaDispo = daoEficiencia.findEficGenByDispoDia(fec);
+	     		Object[] resul = calculoEfic_General(fec, listaDiaDispo,"Dia",1440);
+				resulPr.add(i, resul);
+			}
+		}else if ((tipo.equals("Individual")) || (tipo.equals("IndividualActual"))) {
 				
-				BigInteger und = (BigInteger) listaDiaDispo.get(j)[0];		
-				BigDecimal vel = (BigDecimal) listaDiaDispo.get(j)[1];
-				int undInt = und.intValue();
-				Date fecha = (Date) listaDiaDispo.get(j)[3];
+
+		    	Calendar fecha = Calendar.getInstance();
+		    	fecha.setTime(new Date());
+		    	Calendar fjornada = ct.determinarFechaJornada(fecha, turno);
+				fjornada.add(Calendar.DAY_OF_MONTH, -1);
+				DateFormat dateformatC = new SimpleDateFormat("yyyy-MM-dd");
+				String jornadaStr = dateformatC.format(fjornada.getTime());	
+				List<Object[]> listaDiaDispo = daoEficiencia.findEficGenByDispoDia(jornadaStr);
+	     		Object[] resul = calculoEfic_General(jornadaStr, listaDiaDispo,"Dia",1440);
+				resulPr.add(0, resul);				
+		}else if (tipo.equals("Turno")) {
+			    
+			    List<Object[]> listasTurno = daoEficiencia.findUltimoTurno();
+			    int sw = 0;
+			    if (listasTurno.size() > 0){
+				    int idTurno = (int) listasTurno.get(0)[4];
+				    Date fturno = (Date) listasTurno.get(0)[3];
+				    Turno utlturno = daoTurno.findOne(idTurno);
+				    Turno turnoActual = turno_actual(daoTurno);
+			    	Calendar fecha = Calendar.getInstance();
+			    	fecha.setTime(new Date());
+			    	Calendar fjornada = ct.determinarFechaJornada(fecha, utlturno);
+					//fjornada.add(Calendar.DAY_OF_MONTH, -1);
+					DateFormat dateformatC = new SimpleDateFormat("yyyy-MM-dd");
+					String jornadaStr = dateformatC.format(fjornada.getTime());	
+					String fturnoStr = dateformatC.format(fturno);
+					
+					if ((jornadaStr.equals(fturnoStr)) && (idTurno == turnoActual.getIdTurno())){
+						sw = 1;
+						
+							if (listasTurno.size() > 1){
+								idTurno = (int) listasTurno.get(1)[4];
+								fturno = (Date) listasTurno.get(1)[3];
+								fturnoStr = dateformatC.format(fturno);
+							}else{
+								idTurno = 0;
+	      					}
+						
+					}
+				    long tAgendado = tiempoTurno(utlturno);
+	                List<Object[]> listaDiaDispo = daoEficiencia.findEficGenByDispoDiaTurno(idTurno, fturnoStr);
+		     		Object[] resul = calculoEfic_General(fturnoStr, listaDiaDispo,"TurnoGeneral",tAgendado);
+					resulPr.add(0, resul);					 
 				
-				int idDispo = (int) listaDiaDispo.get(j)[4];
-				//int idDispo = dis.intValue();
+			    }
+		}else if (tipo.equals("TurnoActual")) {
+		    List<Object[]> listasTurno = daoEficiencia.findUltimoTurno();
+		    int sw = 0;
+		    if (listasTurno.size() > 0){
+			    int idTurno = (int) listasTurno.get(0)[4];
+			    Date fturno = (Date) listasTurno.get(0)[3];
+			    Turno utlturno = daoTurno.findOne(idTurno);
+			    Turno turnoActual = turno_actual(daoTurno);
+		    	Calendar fecha = Calendar.getInstance();
+		    	fecha.setTime(new Date());
+		    	Calendar fjornada = ct.determinarFechaJornada(fecha, utlturno);
+				//fjornada.add(Calendar.DAY_OF_MONTH, -1);
+				DateFormat dateformatC = new SimpleDateFormat("yyyy-MM-dd");
+				String jornadaStr = dateformatC.format(fjornada.getTime());	
+				String fturnoStr = dateformatC.format(fturno);
 				
-				long tRest = (tiempoParadas("Dia",idDispo,0,fecha,new Date(),0))/60000;
-				double velDou = vel.doubleValue();   
-				
-				if (velDou > 0){
-					prDispo = ((undInt)/((1440 - tRest)*velDou));  //1440 Min tiene el dia
+				if ((jornadaStr.equals(fturnoStr)) && (idTurno == turnoActual.getIdTurno())){
+				    long tAgendado = tiempoTurno(utlturno);
+	                List<Object[]> listaDiaDispo = daoEficiencia.findEficGenByDispoDiaTurno(idTurno, fturnoStr);
+		     		Object[] resul = calculoEfic_General(fturnoStr, listaDiaDispo,"TurnoGeneral",tAgendado);
+					resulPr.add(0, resul);	
+					
 				}
-				
-				sumPr = sumPr + prDispo;
-				contDispo = contDispo + 1;
-				
-				if ((undInt == 0) && (tRest == 0 )){ //Verifico si la Maquia no estuvo para las 24H
-					contDispo = contDispo - 1;
-				}
-				
-			}
-			
-			if (contDispo > 0){
-				pr = sumPr/contDispo;
-			}
-			
-			pr = pr*100;
-			if (pr > 100){
-				pr = 100;
-			}
-			aux[0] = 0;
-			aux[1] = 0;
-			aux[2] = 0;
-			aux[3] = listaDispo.get(i);
-			aux[4] = round(pr,2);
-			resulPr.add(i, aux);
-			
+		    }
 		}
 		
 		return resulPr;
@@ -200,6 +352,81 @@ public class ControladorEficiencia {
 	
 	@RequestMapping("graficoEficienciaMaquinaDia")
 	@ResponseBody		
+	public List<Object[]> graficoEficienciaMaquina(int idDispo, String tipo,int idTurno) throws ParseException{
+        
+		List<Object[]> resulMaq = null;
+		long tRest = 0;
+		double velDou = 0.0;
+		Turno turno = daoTurno.findOne(idTurno);
+		ControladorTurnos ct = new ControladorTurnos();
+    	Calendar fechaA = Calendar.getInstance();
+    	fechaA.setTime(new Date());
+    	Calendar fjornada = ct.determinarFechaJornada(fechaA, turno);
+		DateFormat dateC = new SimpleDateFormat("yyyy-MM-dd");
+		String jornadaStr = dateC.format(fjornada.getTime());
+		
+		if (tipo.equals("Dia")){
+			resulMaq = daoEficiencia.findByIdDispo(idDispo);
+		}else if (tipo.equals("Hora")){
+			resulMaq = daoEficiencia.findByIdDispoAndFecha(idDispo, jornadaStr);
+		}
+		
+		List<Object[]> resulPr = new ArrayList<Object[]>();  
+		
+
+        for (int i = 0; i < resulMaq.size(); i++) {
+        	double pr = 0.0;
+        	Object[] aux = new Object[5];
+          	aux[0] = resulMaq.get(i)[0];
+          	aux[1] = resulMaq.get(i)[1];
+          	aux[2] = resulMaq.get(i)[2];
+          	aux[3] = resulMaq.get(i)[3];
+          	//aux[4] = resulMaq.get(i)[4];
+ 
+			BigInteger und = (BigInteger) aux[2];		
+			//int vel = (int) aux[3];
+			int undInt = und.intValue();
+			int velSet = velocidadSeteada(idDispo); //Velocidad Seteada Directo en la Maquina
+			Date fecha = (Date) aux[1];
+			
+			if (tipo.equals("Dia")){
+				tRest = (tiempoParadas("Dia",idDispo,0,fecha,new Date(),0))/60000;
+				velDou = (double) velSet;    
+				if (velDou > 0){
+					pr = ((undInt)/((1440 - tRest)*velDou));  //1440 Min tiene el dia
+				}
+			else if (tipo.equals("Hora")){
+				//tRest = (tiempoParadas("Dia",idDispo,0,fecha,new Date(),0))/60000;
+				velDou = (double) velSet;     
+				if (velDou > 0){
+					pr = ((undInt)/((60 - tRest)*velDou));  //60 Min tiene la Hora
+				}	
+				String hr = (String) aux[4];
+				aux[1] = hr;
+			}
+		}
+			
+			
+			
+			pr = pr*100;
+			if (pr > 100){
+				pr = 100.0;
+			}
+			
+     		aux[4] = round(pr,2);
+        	
+        	resulPr.add(i, aux);
+        	          
+      
+        }
+		return resulPr;
+			
+	}
+	
+	/*
+	
+	@RequestMapping("graficoEficienciaMaquinaDia")
+	@ResponseBody		
 	public List<Object[]> graficoEficienciaMaquina(int idDispo){
 
 		List<Object[]> resulMaq = daoEficiencia.findByIdDispo(idDispo);
@@ -241,6 +468,10 @@ public class ControladorEficiencia {
 		return resulPr;
 			
 	}
+	
+	*/
+	
+	
 	
 	@RequestMapping("EficienciaActual")
 	@ResponseBody		
@@ -295,12 +526,6 @@ public class ControladorEficiencia {
 			if (pr > 100){
 				pr = 100.0;
 			}		
-			/*if (velSet > 0){
-				
-			
-				pr = (((undInt)/((1440)*velSet))*100);
-			}	*/		
-			
 			
 		}
 		
@@ -419,77 +644,63 @@ public class ControladorEficiencia {
 
 	@RequestMapping("eficienciaGeneralDiaAnterior")
 	@ResponseBody	
-	public double eficienciaGeneralDia(){
+	public double eficienciaGeneralDia() throws ParseException{
 		double resul = 0.0;;
 		int ind = 0;
-		List<Object[]> resulDia = daoEficiencia.findEficienciaGeneralDiaAnterior();
+	
+		List<Object[]> resulDia = eficienciaMaquinas("Individual","");
 		
-		if (resulDia.toArray().length == 1){
-			ind = 0;
-		}else{
-			ind = 1;
+		if (resulDia.size() > 0){
+			double pr = (double) resulDia.get(ind)[4];
+			//double resDl = pr.doubleValue();	
+			resul = pr;
 		}
-		
-		BigInteger totUnd =  (BigInteger) resulDia.get(ind)[1];
-		BigDecimal vel = (BigDecimal) resulDia.get(ind)[2];
-		//double pr = (double) resulDia.get(1)[3];
-		Date fecha = (Date) resulDia.get(ind)[4];
-		double velDou = vel.doubleValue();
-		long tRest = (tiempoParadas("DiaGeneral",0,0,fecha,new Date(),0))/60000;
-		int iTotUnd = totUnd.intValue();
-		
-		resul = (iTotUnd/((1440 - tRest)*velDou))*100;
-		
-		if (resul > 100){
-			resul = 100;
-		}
-		
 		return round(resul,2);
+		
+		
+
 	}
 	
 	@RequestMapping("eficienciaGeneralTurnoAnterior")
 	@ResponseBody	
 	public double eficienciaGeneralTurno() throws ParseException{
 		double resul = 0.0;
-		int  ind = 0;
-		List<Object[]> resulDia = daoEficiencia.findEficienciaGeneralTurnoAnterior();
-		//BigInteger turno = 100000000;
-		//BigInteger turno = (BigInteger) resulDia.get(1)[1];
+		int ind = 0;
+	
+		List<Object[]> resulDia = eficienciaMaquinas("Turno","");
 		
-		if (resulDia.toArray().length == 1){
-			ind = 0;
-		}else{
-			ind = 1;
+		if (resulDia.size() > 0){
+			double pr = (double) resulDia.get(ind)[4];
+			//double resDl = pr.doubleValue();	
+			if (pr > 100){
+				pr = 100;
+			}
+			resul = pr;
 		}
-		
-		BigInteger totUnd =  (BigInteger) resulDia.get(ind)[2];
-		BigDecimal vel = (BigDecimal) resulDia.get(ind)[3];
-		//double pr = (double) resulDia.get(1)[3];
-		Date fecha = (Date) resulDia.get(ind)[5];
-		double velDou = vel.doubleValue();
-		//int iTurno = turno.intValue();
-		
-		Turno turno = daoTurno.findOne((Integer) resulDia.get(ind)[1]);
-		long tAgendado = tiempoTurno(turno); 		
-		//int iTurno = Integer.parseInt(turno);
-		
-		long tRest = (tiempoParadas("TurnoGeneral",0,1,fecha,new Date(),0))/60000;
-		int iTotUnd = totUnd.intValue();
-		
-		resul = (iTotUnd/((tAgendado - tRest)*velDou))*100;
-		
-		if (resul > 100){
-			resul = 100;
-		}		
-		
 		return round(resul,2);
+		
 	}	
 	
-	
+	//Se tomara como Eficiencia Actual del Dia
 	@RequestMapping("eficienciaGeneralTurnoActual")
 	@ResponseBody	
 	public double eficienciaGeneralTurnoActual() throws ParseException{
 		double resul = 0.0;
+		int ind = 0;
+	
+		List<Object[]> resulDia = eficienciaMaquinas("TurnoActual","");
+		
+		if (resulDia.size() > 0){
+			double pr = (double) resulDia.get(ind)[4];
+			//double resDl = pr.doubleValue();	
+			if (pr > 100){
+				pr = 100;
+			}
+			resul = pr;
+		}
+		return round(resul,2);
+		
+		/*double resul = 0.0;
 		List<Object[]> resulDia = daoEficiencia.findEficienciaGeneralTurnoAnterior();
 		//BigInteger turno = 100000000;
 		//BigInteger turno = (BigInteger) resulDia.get(1)[1];
@@ -513,20 +724,20 @@ public class ControladorEficiencia {
 			resul = 100;
 		}		
 		
-		return round(resul,2);
+		return round(resul,2);*/
 	}	
 	
 	
 	
 	@RequestMapping("graficoEficienciaGeneral")
 	@ResponseBody		
-	public List<Object[]> graficoEficienciaGeneral(String tipoGr){
+	public List<Object[]> graficoEficienciaGeneral(String tipoGr) throws ParseException{
 		List<Object[]> resulMaq = null;
 		long tRest = 0;
 		List<Object[]> resulPr = new ArrayList<Object[]>();
 		if (tipoGr.equals("Dia")){
 			 //resulMaq = daoEficiencia.findEficienciaGeneralGrafico();
-			resulMaq = eficienciaMaquinas();
+			resulMaq = eficienciaMaquinas("Lista","");
 			resulPr = resulMaq;
 			
 		}else if (tipoGr.equals("Mes")){

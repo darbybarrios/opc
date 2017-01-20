@@ -176,6 +176,29 @@ public interface RepositorioResumenEficiencia extends CrudRepository< ResumenEfi
 	List<Object[]> findEficGenByDispoDia(@Param("fecha") String fecha);
 	
 	
+	@Query(value="Select Sum(r.cant_unidades), avg(r.vel_seteada),((Sum(r.cant_unidades)/(1440*avg(r.vel_seteada)))*100) Pr, " +
+                 "date(r.fecha_jornada),id_turno From resumen_eficiencia r " +
+		         "Where r.fecha_jornada is not null and to_char(fecha_jornada,'YYYY') = to_char(now(),'YYYY') " +
+		         "Group By date(r.fecha_jornada), id_turno Order by date(r.fecha_jornada) desc " +
+                 "limit 2",nativeQuery=true)
+	List<Object[]> findUltimoTurno();
+	
+	@Query(value="Select Sum(r.cant_unidades), avg(r.vel_seteada),((Sum(r.cant_unidades)/(1440*avg(r.vel_seteada)))*100) Pr, " +
+                 "date(r.fecha_jornada),id_dispositivo,id_turno From resumen_eficiencia r  " +
+		         "Where to_date(to_char(r.fecha_jornada,'yyyy/MM/dd'),'yyyy/MM/dd') = to_date(:fecha,'yyyy/MM/dd') " +
+		         "And id_turno = :id_turno " +
+		         "And r.fecha_jornada is not null and to_char(fecha_jornada,'YYYY') = to_char(now(),'YYYY') " +
+		         "Group By date(r.fecha_jornada), id_dispositivo, id_turno Order by date(r.fecha_jornada)",nativeQuery=true)
+	List<Object[]> findEficGenByDispoDiaTurno(@Param("id_turno") int idTurno, @Param("fecha") String fecha);
+	
+	
+	@Query(value = "Select resumen_eficiencia.id_dispositivo,  date(fec_registro),sum(resumen_eficiencia.cant_unidades) As Total,  Avg(resumen_eficiencia.velocidad) As Velocidad,to_char(fec_registro,'hh') " +
+	               "From resumen_eficiencia " +
+	               "where resumen_eficiencia.id_dispositivo = :idDispo and to_date(to_char(fecha_jornada,'yyyy/MM/dd'),'yyyy/MM/dd') = to_date(:fecha,'yyyy/MM/dd') " +
+	               "Group By resumen_eficiencia.id_dispositivo, date(fec_registro), to_char(fec_registro,'hh') " +
+	               "Order By date(fec_registro) desc",nativeQuery=true)
+	List<Object[]> findByIdDispoAndFecha(@Param("idDispo") int idDispo, @Param("fecha") String fecha);  //Eficiencia por Maquina Diaria
+	
 	
 	
 		

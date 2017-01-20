@@ -1,0 +1,103 @@
+
+
+        <!-- page content -->
+        <div >
+          <div class="">
+            <div class="page-title">
+              <div class="title_left">
+                
+              </div>
+
+              <div class="title_right">
+                <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+
+                </div>
+              </div>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>TAGS</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                          <li><a href="#">Settings 1</a>
+                          </li>
+                          <li><a href="#">Settings 2</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content" ng-controller="TagsController">
+				  <div class="well" style="overflow: auto">
+	                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Seleccionar PLC:</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                          <select id="idPLC" class="form-control" ng-model="selDispo" ng-change="mostrarTagsValores()" type="checkbox" ng-options="dispositivos.idDispositivo as dispositivos.descripcion for dispositivos in dispositivos">
+                            <option value="">-- Seleccionar --</option>
+
+                          </select>
+                        </div>
+				   </div>		
+				  <div><button type="button"  class="btn btn-round btn-success" ng-click="mostrarTagsValores()">Refrescar</button></div>
+				  
+<!-- Ventana Modal -->
+				  
+			
+				
+				
+ <table id="tbdata" class="table table-striped table-bordered">
+                      <thead>
+                        <tr>
+                          <th>ItemId</th>
+                          <th>Descripcion</th>
+                          <th>Calidad</th>
+						  <th>Fecha</th>
+						  <th>Valor Actual</th>
+						  <th>Edición</th>
+  
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="tag in tagsValores track by $index" class="ng-scope">
+							<td><a ng-href="">{{tag.tag.itemId}}</a></td>
+							        <td>{{tag.tag.descTag}}</td>
+									<td>{{tag.calidad}}</td>
+									<td ng-bind="tag.fecha | date:'dd/MMM/yyyy HH:mm:ss'"></td>
+									<td>{{tag.valor}}</td>
+									<td>
+									        <a class="btn btn-primary btn-xs"><i class="fa fa-folder"></i></a>
+											<a class="btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>
+                           					<a class="btn btn-danger btn-xs" ng-click="removerTag($index)"><i class="fa fa-trash-o"></i></a>
+									</td>
+									
+		
+							   
+                        </tr>
+
+                      </tbody>
+
+                    </table>
+                 
+
+
+
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /page content -->	
+        
