@@ -1,0 +1,324 @@
+<div>
+          <div class="">
+            <div class="page-title">
+              <div class="title_left">
+                
+              </div>
+
+              <div class="title_right">
+                <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+
+                </div>
+              </div>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Reporte del d&iacute;a</h2>
+                  
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+
+                   <div class="well" style="overflow: auto">
+
+                   <div class="col-md-10 left-margin">
+				   <form class="form-horizontal form-label-left">
+                       <div class="form-group">
+	                     <label>Seleccionar L&iacute;nea:</label>   
+                        
+						  
+                          <select id="idPLC" class="form-control" ng-model="selMaq" type="checkbox" ng-options="maquinas.idMaquina as maquinas.nombre for maquinas in maquinas">
+                            <option value="">-- Seleccionar --</option>
+
+                          </select>
+                        
+					  </div>
+					</form>  
+				   </div>
+
+					<div class="col-md-4 col-sm-4 col-xs-4">
+                        <fieldset>
+                          <div class="control-group">
+                            <div class="controls">
+                              <div class="col-md-12 xdisplay_inputx form-group has-feedback">
+                                <input type="date" class="form-control has-feedback-left" id="single_cal1" ng-model="fecIni" placeholder="yyyy-MM-dd">
+                                <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
+                                <span id="inputSuccess2Status4" class="sr-only">(success)</span>
+                              </div>
+                            </div>
+                          </div>
+                        </fieldset>
+                      </div>
+					  
+				
+					  
+					<div class="col-md-3">	  
+  						<div><button type="button"  class="btn btn-round btn-success" ng-click="buscarConsulta()">Buscar</button></div>	
+					</div>					  					  
+                    
+					
+					</div>
+					
+					<div>
+					<h2>Resumen de la producci&oacute;n del per&iacute;odo de informe</h2>
+					</div>
+				  
+ 					<table title="Prueba" id="tbreporte" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                      <thead>
+                        <tr>
+                          <th>Hora de Inicio</th> 
+                          <th>Estado de la Producci&oacute;n</th>
+                          <th>Descripcion del Producto</th>
+                          <th>Tasa Objetivo (unidades/min)</th>
+                          <th>Tiempo Programado (min)</th>
+                          <th>Objetivo Unidades</th>
+                          <th>Objetivo Casos</th>
+                          <th>Total Unidades</th>
+                          <th>Total Casos</th>
+                          <th>Unidades estadísticas de producci&oacute;n neta</th>
+                          <th>PR %</th>
+                          
+						  
+  
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="producc in produccion track by $index" class="ng-scope">
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>						   
+                        </tr>
+
+                      </tbody>
+
+                    </table>
+                    
+                    <div>
+					<h2>Resumen de tiempo de inactividad de l&iacute;nea</h2>
+					</div>
+                    
+                    <table id="tbreporte" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                      <thead>
+                        <tr>
+                          <th>Unidad</th> 
+                          <th>MTBF no planeado Min</th>
+                          <th>MTTR Min</th>
+                          <th>Tiempo de actividad Min</th>
+                          <th>Paradas planeadas #</th>
+                          <th>Tiempo de inactividad planificado Min</th>
+                          <th>Paradas de suministro #</th>
+                          <th>Tiempo de inactividad del suministro Min</th>
+                          <th>Paradas internas #</th>
+                          <th>Tiempo de inactividad interno Min</th>
+                          <th>Paradas menores #</th>
+                          <th>Fallas del proceso #</th>
+                          <th>Aver&iacute;as #</th>
+                          
+						  
+  
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="producc in produccion track by $index" class="ng-scope">
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>					   
+                        </tr>
+
+                      </tbody>
+
+                    </table>
+                    
+                    <div>
+					<h2>Resumen de tiempo de inactividad no planeado por categor&iacute;a DTGroup</h2>
+					</div>
+					
+                    <table id="tbreporte" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                      <thead>
+                        <tr>
+                          <th>Categor&iacute;a</th> 
+                          <th>Falta del tiempo Min</th>
+                          <th>Paradas #</th>
+                          <th>Hora del calendario %</th>
+                          <th>Hora programada %</th>                          
+                          
+						  
+  
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="producc in produccion track by $index" class="ng-scope">
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+                        </tr>
+
+                      </tbody>
+
+                    </table>
+				    
+				     <div>
+					<h2>Resumen de tiempo de inactividad planificado por categor&iacute;a de DTGroup</h2>
+					</div>
+				    
+					<table id="tbreporte" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                      <thead>
+                        <tr>
+                          <th>Categor&iacute;a</th> 
+                          <th>Falta del tiempo Min</th>
+                          <th>Paradas #</th>
+                          <th>Hora del calendario %</th>
+                          <th>Hora programada %</th>                          
+                          
+						  
+  
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="producc in produccion track by $index" class="ng-scope">
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+                        </tr>
+
+                      </tbody>
+
+                    </table>
+                    <div>
+                    <h2>Top X Resumen del tiempo de inactividad por ocurrencia</h2>
+                    </div>
+                    <table id="tbreporte" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                      <thead>
+                        <tr>
+                          <th>Level 1</th> 
+                          <th>Level 2</th> 
+                          <th>Level 3</th> 
+                          <th>Level 4</th> 
+                          <th>Falta del tiempo Min</th>
+                          <th>Paradas #</th>
+                          
+						  
+  
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="producc in produccion track by $index" class="ng-scope">
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        				   
+                        </tr>
+
+                      </tbody>
+
+                    </table>
+                    
+                    <div>
+                    <h2>Top X Tiempo de inactividad Resumen por duraci&oacute;n</h2>
+                    </div>
+                    <table id="tbreporte" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                      <thead>
+                        <tr>
+                          <th>Level 1</th> 
+                          <th>Level 2</th> 
+                          <th>Level 3</th> 
+                          <th>Level 4</th> 
+                          <th>Falta del tiempo Min</th>
+                          <th>Paradas #</th>
+                          
+						  
+  
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="producc in produccion track by $index" class="ng-scope">
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        				   
+                        </tr>
+
+                      </tbody>
+
+                    </table>
+                    
+                    <div>
+                    <h2>Tiempo de inactividad Top X Eventos m&aacute;s largos</h2>
+                    </div>
+                    
+                    <table id="tbreporte" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                      <thead>
+                        <tr>
+                          <th>Level 1</th> 
+                          <th>Level 2</th> 
+                          <th>Level 3</th> 
+                          <th>Level 4</th>
+                          <th>Hora de inicio</th>
+                          <th>Falla</th>
+                          <th>Falta del tiempo Min</th>
+                          <th>Comentarios</th>
+                          
+						  
+  
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="producc in produccion track by $index" class="ng-scope">
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        <td  ng-bind="producc.turno "></td>
+							        				   
+                        </tr>
+
+                      </tbody>
+
+                    </table>
+<!-- /Ventana Modal -->	
+       					
+					
+											  
+                        
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
