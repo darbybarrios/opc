@@ -615,7 +615,7 @@ function graficoPrMPHora($http,$scope,baseUrl,notificationService,id,turno){
         for (var i = 0; i < $scope.graficoPrMPHr.length; i++) {
                 
                // notificationService.error($scope.graficoPrMP[0][2]);
-                $scope.labelsHr.push($scope.graficoPrMPHr[i][1]);
+                $scope.labelsHr.push($scope.graficoPrMPHr[i][5]);
                 $scope.dataAuxHr.push($scope.graficoPrMPHr[i][4]);
                 
          
@@ -2711,6 +2711,7 @@ app.controller("TableroController", ['$scope','$http','$timeout','$rootScope','n
 	inicio = '01/01/1970';
 	fin = '01/01/1970';
 	iniciar_elementos();
+	$scope.opGrafico = 'D';
 	limpiar_tags($http,$scope,baseUrl);
 	buscar_turno_actual($http,$scope,baseUrl);
 	iniciarGraficoPrMP($http,$scope,$filter,baseUrl);

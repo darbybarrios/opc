@@ -369,6 +369,7 @@ public class ControladorEficiencia {
 			resulMaq = daoEficiencia.findByIdDispo(idDispo);
 		}else if (tipo.equals("Hora")){
 			resulMaq = daoEficiencia.findByIdDispoAndFecha(idDispo, jornadaStr);
+					
 		}
 		
 		List<Object[]> resulPr = new ArrayList<Object[]>();  
@@ -376,12 +377,19 @@ public class ControladorEficiencia {
 
         for (int i = 0; i < resulMaq.size(); i++) {
         	double pr = 0.0;
-        	Object[] aux = new Object[5];
+        	Object[] aux = new Object[6];
           	aux[0] = resulMaq.get(i)[0];
           	aux[1] = resulMaq.get(i)[1];
           	aux[2] = resulMaq.get(i)[2];
           	aux[3] = resulMaq.get(i)[3];
-          	//aux[4] = resulMaq.get(i)[4];
+          	
+          	if (tipo.equals("Hora")){
+          		aux[5] = resulMaq.get(i)[4];
+          	}
+          	
+
+          	
+          	//aux[5] = resulMaq.get(i)[4];
  
 			BigInteger und = (BigInteger) aux[2];		
 			//int vel = (int) aux[3];
@@ -395,16 +403,21 @@ public class ControladorEficiencia {
 				if (velDou > 0){
 					pr = ((undInt)/((1440 - tRest)*velDou));  //1440 Min tiene el dia
 				}
-			else if (tipo.equals("Hora")){
-				//tRest = (tiempoParadas("Dia",idDispo,0,fecha,new Date(),0))/60000;
-				velDou = (double) velSet;     
-				if (velDou > 0){
+				
+				
+			}
+				
+			if (tipo.equals("Hora")){
+
+				    
+				if (velSet > 0){
+					velDou = (double) velSet; 
 					pr = ((undInt)/((60 - tRest)*velDou));  //60 Min tiene la Hora
 				}	
-				String hr = (String) aux[4];
-				aux[1] = hr;
+			//	String hr = (String) aux[4];
+				//aux[1] = hr;
 			}
-		}
+		
 			
 			
 			
