@@ -68,7 +68,7 @@
 					<h2>Resumen de la producci&oacute;n del per&iacute;odo de informe</h2>
 					</div>
 				  
- 					<table title="Prueba" id="tbreporte" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+ 					<table id="tbreporte1" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                       <thead>
                         <tr>
                           <th>Hora de Inicio</th> 
@@ -88,7 +88,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr ng-repeat="producc in produccion track by $index" class="ng-scope">
+                        <tr ng-repeat="report1 in reporte1 track by $index" class="ng-scope">
 							        <td  ng-bind="producc.turno "></td>
 							        <td  ng-bind="producc.turno "></td>
 							        <td  ng-bind="producc.turno "></td>
@@ -110,7 +110,7 @@
 					<h2>Resumen de tiempo de inactividad de l&iacute;nea</h2>
 					</div>
                     
-                    <table id="tbreporte" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                    <table id="tbreporte2" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                       <thead>
                         <tr>
                           <th>Unidad</th> 
@@ -132,7 +132,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr ng-repeat="producc in produccion track by $index" class="ng-scope">
+                        <tr ng-repeat="report2 in reporte2 track by $index" class="ng-scope">
 							        <td  ng-bind="producc.turno "></td>
 							        <td  ng-bind="producc.turno "></td>
 							        <td  ng-bind="producc.turno "></td>
@@ -156,7 +156,7 @@
 					<h2>Resumen de tiempo de inactividad no planeado por categor&iacute;a DTGroup</h2>
 					</div>
 					
-                    <table id="tbreporte" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                    <table id="tbreporte3" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                       <thead>
                         <tr>
                           <th>Categor&iacute;a</th> 
@@ -170,7 +170,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr ng-repeat="producc in produccion track by $index" class="ng-scope">
+                        <tr ng-repeat="report3 in reporte3 track by $index" class="ng-scope">
 							        <td  ng-bind="producc.turno "></td>
 							        <td  ng-bind="producc.turno "></td>
 							        <td  ng-bind="producc.turno "></td>
@@ -186,7 +186,7 @@
 					<h2>Resumen de tiempo de inactividad planificado por categor&iacute;a de DTGroup</h2>
 					</div>
 				    
-					<table id="tbreporte" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+					<table id="tbreporte4" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                       <thead>
                         <tr>
                           <th>Categor&iacute;a</th> 
@@ -200,7 +200,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr ng-repeat="producc in produccion track by $index" class="ng-scope">
+                        <tr ng-repeat="report4 in reporte4 track by $index" class="ng-scope">
 							        <td  ng-bind="producc.turno "></td>
 							        <td  ng-bind="producc.turno "></td>
 							        <td  ng-bind="producc.turno "></td>
@@ -214,7 +214,7 @@
                     <div>
                     <h2>Top X Resumen del tiempo de inactividad por ocurrencia</h2>
                     </div>
-                    <table id="tbreporte" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                    <table id="tbreporte5" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                       <thead>
                         <tr>
                           <th>Level 1</th> 
@@ -229,7 +229,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr ng-repeat="producc in produccion track by $index" class="ng-scope">
+                        <tr ng-repeat="report5 in reporte5 track by $index" class="ng-scope">
 							        <td  ng-bind="producc.turno "></td>
 							        <td  ng-bind="producc.turno "></td>
 							        <td  ng-bind="producc.turno "></td>
@@ -246,7 +246,7 @@
                     <div>
                     <h2>Top X Tiempo de inactividad Resumen por duraci&oacute;n</h2>
                     </div>
-                    <table id="tbreporte" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                    <table id="tbreporte6" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                       <thead>
                         <tr>
                           <th>Level 1</th> 
@@ -261,7 +261,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr ng-repeat="producc in produccion track by $index" class="ng-scope">
+                        <tr ng-repeat="report6 in reporte6 track by $index" class="ng-scope">
 							        <td  ng-bind="producc.turno "></td>
 							        <td  ng-bind="producc.turno "></td>
 							        <td  ng-bind="producc.turno "></td>
@@ -279,7 +279,7 @@
                     <h2>Tiempo de inactividad Top X Eventos m&aacute;s largos</h2>
                     </div>
                     
-                    <table id="tbreporte" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                    <table id="tbreporte7" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                       <thead>
                         <tr>
                           <th>Level 1</th> 
@@ -296,7 +296,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr ng-repeat="producc in produccion track by $index" class="ng-scope">
+                        <tr ng-repeat="report7 in reporte7 track by $index" class="ng-scope">
 							        <td  ng-bind="producc.turno "></td>
 							        <td  ng-bind="producc.turno "></td>
 							        <td  ng-bind="producc.turno "></td>
